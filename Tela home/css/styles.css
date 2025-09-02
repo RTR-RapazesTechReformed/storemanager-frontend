@@ -1,0 +1,546 @@
+/* Reset e Configurações Globais */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    /* Cores Principais */
+    --primary-color: #00CED1;
+    --secondary-color: #20B2AA;
+    --success-color: #32CD32;
+    --warning-color: #FFD700;
+    --danger-color: #FF6B6B;
+    --dark-color: #2C3E50;
+    --light-color: #ECF0F1;
+    --white: #FFFFFF;
+    --gray-light: #BDC3C7;
+    --gray-medium: #95A5A6;
+    --gray-dark: #7F8C8D;
+    
+    /* Tipografia */
+    --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    --font-size-xs: 0.75rem;
+    --font-size-sm: 0.875rem;
+    --font-size-base: 1rem;
+    --font-size-lg: 1.125rem;
+    --font-size-xl: 1.25rem;
+    --font-size-2xl: 1.5rem;
+    --font-size-3xl: 1.875rem;
+    
+    /* Espaçamentos */
+    --spacing-xs: 0.25rem;
+    --spacing-sm: 0.5rem;
+    --spacing-md: 1rem;
+    --spacing-lg: 1.5rem;
+    --spacing-xl: 2rem;
+    --spacing-2xl: 3rem;
+    
+    /* Bordas */
+    --border-radius: 8px;
+    --border-radius-lg: 12px;
+    
+    /* Sombras */
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+body {
+    font-family: var(--font-family);
+    font-size: var(--font-size-base);
+    line-height: 1.6;
+    color: var(--dark-color);
+    background-color: var(--light-color);
+    overflow-x: hidden;
+}
+
+/* Header Principal */
+.main-header {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: var(--white);
+    padding: var(--spacing-md) 0;
+    box-shadow: var(--shadow-md);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.header-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--spacing-md);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-xl);
+}
+
+/* Logo */
+.logo-container {
+    display: flex;
+    align-items: center;
+}
+
+.logo-icon {
+    background-color: var(--white);
+    color: var(--primary-color);
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--border-radius);
+    font-weight: bold;
+    font-size: var(--font-size-sm);
+    box-shadow: var(--shadow-sm);
+}
+
+.logo-text {
+    letter-spacing: 1px;
+}
+
+/* Navegação Principal */
+.main-navigation {
+    display: flex;
+    gap: var(--spacing-sm);
+    flex-wrap: wrap;
+}
+
+.nav-button {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md) var(--spacing-lg);
+    background-color: rgba(255, 255, 255, 0.1);
+    color: var(--white);
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    min-width: 120px;
+    justify-content: center;
+}
+
+.nav-button:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.nav-button.active {
+    background-color: var(--white);
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+.nav-icon {
+    font-size: var(--font-size-lg);
+}
+
+/* Container Principal */
+.main-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: var(--spacing-xl) var(--spacing-md);
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: var(--spacing-xl);
+    min-height: calc(100vh - 120px);
+}
+
+/* Área de Conteúdo Principal */
+.content-area {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+}
+
+.charts-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-lg);
+}
+
+/* Cards de Gráficos */
+.chart-card {
+    background-color: var(--white);
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-xl);
+    box-shadow: var(--shadow-md);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.chart-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+}
+
+.chart-title {
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+    color: var(--dark-color);
+    margin-bottom: var(--spacing-lg);
+    text-align: center;
+    line-height: 1.4;
+}
+
+/* Gráfico Placeholder */
+.chart-container {
+    height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.chart-placeholder {
+    display: flex;
+    align-items: end;
+    gap: var(--spacing-md);
+    height: 150px;
+    width: 100%;
+    justify-content: center;
+}
+
+.bar {
+    width: 30px;
+    border-radius: 4px 4px 0 0;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.bar:hover {
+    opacity: 0.8;
+    transform: scaleY(1.05);
+}
+
+/* Lista de Cartas Mais Vendidas */
+.top-cards-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.card-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md);
+    background-color: var(--light-color);
+    border-radius: var(--border-radius);
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.card-item:hover {
+    background-color: var(--gray-light);
+    transform: translateX(4px);
+}
+
+.card-icon {
+    font-size: var(--font-size-xl);
+    width: 40px;
+    text-align: center;
+}
+
+.card-name {
+    flex: 1;
+    font-weight: 500;
+    color: var(--dark-color);
+}
+
+.card-price {
+    font-weight: 600;
+    color: var(--success-color);
+    font-size: var(--font-size-sm);
+}
+
+/* Sidebar Financeira - ÁREA PRINCIPAL DO PROBLEMA */
+.financial-sidebar {
+    background-color: var(--white);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-md);
+    /* Altura fixa para permitir rolagem interna */
+    height: fit-content;
+    max-height: calc(100vh - 160px);
+    position: sticky;
+    top: 100px;
+}
+
+.financial-container {
+    padding: var(--spacing-xl);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+    /* Altura máxima com rolagem */
+    max-height: calc(100vh - 200px);
+    overflow-y: auto;
+    /* Estilização da barra de rolagem */
+    scrollbar-width: thin;
+    scrollbar-color: var(--gray-medium) var(--light-color);
+}
+
+/* Estilização personalizada da barra de rolagem para Webkit */
+.financial-container::-webkit-scrollbar {
+    width: 6px;
+}
+
+.financial-container::-webkit-scrollbar-track {
+    background: var(--light-color);
+    border-radius: 3px;
+}
+
+.financial-container::-webkit-scrollbar-thumb {
+    background: var(--gray-medium);
+    border-radius: 3px;
+    transition: background 0.3s ease;
+}
+
+.financial-container::-webkit-scrollbar-thumb:hover {
+    background: var(--gray-dark);
+}
+
+/* Cards Financeiros */
+.financial-card {
+    background-color: var(--light-color);
+    border-radius: var(--border-radius);
+    padding: var(--spacing-lg);
+    text-align: center;
+    transition: all 0.3s ease;
+    border-left: 4px solid transparent;
+}
+
+.financial-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-sm);
+}
+
+.financial-title {
+    font-size: var(--font-size-base);
+    font-weight: 500;
+    color: var(--gray-dark);
+    margin-bottom: var(--spacing-sm);
+}
+
+.financial-value {
+    font-size: var(--font-size-2xl);
+    font-weight: 700;
+    margin-top: var(--spacing-sm);
+}
+
+.financial-value.primary {
+    color: var(--primary-color);
+}
+
+.financial-value.success {
+    color: var(--success-color);
+}
+
+.financial-value.danger {
+    color: var(--danger-color);
+}
+
+/* Seção de Dados Roláveis */
+.scrollable-data-section {
+    margin-top: var(--spacing-lg);
+    border-top: 2px solid var(--light-color);
+    padding-top: var(--spacing-lg);
+}
+
+.section-title {
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+    color: var(--dark-color);
+    margin-bottom: var(--spacing-lg);
+    text-align: center;
+}
+
+.scrollable-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+    /* Altura máxima para a área rolável específica */
+    max-height: 300px;
+    overflow-y: auto;
+    padding-right: var(--spacing-sm);
+    /* Estilização da barra de rolagem */
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary-color) var(--light-color);
+}
+
+.scrollable-content::-webkit-scrollbar {
+    width: 4px;
+}
+
+.scrollable-content::-webkit-scrollbar-track {
+    background: var(--light-color);
+    border-radius: 2px;
+}
+
+.scrollable-content::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 2px;
+}
+
+.scrollable-content::-webkit-scrollbar-thumb:hover {
+    background: var(--secondary-color);
+}
+
+/* Itens de Dados */
+.data-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-md);
+    background-color: var(--light-color);
+    border-radius: var(--border-radius);
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.data-item:hover {
+    background-color: var(--gray-light);
+    transform: translateX(2px);
+}
+
+.data-label {
+    font-weight: 500;
+    color: var(--gray-dark);
+    font-size: var(--font-size-sm);
+}
+
+.data-value {
+    font-weight: 600;
+    color: var(--dark-color);
+    font-size: var(--font-size-sm);
+}
+
+/* Responsividade */
+@media (max-width: 1024px) {
+    .main-container {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-lg);
+    }
+    
+    .financial-sidebar {
+        position: static;
+        max-height: none;
+    }
+    
+    .financial-container {
+        max-height: none;
+        overflow-y: visible;
+    }
+    
+    .scrollable-content {
+        max-height: 200px;
+    }
+}
+
+@media (max-width: 768px) {
+    .header-container {
+        flex-direction: column;
+        gap: var(--spacing-md);
+    }
+    
+    .main-navigation {
+        justify-content: center;
+        width: 100%;
+    }
+    
+    .nav-button {
+        min-width: auto;
+        flex: 1;
+        max-width: 150px;
+    }
+    
+    .charts-section {
+        grid-template-columns: 1fr;
+    }
+    
+    .main-container {
+        padding: var(--spacing-lg) var(--spacing-sm);
+    }
+}
+
+@media (max-width: 480px) {
+    .nav-button {
+        padding: var(--spacing-sm) var(--spacing-md);
+        font-size: var(--font-size-xs);
+    }
+    
+    .nav-text {
+        display: none;
+    }
+    
+    .chart-card {
+        padding: var(--spacing-lg);
+    }
+    
+    .financial-card {
+        padding: var(--spacing-md);
+    }
+    
+    .financial-value {
+        font-size: var(--font-size-xl);
+    }
+}
+
+/* Animações e Transições */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.chart-card,
+.financial-card {
+    animation: fadeIn 0.6s ease-out;
+}
+
+/* Estados de Foco para Acessibilidade */
+.nav-button:focus,
+.card-item:focus,
+.data-item:focus {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
+/* Melhorias de Performance */
+.chart-card,
+.financial-card,
+.card-item,
+.data-item {
+    will-change: transform;
+}
+
+/* Indicador de Carregamento */
+.loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid var(--primary-color);
+    border-radius: 50%;
+    border-top-color: transparent;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
