@@ -4,22 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Sistema de Gestão</title>
-    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/estoque.css">
 </head>
 <body>
     <!-- Header Principal -->
     <header class="main-header">
         <div class="header-container">
             <!-- Logo -->
-            <div class="logo-container">
-                <div class="logo-icon">
-                    <span class="logo-text">SISTEMA</span>
-                </div>
-            </div>
+        
             
             <!-- Navegação Principal -->
-            <nav class="main-navigation">
-                <button class="nav-button" onclick="location.href='gestao-interna.html'">
+          <nav class="main-navigation">
+                <button class="nav-button active" onclick="location.href='gestao-interna.html'">
                     <span class="nav-icon">💰</span>
                     <span class="nav-text">Gestão Interna</span>
                 </button>
@@ -31,19 +27,265 @@
                     <span class="nav-icon">📊</span>
                     <span class="nav-text">Analytics</span>
                 </button>
-                <button class="nav-button active" onclick="location.href='estoque.html'">
+                <button class="nav-button" onclick="location.href='estoque.html'">
                     <span class="nav-icon">🏪</span>
                     <span class="nav-text">Estoque</span>
                 </button>
             </nav>
         </div>
     </header>
+<body>
+    <!-- Container Principal -->
+    <div class="main-container">
+        <!-- Sidebar de Navegação -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-container">
+                    <div class="logo-icon">
+                        <span class="logo-symbol">📊</span>
+                    </div>
+                </div>
+            </div>
+            
+            <nav class="sidebar-navigation">
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="#" class="nav-link active" data-section="tendencias">
+                            <span class="nav-icon">📈</span>
+                            <span class="nav-text">Dashboards Tendências</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-section="operacionais">
+                            <span class="nav-icon">⚙️</span>
+                            <span class="nav-text">Dashboards Operacionais</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Área de Conteúdo Principal -->
+        <main class="main-content">
+            <!-- Header da Página -->
+            <header class="page-header">
+                <div class="header-controls">
+                    <!-- Campo de Busca -->
+                    <div class="search-container">
+                        <input 
+                            type="text" 
+                            id="product-search" 
+                            class="search-input" 
+                            placeholder="Procurar produto..."
+                            aria-label="Buscar produtos no estoque"
+                        >
+                        <button class="search-button" type="button" aria-label="Executar busca">
+                            <span class="search-icon">🔍</span>
+                        </button>
+                    </div>
+
+                    <!-- Botões de Ação -->
+                    <div class="action-buttons">
+                        <button class="btn btn-primary" id="add-product-btn" type="button">
+                            <span class="btn-icon">➕</span>
+                            <span class="btn-text">Cadastrar Produto</span>
+                        </button>
+                        <button class="btn btn-secondary" id="filters-btn" type="button">
+                            <span class="btn-icon">🔽</span>
+                            <span class="btn-text">Filtros</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Área de Filtros (Inicialmente Oculta) -->
+                <div class="filters-panel" id="filters-panel">
+                    <div class="filters-content">
+                        <div class="filter-group">
+                            <label for="category-filter" class="filter-label">Categoria:</label>
+                            <select id="category-filter" class="filter-select">
+                                <option value="">Todas as categorias</option>
+                                <option value="promocoes">Promoções</option>
+                                <option value="evolucoes">Evoluções</option>
+                                <option value="prismaticas">Prismáticas</option>
+                            </select>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label for="price-filter" class="filter-label">Preço:</label>
+                            <select id="price-filter" class="filter-select">
+                                <option value="">Todos os preços</option>
+                                <option value="0-10">R$ 0 - R$ 10</option>
+                                <option value="10-50">R$ 10 - R$ 50</option>
+                                <option value="50-100">R$ 50 - R$ 100</option>
+                                <option value="100+">Acima de R$ 100</option>
+                            </select>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label for="stock-filter" class="filter-label">Estoque:</label>
+                            <select id="stock-filter" class="filter-select">
+                                <option value="">Todos</option>
+                                <option value="available">Disponível</option>
+                                <option value="low">Estoque baixo</option>
+                                <option value="out">Sem estoque</option>
+                            </select>
+                        </div>
+                        
+                        <div class="filter-actions">
+                            <button class="btn btn-small btn-primary" id="apply-filters-btn">Aplicar</button>
+                            <button class="btn btn-small btn-outline" id="clear-filters-btn">Limpar</button>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Lista de Produtos -->
+            <section class="products-section">
+                <div class="products-header">
+                    <div class="bulk-actions">
+                        <input type="checkbox" id="select-all-products" class="bulk-checkbox" aria-label="Selecionar todos os produtos">
+                        <label for="select-all-products" class="bulk-label">Selecionar todos</label>
+                        <button class="btn btn-small btn-danger" id="bulk-delete-btn" disabled>
+                            <span class="btn-icon">🗑️</span>
+                            <span class="btn-text">Excluir selecionados</span>
+                        </button>
+                    </div>
+                    
+                    <div class="products-count">
+                        <span id="products-count-text">0 produtos encontrados</span>
+                    </div>
+                </div>
+
+                <!-- Container da Lista de Produtos -->
+                <div class="products-list-container">
+                    <div id="products-list" class="products-list" role="list">
+                        <!-- Os produtos serão inseridos aqui via JavaScript -->
+                        <div class="loading-state" id="loading-state">
+                            <div class="loading-spinner"></div>
+                            <p>Carregando produtos...</p>
+                        </div>
+                        
+                        <div class="empty-state" id="empty-state" style="display: none;">
+                            <div class="empty-icon">📦</div>
+                            <h3>Nenhum produto encontrado</h3>
+                            <p>Tente ajustar os filtros ou adicionar novos produtos ao estoque.</p>
+                            <button class="btn btn-primary" id="add-first-product-btn">
+                                <span class="btn-icon">➕</span>
+                                <span class="btn-text">Adicionar primeiro produto</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Paginação -->
+                <div class="pagination-container" id="pagination-container">
+                    <div class="pagination-info">
+                        <span id="pagination-info-text">Mostrando 1-10 de 50 produtos</span>
+                    </div>
+                    
+                    <div class="pagination-controls">
+                        <button class="btn btn-small btn-outline" id="prev-page-btn" disabled>
+                            <span class="btn-icon">◀</span>
+                            <span class="btn-text">Anterior</span>
+                        </button>
+                        
+                        <div class="page-numbers" id="page-numbers">
+                            <!-- Números das páginas serão inseridos aqui -->
+                        </div>
+                        
+                        <button class="btn btn-small btn-outline" id="next-page-btn">
+                            <span class="btn-icon">▶</span>
+                            <span class="btn-text">Próxima</span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modal para Adicionar/Editar Produto -->
+    <div class="modal-overlay" id="product-modal-overlay">
+        <div class="modal" id="product-modal" role="dialog" aria-labelledby="modal-title" aria-modal="true">
+            <div class="modal-header">
+                <h2 id="modal-title" class="modal-title">Adicionar Produto</h2>
+                <button class="modal-close-btn" id="modal-close-btn" aria-label="Fechar modal">
+                    <span class="close-icon">✕</span>
+                </button>
+            </div>
+            
+            <div class="modal-body">
+                <form id="product-form" class="product-form">
+                    <div class="form-group">
+                        <label for="product-name" class="form-label">Nome do Produto *</label>
+                        <input type="text" id="product-name" name="name" class="form-input" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="product-category" class="form-label">Categoria *</label>
+                        <select id="product-category" name="category" class="form-select" required>
+                            <option value="">Selecione uma categoria</option>
+                            <option value="promocoes">Promoções</option>
+                            <option value="evolucoes">Evoluções Prismáticas</option>
+                            <option value="prismaticas">Prismáticas</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="product-price" class="form-label">Preço (R$) *</label>
+                        <input type="number" id="product-price" name="price" class="form-input" step="0.01" min="0" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="product-stock" class="form-label">Quantidade em Estoque *</label>
+                        <input type="number" id="product-stock" name="stock" class="form-input" min="0" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="product-description" class="form-label">Descrição</label>
+                        <textarea id="product-description" name="description" class="form-textarea" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            
+            <div class="modal-footer">
+                <button class="btn btn-outline" id="modal-cancel-btn" type="button">Cancelar</button>
+                <button class="btn btn-primary" id="modal-save-btn" type="submit" form="product-form">
+                    <span class="btn-text">Salvar Produto</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Confirmação -->
+    <div class="modal-overlay" id="confirm-modal-overlay">
+        <div class="modal modal-small" id="confirm-modal" role="dialog" aria-labelledby="confirm-modal-title" aria-modal="true">
+            <div class="modal-header">
+                <h2 id="confirm-modal-title" class="modal-title">Confirmar Ação</h2>
+            </div>
+            
+            <div class="modal-body">
+                <p id="confirm-modal-message">Tem certeza que deseja realizar esta ação?</p>
+            </div>
+            
+            <div class="modal-footer">
+                <button class="btn btn-outline" id="confirm-cancel-btn" type="button">Cancelar</button>
+                <button class="btn btn-danger" id="confirm-action-btn" type="button">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast de Notificações -->
+    <div class="toast-container" id="toast-container">
+        <!-- Toasts serão inseridos aqui via JavaScript -->
+    </div>
+
+</body>
 
 
-    
 
     <!-- JavaScript -->
     <script src="../js/estoque.js"></script>
 </body>
 </html>
+
 
