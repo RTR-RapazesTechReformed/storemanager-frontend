@@ -3,19 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>StoreManager - Login</title>
+    <link rel="stylesheet" href="/Tela de Login/css/cssCopia_Teste.css">
 </head>
-<body>
-    <h1>Login</h1>
-    <form action="/login" method="POST">
-        <label for="username">Nome de Usuário:</label><br>
-        <input type="text" id="username" required>
-        <br>
-        <label for="password">Senha:</label><br>
-        <input type="password" id="password" required>
-        <br>
-        <button type="submit">Entrar</button>
-        <a href="*"><h4>Esqueci minha senha</h4></a>
-    </form>
+<body> 
+<div id="logos-container">
+    <div id="logoRTR">
+        <img src="/img/logo-rtr.png" alt="">
+    </div>
+
+    <div id="divisoria"></div>
+
+    <div id="logoMeruru">
+        <img src="/img/logo-meruru.jpeg" alt="">
+    </div>
+</div>
+    <div id="divLogin">
+        <form action="/login" method="POST">
+            <label for="username">Nome de Usuário:</label>
+            <input type="text" id="username" name="username" required placeholder="Digite seu usuário">
+            
+            <label for="password">Senha:</label>
+            <input type="password" id="password" name="password" required placeholder="Digite sua senha">
+            
+            <button type="submit">Entrar</button>
+            <a href="#"><h4>Esqueci minha senha</h4></a>
+        </form>
+    </div>
 </body>
 </html>
