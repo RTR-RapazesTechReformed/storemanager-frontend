@@ -2,7 +2,7 @@ body {
     margin: 0;
     padding: 0;
     background: #000;
-    font-family: 'Segoe UI', Arial, sans-serif;
+    font-family: 'Montserrat', sans-serif;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
