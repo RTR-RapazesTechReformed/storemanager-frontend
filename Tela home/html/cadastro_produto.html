@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastrar Produto - Sistema de Gestão de Estoque</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .form-container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #2c3e50;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: background-color 0.3s;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: #007bff;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #0056b3;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #545b62;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .alert {
+            padding: 12px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .required {
+            color: #dc3545;
+        }
+
+        .card-fields {
+            display: none;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+
+        .card-fields.active {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Cadastrar Produto</h1>
+            <p>Adicione um novo produto ao sistema de estoque</p>
+        </div>
+
+        <div class="form-container">
+            <form id="product-form">
+                <div class="form-group">
+                    <label for="product-name">Nome do Produto <span class="required">*</span></label>
+                    <input type="text" id="product-name" name="name" required 
+                           placeholder="Ex: Booster Box Paldean Fates">
+                </div>
+                
+                <div class="form-group">
+                    <label for="product-description">Descrição</label>
+                    <textarea id="product-description" name="description" 
+                              placeholder="Ex: Caixa lacrada com 36 boosters"></textarea>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="product-type">Tipo <span class="required">*</span></label>
+                        <select id="product-type" name="type" required>
+                            <option value="">Selecione um tipo</option>
+                            <option value="CARD">Carta</option>
+                            <option value="BOOSTER_BOX">Booster Box</option>
+                            <option value="ACCESSORY">Acessório</option>
+                        </select>
+                        
+                        <!-- Campos condicionais para CARD -->
+                        <div id="card-fields" class="card-fields">
+                            <div class="form-group">
+                                <label for="card-select">Selecionar Carta <span class="required">*</span></label>
+                                <select id="card-select" name="cardId">
+                                    <option value="">Carregando cartas...</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="product-price">Preço de Venda Sugerido (R$) <span class="required">*</span></label>
+                        <input type="number" id="product-price" name="price" step="0.01" min="0" required 
+                               placeholder="1200.00">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="product-condition">Condição <span class="required">*</span></label>
+                    <select id="product-condition" name="condition" required>
+                        <option value="">Selecione uma condição</option>
+                        <option value="MINT">Mint</option>
+                        <option value="LIGHTLY_PLAYED">Lightly Played</option>
+                        <option value="MODERATELY_PLAYED">Moderately Played</option>
+                        <option value="HEAVILY_PLAYED">Heavily Played</option>
+                        <option value="DAMAGED">Damaged</option>
+                        <option value="SEALED">Sealed</option>
+                        <option value="OPENED">Opened</option>
+                        <option value="USED">Used</option>
+                    </select>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Cadastrar Produto</button>
+                    <a href="estoque.html" class="btn btn-secondary">Voltar ao Sistema</a>
+                </div>
+            </form>
+        </div>
+
+        <!-- Área de alertas -->
+        <div id="alerts"></div>
+    </div>
+
+    <script src="../js/cadastro_produto.js"></script>
+</body>
+</html>
+
