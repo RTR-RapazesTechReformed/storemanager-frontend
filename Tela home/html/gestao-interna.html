@@ -1,11 +1,15 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Sistema de Gestão</title>
+    <title>Gestão Interna - StoreManager</title>
     <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/graficosGestaoInterna.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
+
 <body>
     <!-- Header Principal -->
     <header class="main-header">
@@ -13,10 +17,10 @@
             <!-- Logo -->
             <div class="logo-container">
                 <div class="logo-icon">
-                    <img src="/img/logo-rtr.png" id="logoRTR">
+                    <p class="storeManagerTitutlo">STORE MANAGER</p>
                 </div>
             </div>
-            
+
             <!-- Navegação Principal -->
             <nav class="main-navigation">
                 <button class="nav-button active" onclick="location.href='gestao-interna.html'">
@@ -39,133 +43,146 @@
         </div>
     </header>
 
-    <!-- Container Principal -->
-    <main class="main-container">
-        <!-- Área de Conteúdo Principal -->
-        <section class="content-area">
-            <!-- Seção de Gráficos -->
-            <div class="charts-section">
-                <!-- Gráfico de Vendas -->
-                <div class="chart-card">
-                    <h3 class="chart-title">Quantidade de vendas no último mês</h3>
-                    <div class="chart-container" id="sales-chart">
-                        <!-- Placeholder para gráfico de barras -->
-                        <div class="chart-placeholder">
-                            <div class="bar" style="height: 60%; background-color: #20B2AA;"></div>
-                            <div class="bar" style="height: 50%; background-color: #20B2AA;"></div>
-                            <div class="bar" style="height: 80%; background-color: #32CD32;"></div>
-                            <div class="bar" style="height: 90%; background-color: #9ACD32;"></div>
-                            <div class="bar" style="height: 70%; background-color: #FFD700;"></div>
-                        </div>
-                    </div>
-                </div>
+    <!-- Conteúdo Principal -->
+    <main class="dashboard-container">
+      <!-- Sidebar Direita - Área Financeira -->
+<aside class="financial-sidebar">
+    <div class="financial-container sidebar-flex">
+        <!-- Caixa da Empresa -->
+        <div class="financial-box primary-box">
+            <h4 class="financial-title">Caixa da Empresa</h4>
+            <div class="financial-value primary">R$560.000,00</div>
+        </div>
 
-                <!-- Lista de Cartas Mais Vendidas -->
-                <div class="chart-card">
-                    <h3 class="chart-title">Cartas mais vendidas no último semestre<br>(independente de coleção)</h3>
-                    <div class="top-cards-list" id="top-cards-list">
-                        <div class="card-item">
-                            <span class="card-icon">⚡</span>
-                            <span class="card-name">Pikachu</span>
-                            <span class="card-price">R$65.000</span>
-                        </div>
-                        <div class="card-item">
-                            <span class="card-icon">🔵</span>
-                            <span class="card-name">Zubat</span>
-                            <span class="card-price">R$1.000</span>
-                        </div>
-                        <div class="card-item">
-                            <span class="card-icon">🟣</span>
-                            <span class="card-name">Ticaracaticamon</span>
-                            <span class="card-price">R$550</span>
-                        </div>
-                        <div class="card-item">
-                            <span class="card-icon">🔥</span>
-                            <span class="card-name">Charizard</span>
-                            <span class="card-price">R$300</span>
-                        </div>
-                        <div class="card-item">
-                            <span class="card-icon">🐻</span>
-                            <span class="card-name">Freddy Fazbear</span>
-                            <span class="card-price">R$150</span>
-                        </div>
+        <!-- Lucro Semestral -->
+        <div class="financial-box success-box">
+            <h4 class="financial-title">Lucro Semestral</h4>
+            <div class="financial-value success">R$200.000,00</div>
+        </div>
+
+        <!-- Total em Dívidas -->
+        <div class="financial-box danger-box">
+            <h4 class="financial-title">Total em Dívidas</h4>
+            <div class="financial-value danger">R$2.025,00</div>
+        </div>
+    </div>
+</aside>
+
+        <!-- Área de Gráficos e Listas -->
+        <section class="charts-container">
+            <!-- Gráfico de Vendas -->
+            <div class="chart-card" id="salesChartCard">
+                <h3 class="chart-title">Quantidade de vendas no último mês</h3>
+                <canvas id="salesChart"></canvas>
+            </div>
+
+            <!-- Lista de Cartas Mais Vendidas -->
+            <div class="chart-card" id="topCards">
+                <h3 class="chart-title">Cartas mais vendidas no último semestre<br>(independente de coleção)</h3>
+                <div class="top-cards-list" id="top-cards-list">
+                    <div class="card-item">
+                        <span class="card-icon">⚡</span>
+                        <span class="card-name">Pikachu</span>
+                        <span class="card-price">R$65.000</span>
+                    </div>
+                    <div class="card-item">
+                        <span class="card-icon">🔵</span>
+                        <span class="card-name">Zubat</span>
+                        <span class="card-price">R$1.000</span>
+                    </div>
+                    <div class="card-item">
+                        <span class="card-icon">🟣</span>
+                        <span class="card-name">Ticaracaticamon</span>
+                        <span class="card-price">R$550</span>
+                    </div>
+                    <div class="card-item">
+                        <span class="card-icon">🔥</span>
+                        <span class="card-name">Charizard</span>
+                        <span class="card-price">R$300</span>
+                    </div>
+                    <div class="card-item">
+                        <span class="card-icon">🐻</span>
+                        <span class="card-name">Freddy Fazbear</span>
+                        <span class="card-price">R$150</span>
                     </div>
                 </div>
+            </div>
+
+            <!-- Gráfico Extra - Distribuição por Coleções -->
+            <div class="chart-card" id="distribuicaoColecoes">
+                <h3 class="chart-title">Distribuição de vendas por coleções</h3>
+                <canvas id="collectionsChart"></canvas>
+            </div>
+
+            <!-- Gráfico Extra - Evolução semanal -->
+            <div class="chart-card" id="evolucaoSemanal">
+                <h3 class="chart-title">Evolução semanal de vendas</h3>
+                <canvas id="weeklyChart"></canvas>
             </div>
         </section>
-
-        <!-- Sidebar Direita - Área Financeira -->
-        <aside class="financial-sidebar">
-            <div class="financial-container">
-                <!-- Caixa da Empresa -->
-                <div class="financial-card">
-                    <h4 class="financial-title">Caixa da Empresa:</h4>
-                    <div class="financial-value primary" id="company-cash">
-                        R$560.000,00,00
-                    </div>
-                </div>
-
-                <!-- Lucro Semestral -->
-                <div class="financial-card">
-                    <h4 class="financial-title">Lucro semestral:</h4>
-                    <div class="financial-value success" id="semester-profit">
-                        R$200.000,00
-                    </div>
-                </div>
-
-                <!-- Total em Dívidas -->
-                <div class="financial-card">
-                    <h4 class="financial-title">Total em dívidas:</h4>
-                    <div class="financial-value danger" id="total-debts">
-                        R$2.025,00
-                    </div>
-                </div>
-
-                <!-- Área Adicional para Dados Roláveis -->
-                <div class="scrollable-data-section">
-                    <h4 class="section-title">Dados Adicionais</h4>
-                    <div class="scrollable-content" id="additional-data">
-                        <!-- Conteúdo adicional que pode ser rolado -->
-                        <div class="data-item">
-                            <span class="data-label">Vendas Hoje:</span>
-                            <span class="data-value">R$1.250,00</span>
-                        </div>
-                        <div class="data-item">
-                            <span class="data-label">Vendas Ontem:</span>
-                            <span class="data-value">R$980,00</span>
-                        </div>
-                        <div class="data-item">
-                            <span class="data-label">Meta Mensal:</span>
-                            <span class="data-value">R$50.000,00</span>
-                        </div>
-                        <div class="data-item">
-                            <span class="data-label">Progresso:</span>
-                            <span class="data-value">68%</span>
-                        </div>
-                        <div class="data-item">
-                            <span class="data-label">Clientes Ativos:</span>
-                            <span class="data-value">1.247</span>
-                        </div>
-                        <div class="data-item">
-                            <span class="data-label">Novos Clientes:</span>
-                            <span class="data-value">23</span>
-                        </div>
-                        <div class="data-item">
-                            <span class="data-label">Produtos em Estoque:</span>
-                            <span class="data-value">5.432</span>
-                        </div>
-                        <div class="data-item">
-                            <span class="data-label">Produtos Vendidos:</span>
-                            <span class="data-value">892</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </aside>
     </main>
 
-    <!-- JavaScript -->
+    <!-- Script dos Gráficos -->
     <script src="../js/gestao.js"></script>
-</body>
-</html>
 
+    <script>
+        // Gráfico de Vendas (barras)
+const salesCtx = document.getElementById('salesChart').getContext('2d');
+new Chart(salesCtx, {
+  type: 'bar',
+  data: {
+    labels: ['Semana 1', 'Semana 2', 'Semana 3', 'Semana 4'],
+    datasets: [{
+      label: 'Vendas',
+      data: [120, 150, 180, 220],
+      backgroundColor: ['#20B2AA', '#32CD32', '#FFD700', '#9ACD32']
+    }]
+  },
+  options: {
+    responsive: false,
+    maintainAspectRatio: true,
+    plugins: {
+      legend: { display: false }
+    }
+  }
+});
+
+// Gráfico Pizza (coleções)
+const collectionsCtx = document.getElementById('collectionsChart').getContext('2d');
+new Chart(collectionsCtx, {
+  type: 'pie',
+  data: {
+    labels: ['Base Set', 'Fóssil', 'Jungle', 'Moderno'],
+    datasets: [{
+      data: [35, 20, 25, 20],
+      backgroundColor: ['#FF6B6B', '#20B2AA', '#FFD700', '#32CD32']
+    }]
+  },
+  options: {responsive: false, maintainAspectRatio: true }
+});
+
+// Gráfico Linha (evolução semanal)
+const weeklyCtx = document.getElementById('weeklyChart').getContext('2d');
+new Chart(weeklyCtx, {
+  type: 'line',
+  data: {
+    labels: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'],
+    datasets: [{
+      label: 'Vendas R$',
+      data: [200, 350, 300, 400, 450, 600, 500],
+      borderColor: '#20e7dd',
+      backgroundColor: 'rgba(32, 231, 221, 0.2)',
+      tension: 0.3,
+      fill: true
+    }]
+  },
+  options: {
+    responsive: false,
+    maintainAspectRatio: true
+  }
+});
+
+    </script>
+</body>
+
+</html>
