@@ -13,7 +13,7 @@ document.getElementById('loginForm').addEventListener('submit', async function (
             body: JSON.stringify({ username, password })
         });
         if (response.ok) {
-            window.location.href = "/Tela de Produtos/html/produtos.html";
+            window.location.href = "../Tela%20home/estoque.html";
         } else {
             document.getElementById('errorMessage').textContent = "Usuário ou senha inválidos.";
             document.getElementById('errorMessage').style.display = 'block';

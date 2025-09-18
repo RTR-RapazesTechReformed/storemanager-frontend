@@ -7,8 +7,8 @@
 
 :root {
     /* Cores Principais */
-    --primary-color: #00CED1;
-    --secondary-color: #20B2AA;
+    --primary-color: #000000;
+    --secondary-color: #20e7dd;
     --success-color: #32CD32;
     --warning-color: #FFD700;
     --danger-color: #FF6B6B;
@@ -58,7 +58,7 @@ body {
 
 /* Header Principal */
 .main-header {
-    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    background: linear-gradient(25deg, var(--primary-color), var(--secondary-color));
     color: var(--white);
     padding: var(--spacing-md) 0;
     box-shadow: var(--shadow-md);
@@ -81,16 +81,14 @@ body {
 .logo-container {
     display: flex;
     align-items: center;
+    flex-wrap:wrap;
+    gap: var(--spacing-sm);
+
 }
 
-.logo-icon {
-    background-color: var(--white);
-    color: var(--primary-color);
-    padding: var(--spacing-sm) var(--spacing-md);
-    border-radius: var(--border-radius);
-    font-weight: bold;
-    font-size: var(--font-size-sm);
-    box-shadow: var(--shadow-sm);
+.logo-icon img {
+    height: 50px;
+    width: 50px;
 }
 
 .logo-text {
@@ -543,4 +541,3 @@ body {
         transform: rotate(360deg);
     }
 }
-
