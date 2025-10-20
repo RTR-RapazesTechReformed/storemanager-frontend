@@ -14,14 +14,13 @@
     <!-- Header Principal -->
     <header class="main-header">
         <div class="header-container">
-            <!-- Logo -->
             <div class="logo-container">
                 <div class="logo-icon">
                     <p class="storeManagerTitutlo">STORE MANAGER</p>
                 </div>
             </div>
 
-            <!-- Navegação Principal -->
+            <!-- Navegação Principal (NÃO ALTERAR) -->
             <nav class="main-navigation">
                 <button class="nav-button active" onclick="location.href='gestao-interna.html'">
                     <span class="nav-icon">💰</span>
@@ -45,144 +44,61 @@
 
     <!-- Conteúdo Principal -->
     <main class="dashboard-container">
-      <!-- Sidebar Direita - Área Financeira -->
-<aside class="financial-sidebar">
-    <div class="financial-container sidebar-flex">
-        <!-- Caixa da Empresa -->
-        <div class="financial-box primary-box">
-            <h4 class="financial-title">Caixa da Empresa</h4>
-            <div class="financial-value primary">R$560.000,00</div>
-        </div>
 
-        <!-- Lucro Semestral -->
-        <div class="financial-box success-box">
-            <h4 class="financial-title">Lucro Semestral</h4>
-            <div class="financial-value success">R$200.000,00</div>
-        </div>
+        <!-- === KPIs Principais === -->
+        <aside class="financial-sidebar">
+            <div class="financial-container sidebar-flex">
+                <div class="financial-box primary-box">
+                    <h4 class="financial-title">Total de Cartas em Estoque</h4>
+                    <div id="company-cash" class="financial-value primary">--</div>
+                </div>
 
-        <!-- Total em Dívidas -->
-        <div class="financial-box danger-box">
-            <h4 class="financial-title">Total em Dívidas</h4>
-            <div class="financial-value danger">R$2.025,00</div>
-        </div>
-    </div>
-</aside>
+                <div class="financial-box success-box">
+                    <h4 class="financial-title">Total de Booster Boxes</h4>
+                    <div id="semester-profit" class="financial-value success">--</div>
+                </div>
 
-        <!-- Área de Gráficos e Listas -->
+                <div class="financial-box danger-box">
+                    <h4 class="financial-title">Top Pokémon em Estoque</h4>
+                    <div id="total-debts" class="financial-value danger">--</div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- === Gráficos e Listas === -->
         <section class="charts-container">
-            <!-- Gráfico de Vendas -->
-            <div class="chart-card" id="salesChartCard">
-                <h3 class="chart-title">Quantidade de vendas no último mês</h3>
+
+            <!-- Gráfico 1: Vendas (Sales Overview) -->
+            <div class="chart-card">
+                <h3 class="chart-title">Panorama de Vendas (Últimos Meses)</h3>
                 <canvas id="salesChart"></canvas>
             </div>
 
-            <!-- Lista de Cartas Mais Vendidas -->
-            <div class="chart-card" id="topCards">
-                <h3 class="chart-title">Cartas mais vendidas no último semestre<br>(independente de coleção)</h3>
-                <div class="top-cards-list" id="top-cards-list">
-                    <div class="card-item">
-                        <span class="card-icon">⚡</span>
-                        <span class="card-name">Pikachu</span>
-                        <span class="card-price">R$65.000</span>
-                    </div>
-                    <div class="card-item">
-                        <span class="card-icon">🔵</span>
-                        <span class="card-name">Zubat</span>
-                        <span class="card-price">R$1.000</span>
-                    </div>
-                    <div class="card-item">
-                        <span class="card-icon">🟣</span>
-                        <span class="card-name">Ticaracaticamon</span>
-                        <span class="card-price">R$550</span>
-                    </div>
-                    <div class="card-item">
-                        <span class="card-icon">🔥</span>
-                        <span class="card-name">Charizard</span>
-                        <span class="card-price">R$300</span>
-                    </div>
-                    <div class="card-item">
-                        <span class="card-icon">🐻</span>
-                        <span class="card-name">Freddy Fazbear</span>
-                        <span class="card-price">R$150</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Gráfico Extra - Distribuição por Coleções -->
-            <div class="chart-card" id="distribuicaoColecoes">
-                <h3 class="chart-title">Distribuição de vendas por coleções</h3>
+            <!-- Gráfico 2: Aquisições Mensais -->
+            <div class="chart-card">
+                <h3 class="chart-title">Aquisições Mensais</h3>
                 <canvas id="collectionsChart"></canvas>
             </div>
 
-            <!-- Gráfico Extra - Evolução semanal -->
-            <div class="chart-card" id="evolucaoSemanal">
-                <h3 class="chart-title">Evolução semanal de vendas</h3>
+            <!-- Gráfico 3: Envelhecimento de Estoque -->
+            <div class="chart-card">
+                <h3 class="chart-title">Envelhecimento de Estoque</h3>
                 <canvas id="weeklyChart"></canvas>
             </div>
+
+            <!-- Lista de Cartas de Maior Valor -->
+            <div class="chart-card" id="topCards">
+                <h3 class="chart-title">Cartas Mais Valiosas (Mercado Atual)</h3>
+                <div class="top-cards-list" id="top-cards-list">
+                    <p>Carregando cartas...</p>
+                </div>
+            </div>
+
         </section>
     </main>
 
-    <!-- Script dos Gráficos -->
+    <!-- Script principal -->
     <script src="../js/gestao.js"></script>
 
-    <script>
-        // Gráfico de Vendas (barras)
-const salesCtx = document.getElementById('salesChart').getContext('2d');
-new Chart(salesCtx, {
-  type: 'bar',
-  data: {
-    labels: ['Semana 1', 'Semana 2', 'Semana 3', 'Semana 4'],
-    datasets: [{
-      label: 'Vendas',
-      data: [120, 150, 180, 220],
-      backgroundColor: ['#20B2AA', '#32CD32', '#FFD700', '#9ACD32']
-    }]
-  },
-  options: {
-    responsive: false,
-    maintainAspectRatio: true,
-    plugins: {
-      legend: { display: false }
-    }
-  }
-});
-
-// Gráfico Pizza (coleções)
-const collectionsCtx = document.getElementById('collectionsChart').getContext('2d');
-new Chart(collectionsCtx, {
-  type: 'pie',
-  data: {
-    labels: ['Base Set', 'Fóssil', 'Jungle', 'Moderno'],
-    datasets: [{
-      data: [35, 20, 25, 20],
-      backgroundColor: ['#FF6B6B', '#20B2AA', '#FFD700', '#32CD32']
-    }]
-  },
-  options: {responsive: false, maintainAspectRatio: true }
-});
-
-// Gráfico Linha (evolução semanal)
-const weeklyCtx = document.getElementById('weeklyChart').getContext('2d');
-new Chart(weeklyCtx, {
-  type: 'line',
-  data: {
-    labels: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'],
-    datasets: [{
-      label: 'Vendas R$',
-      data: [200, 350, 300, 400, 450, 600, 500],
-      borderColor: '#20e7dd',
-      backgroundColor: 'rgba(32, 231, 221, 0.2)',
-      tension: 0.3,
-      fill: true
-    }]
-  },
-  options: {
-    responsive: false,
-    maintainAspectRatio: true
-  }
-});
-
-    </script>
 </body>
-
 </html>
