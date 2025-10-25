@@ -1,10 +1,9 @@
 /**
  * Dashboard Management System
  * Integração real com backend (Spring Boot)
- * Versão estável - sem duplicar gráficos
+ * Versão corrigida — gráficos populam corretamente
  */
 
-// ===== CONFIGURAÇÕES =====
 const CONFIG = {
     API_BASE_URL: 'http://localhost:8080/api/dashboard',
     UPDATE_INTERVAL: 30000,
@@ -16,36 +15,28 @@ class DashboardAPI {
     static async getTotalCardsInStock() {
         return this.fetchJSON(`${CONFIG.API_BASE_URL}/total-cards-in-stock`);
     }
-
     static async getTotalBoosterBoxes() {
         return this.fetchJSON(`${CONFIG.API_BASE_URL}/total-booster-boxes`);
     }
-
     static async getTopPokemonByStock() {
         return this.fetchJSON(`${CONFIG.API_BASE_URL}/top-pokemon-by-stock`);
     }
-
     static async getTopCollectionByItems() {
         return this.fetchJSON(`${CONFIG.API_BASE_URL}/top-collection-by-items`);
     }
-
     static async getMonthlyAcquisitions() {
         return this.fetchJSON(`${CONFIG.API_BASE_URL}/monthly-acquisitions`);
     }
-
     static async getSalesOverview() {
         return this.fetchJSON(`${CONFIG.API_BASE_URL}/sales-overview`);
     }
-
     static async getStockAgingOverview() {
         return this.fetchJSON(`${CONFIG.API_BASE_URL}/stock-aging-overview`);
     }
-
     static async getValuedCards() {
         return this.fetchJSON(`${CONFIG.API_BASE_URL}/valued-cards`);
     }
 
-    /** Função genérica */
     static async fetchJSON(url) {
         try {
             const response = await fetch(url, {
@@ -56,7 +47,7 @@ class DashboardAPI {
             return await response.json();
         } catch (error) {
             console.error(`Erro ao buscar dados da API (${url}):`, error);
-            throw error;
+            return [];
         }
     }
 }
@@ -66,18 +57,16 @@ class DashboardManager {
     constructor() {
         this.isLoading = false;
         this.updateTimer = null;
-        this.charts = {}; // armazena instâncias do Chart.js
+        this.charts = {};
         this.init();
     }
 
-    /** Inicialização */
     init() {
         this.loadInitialData();
         this.startAutoUpdate();
         console.log('Dashboard inicializado com sucesso 🚀');
     }
 
-    /** Carregamento inicial */
     async loadInitialData() {
         this.setLoadingState(true);
         try {
@@ -114,7 +103,6 @@ class DashboardManager {
                 stockAging,
                 valuedCards
             });
-
         } catch (error) {
             console.error('Erro ao carregar dados iniciais:', error);
         } finally {
@@ -122,68 +110,90 @@ class DashboardManager {
         }
     }
 
-    // ===== ATUALIZAÇÕES DE INTERFACE =====
-
-    /** Atualiza cards de KPI */
+    // ===== ATUALIZAÇÕES =====
     updateKPIs(data) {
-        const { totalCards, boosterBoxes, topPokemon } = data;
-        document.getElementById('company-cash').textContent = `${totalCards.totalCardsInStock || 0} cartas`;
-        document.getElementById('semester-profit').textContent = `${boosterBoxes.totalBoosterBoxes || 0} boosters`;
-        document.getElementById('total-debts').textContent = `Top: ${topPokemon.pokemonName || '---'}`;
-    }
+    const { totalCards, boosterBoxes, topPokemon } = data;
 
-    /** Atualiza todos os gráficos (versão estável) */
+    document.getElementById('company-cash').textContent =
+        `${totalCards.total_cards_in_stock || 0} cartas`;
+    document.getElementById('semester-profit').textContent =
+        `${boosterBoxes.total_booster_boxes || 0} boosters`;
+    document.getElementById('total-debts').textContent =
+        `Top: ${topPokemon.pokemonName || '---'}`;
+}
+
     updateCharts(data) {
         const { monthlyAcquisitions, salesOverview, stockAging, valuedCards } = data;
 
+        // === Panorama de Vendas ===
         this.drawChartOnce('salesChart', 'bar', salesOverview, {
             label: 'Vendas (R$)',
-            labelField: 'productName',
-            valueField: 'totalRevenue'
+            labelField: this.detectLabelField(salesOverview, ['month', 'productName', 'name']),
+            valueField: this.detectValueField(salesOverview, ['totalRevenue', 'sales', 'value'])
         });
 
+        // === Aquisições Mensais ===
         this.drawChartOnce('collectionsChart', 'pie', monthlyAcquisitions, {
-            label: 'Aquisições',
-            labelField: 'month',
-            valueField: 'totalCost'
+            label: 'Aquisições (R$)',
+            labelField: this.detectLabelField(monthlyAcquisitions, ['month', 'label']),
+            valueField: this.detectValueField(monthlyAcquisitions, ['totalCost', 'value', 'amount'])
         });
 
+        // === Envelhecimento de Estoque ===
         this.drawChartOnce('weeklyChart', 'line', stockAging, {
             label: 'Dias em Estoque',
-            labelField: 'productName',
-            valueField: 'daysInStock'
+            labelField: this.detectLabelField(stockAging, ['productName', 'item', 'name']),
+            valueField: this.detectValueField(stockAging, ['daysInStock', 'days', 'value'])
         });
 
+        // === Cartas Valiosas ===
         this.updateTopCardsList(valuedCards);
     }
 
-    /**
-     * Cria ou atualiza um gráfico de forma controlada (sem duplicar)
-     */
+    // ===== DETECÇÃO AUTOMÁTICA DE CAMPOS =====
+    detectLabelField(data, candidates) {
+        if (!Array.isArray(data) || data.length === 0) return 'label';
+        const keys = Object.keys(data[0]);
+        return candidates.find(c => keys.includes(c)) || keys[0];
+    }
+
+    detectValueField(data, candidates) {
+        if (!Array.isArray(data) || data.length === 0) return 'value';
+        const keys = Object.keys(data[0]);
+        return candidates.find(c => keys.includes(c)) ||
+            keys.find(k => typeof data[0][k] === 'number') ||
+            keys[1];
+    }
+
+    // ===== CHART CREATION =====
     drawChartOnce(elementId, type, data, { label, labelField, valueField }) {
         const canvas = document.getElementById(elementId);
-        if (!canvas) return;
+        if (!canvas || !Array.isArray(data) || data.length === 0) return;
 
-        // Atualiza gráfico existente
+        const labels = data.map(d => d[labelField] || '---');
+        const values = data.map(d => d[valueField] || 0);
+
         if (this.charts[elementId]) {
             const chart = this.charts[elementId];
-            chart.data.labels = data.map(d => d[labelField] || '---');
-            chart.data.datasets[0].data = data.map(d => d[valueField] || 0);
+            chart.data.labels = labels;
+            chart.data.datasets[0].data = values;
             chart.update();
             return;
         }
 
-        // Cria gráfico novo
         const ctx = canvas.getContext('2d');
         this.charts[elementId] = new Chart(ctx, {
-            type: type,
+            type,
             data: {
-                labels: data.map(d => d[labelField] || '---'),
+                labels,
                 datasets: [{
-                    label: label,
-                    data: data.map(d => d[valueField] || 0),
-                    backgroundColor: ['#20B2AA', '#32CD32', '#FFD700', '#4D96FF'],
-                    borderColor: '#20B2AA',
+                    label,
+                    data: values,
+                    backgroundColor: [
+                        '#20B2AA', '#32CD32', '#FFD700', '#4D96FF', '#FF6F61',
+                        '#6A5ACD', '#FFB347', '#66CDAA', '#C71585', '#708090'
+                    ],
+                    borderColor: '#1E90FF',
                     borderWidth: 1,
                     fill: type === 'line'
                 }]
@@ -197,24 +207,54 @@ class DashboardManager {
         });
     }
 
-    /** Atualiza lista das cartas mais valiosas */
-    updateTopCardsList(cards) {
-        const container = document.getElementById('top-cards-list');
-        container.innerHTML = '';
-        cards.forEach(card => {
-            const item = document.createElement('div');
-            item.className = 'card-item';
-            item.innerHTML = `
-                <span class="card-icon">🎴</span>
-                <span class="card-name">${card.productName || '---'}</span>
-                <span class="card-price">${this.formatCurrency(card.currentSalePrice || 0)}</span>
-            `;
-            container.appendChild(item);
-        });
+updateTopCardsList(cards) {
+    const container = document.getElementById('top-cards-list');
+    container.innerHTML = '';
+
+    if (!Array.isArray(cards) || cards.length === 0) {
+        container.innerHTML = '<p>Nenhuma carta encontrada.</p>';
+        return;
     }
 
-    // ===== UTILITÁRIOS =====
+    // Normaliza e garante número (fallbacks: avg_sale_price -> current_sale_price -> 0)
+    const normalized = cards.map(c => ({
+        ...c,
+        _avgPrice: Number(c.avg_sale_price ?? c.current_sale_price ?? 0),
+        _currentPrice: Number(c.current_sale_price ?? 0),
+        _stock: Number(c.current_stock ?? 0)
+    }));
 
+    // Ordena decrescentemente por avg_sale_price
+    normalized.sort((a, b) => b._avgPrice - a._avgPrice || b._currentPrice - a._currentPrice);
+
+    // Pega top 3 (ou menos se tiver menos itens)
+    const top = normalized.slice(0, 3);
+
+    // Cria título opcional
+    const title = document.createElement('div');
+    title.className = 'top-cards-title';
+    title.innerHTML = '<strong>Top 3 Cartas Valiosas</strong>';
+    container.appendChild(title);
+
+    top.forEach((card, index) => {
+        const item = document.createElement('div');
+        item.className = 'card-item';
+
+        // Exibe posição, nome, avg_sale_price, current_sale_price e estoque
+        item.innerHTML = `
+            <span class="card-rank">#${index + 1}</span>
+            <span class="card-icon">🎴</span>
+            <span class="card-name">${card.product_name || card.product_name || '---'}</span>
+            <span class="card-avg">Avg: ${this.formatCurrency(card._avgPrice)}</span>
+            <span class="card-price">Venda: ${this.formatCurrency(card._currentPrice)}</span>
+            <span class="card-stock">(${card._stock} unid.)</span>
+        `;
+
+        container.appendChild(item);
+    });
+}
+
+    // ===== UTILITÁRIOS =====
     setLoadingState(loading) {
         this.isLoading = loading;
         document.body.classList.toggle('loading', loading);
@@ -227,7 +267,8 @@ class DashboardManager {
     async refreshData() {
         try {
             const totalCards = await DashboardAPI.getTotalCardsInStock();
-            document.getElementById('company-cash').textContent = `${totalCards.totalCardsInStock || 0} cartas`;
+            document.getElementById('company-cash').textContent =
+                `${totalCards.totalCardsInStock || 0} cartas`;
         } catch (e) {
             console.error('Erro na atualização automática:', e);
         }
