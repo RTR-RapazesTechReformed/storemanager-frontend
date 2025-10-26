@@ -5,7 +5,7 @@ document.getElementById('loginForm').addEventListener('submit', async function (
     const password = document.getElementById('password').value;
 
     try {
-        const response = await fetch("http://localhost:8080/login", {
+        const response = await fetch("http://localhost:8080/store-manager-api/auth/login", {
             method: 'POST',
             headers: {
                 "Content-Type": "application/json"
@@ -13,7 +13,20 @@ document.getElementById('loginForm').addEventListener('submit', async function (
             body: JSON.stringify({ username, password })
         });
         if (response.ok) {
-            window.location.href = "../Tela%20home/estoque.html";
+              const data = await response.json();
+
+    // Extrai os campos necessários
+    const sessionId = data.session_id;
+    const userId = data.user_id;
+
+    // Armazena no sessionStorage
+    sessionStorage.setItem("session-id", sessionId);
+    sessionStorage.setItem("user-id", userId);
+
+    // Redireciona para a página inicial
+
+    window.location.href = "Tela%home/html/estoque.html";
+
         } else {
             document.getElementById('errorMessage').textContent = "Usuário ou senha inválidos.";
             document.getElementById('errorMessage').style.display = 'block';
