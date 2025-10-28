@@ -1,36 +1,33 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StoreManager - Login</title>
-    <link rel="stylesheet" href="/Tela de Login/css/cssCopia_Teste.css">
-    <!-- <script src="../js/login.js"></script> -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StoreManager - Login</title>
+  <link rel="stylesheet" href="/Tela de Login/css/cssCopia_Teste.css">
+  <script defer src="../js/login.js"></script>
 </head>
-<body> 
-<div id="logos-container">
-    <div id="logoRTR">
-        <img src="/img/logo-rtr.png" alt="">
-    </div>
-
+<body>
+  <div id="logos-container">
+    <div id="logoRTR"><img src="/img/logo-rtr.png" alt=""></div>
     <div id="divisoria"></div>
+    <div id="logoMeruru"><img src="/img/logo-meruru.jpeg" alt=""></div>
+  </div>
 
-    <div id="logoMeruru">
-        <img src="/img/logo-meruru.jpeg" alt="">
-    </div>
-</div>
-    <div id="divLogin">
-        <form action="/login" method="POST">
-            <label for="username">E-mail:</label>
-            <input type="text" id="username" name="username" required placeholder="Digite seu usuário">
-            
-            <label for="password">Senha:</label>
-            <input type="password" id="password" name="password" required placeholder="Digite sua senha">
-            
-            <button type="submit">Entrar</button></a>
-            <a href="#"><h4>Esqueci minha senha</h4></a>
-            <a href="/Tela de Login/html/cadastro.html"><h4>Cadastrar um novo usuário</h4></a>
-        </form>
-    </div>
+  <div id="divLogin">
+    <form id="loginForm">
+      <label for="email">E-mail:</label>
+      <input type="text" id="email" name="email" required placeholder="Digite seu e-mail">
+
+      <label for="password">Senha:</label>
+      <input type="password" id="password" name="password" required placeholder="Digite sua senha">
+
+      <button type="submit">Entrar</button>
+      <p id="errorMessage" style="display:none; color:red;"></p>
+
+      <a href="#"><h4>Esqueci minha senha</h4></a>
+      <a href="/Tela de Login/html/cadastro.html"><h4>Cadastrar um novo usuário</h4></a>
+    </form>
+  </div>
 </body>
 </html>
