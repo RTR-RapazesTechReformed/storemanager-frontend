@@ -8,7 +8,7 @@
 :root {
     /* Cores Principais */
     --primary-color: #000000;
-    --secondary-color: #20e7dd;
+    --secondary-color: #000000;
     --success-color: #32CD32;
     --warning-color: #FFD700;
     --danger-color: #FF6B6B;
@@ -126,7 +126,7 @@ body {
 }
 
 .nav-button.active {
-    background-color: var(--white);
+    background-color: #5bf2fd;
     color: var(--primary-color);
     font-weight: 600;
 }

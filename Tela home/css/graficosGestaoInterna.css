@@ -6,29 +6,49 @@
 }
 
 .chart-card canvas {
-  position: absolute;
+  position: relative;
   top: 0;
   left: 0;
   width: 100% !important;
   height: 100% !important;
 }
 
-#salesChart{
-    margin-left: 32%;
+#panoramaVendas{
+height: 433px; 
+width: 1320px;
+margin-left: 15px;
+margin-bottom: 75px;
 }
-
 .chart-card{
     margin-bottom: 2%;
 }
 
-
-#collectionsChart{
-    margin-left: 36%;
+.salesChart{
+    height: 150px; 
+    width: 100%;
+    display: block;
 }
 
 
+#aquisicoesMensais{
+    height: 550px;
+    width: 1320px;
+    margin-left: 15px;
+    margin-bottom: 75px;
+}
+
+
+
+#envelhecimentoEstoque{
+    height: 550px;
+    width: 1320px;
+    margin-left: 15px;
+    margin-bottom: 75px;
+}
+
 #weeklyChart{
-    margin-left: 36%;
+    
+    display: block; 
 }
 
 

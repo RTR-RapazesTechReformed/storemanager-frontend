@@ -5,7 +5,7 @@ document.getElementById('loginForm').addEventListener('submit', async function (
     const password = document.getElementById('password').value;
 
     try {
-        const response = await fetch("http://localhost:8080/store-manager-api/auth/login", {
+        const response = await fetch("http://127.0.0.1:5500//store-manager-api/auth/login", {
             method: 'POST',
             headers: {
                 "Content-Type": "application/json"
@@ -25,7 +25,7 @@ document.getElementById('loginForm').addEventListener('submit', async function (
 
     // Redireciona para a página inicial
 
-    window.location.href = "Tela%home/html/estoque.html";
+    window.location.href = "Tela%20home/html/estoque.html";
 
         } else {
             document.getElementById('errorMessage').textContent = "Usuário ou senha inválidos.";
