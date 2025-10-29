@@ -1,0 +1,44 @@
+name: Deploy Frontend to EC2
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    env:
+      FRONT1_ID: ${{ secrets.FRONT1_ID }}
+      FRONT2_ID: ${{ secrets.FRONT2_ID }}
+      AWS_REGION: us-east-1
+      SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
+      USER: ubuntu # ou ec2-user, depende da AMI
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install SSH key
+        run: |
+          echo "$SSH_KEY" > key.pem
+          chmod 600 key.pem
+
+      - name: Get EC2 Public IPs
+        id: get_ips
+        run: |
+          # Instale AWS CLI
+          sudo apt-get update && sudo apt-get install -y awscli
+          IP1=$(aws ec2 describe-instances --instance-ids $FRONT1_ID --region $AWS_REGION --query "Reservations[].Instances[].PublicIpAddress" --output text)
+          IP2=$(aws ec2 describe-instances --instance-ids $FRONT2_ID --region $AWS_REGION --query "Reservations[].Instances[].PublicIpAddress" --output text)
+          echo "IP1=$IP1" >> $GITHUB_ENV
+          echo "IP2=$IP2" >> $GITHUB_ENV
+
+      - name: Deploy to EC2 vm-front-pub-1
+        run: |
+          rsync -avz -e "ssh -i key.pem -o StrictHostKeyChecking=no" ./storemanager-frontend/ $USER@$IP1:/home/$USER/storemanager-frontend/
+
+      - name: Deploy to EC2 vm-front-pub-2
+        run: |
+          rsync -avz -e "ssh -i key.pem -o StrictHostKeyChecking=no" ./storemanager-frontend/ $USER@$IP2:/home/$USER/storemanager-frontend/
