@@ -1,3 +1,4 @@
-1. Fazer Dockerfile do frontend para copiar os arquivos HTML, CSS e JS para o contêiner Nginx.
+1. Fazer Dockerfile do frontend para copiar os arquivos HTML, CSS e JS para o contêiner. - FEITO
+    1.a. Nginx como servidor web e Proxy Reverso para o Back-end. - Fazendo
+
 2. Atualizar o workflow do GitHub Actions para construir e implantar a imagem Docker do frontend no EC2.
-3. Configurar o Nginx para rotear as requisições da API para o backend corretamente.
