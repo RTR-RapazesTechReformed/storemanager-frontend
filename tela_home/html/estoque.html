@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estoque - StoreManager</title>
+    <link rel="stylesheet" href="/css/estoque.css">
+</head>
+
+<body>
+    <!-- Header Global -->
+    <header class="main-header">
+        <div class="header-container">
+            <!-- Logo / Título -->
+            <div class="logo-container">
+                <div class="logo-icon">RTR</div>
+                <div class="logo-text">StoreManager</div>
+            </div>
+
+            <!-- Navegação -->
+            <nav class="main-navigation">
+                <button class="nav-button" onclick="location.href='gestao-interna.html'">Gestão Interna</button>
+                <button class="nav-button" onclick="location.href='externo.html'">Mercado Externo</button>
+                <button class="nav-button" onclick="location.href='analytics.html'">Analytics</button>
+                <button class="nav-button active" onclick="location.href='estoque.html'">Estoque</button>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <!-- Tabs -->
+            <div class="tabs">
+                <button class="tab active" onclick="showTab('movements')">Movimentar Estoque</button>
+                <button class="tab" onclick="showTab('inventory')">Inventário</button>
+                <button class="tab" onclick="showTab('products')">Produtos</button>
+            </div>
+
+            <!-- Aba Movimentações -->
+            <div id="movements-tab" class="tab-content active">
+                <h2>Movimentação de Estoque</h2>
+
+                <div class="movement-form">
+                    <div class="movement-toggle">
+                        <div class="toggle-option active" data-type="IN">Entrada (Compra)</div>
+                        <div class="toggle-option" data-type="OUT">Saída (Venda)</div>
+                        <div class="toggle-option" data-type="ADJUST">Ajuste</div>
+                    </div>
+
+                    <form id="movement-form">
+                        <div class="form-group">
+                            <label class="form-label" for="movement-product">Produto <span
+                                    style="color: var(--danger-color);">*</span></label>
+                            <select class="form-select" id="movement-product" name="productId" required>
+                                <option value="">Selecione um produto</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="movement-quantity">Quantidade <span
+                                    style="color: var(--danger-color);">*</span></label>
+                            <input class="form-input" type="number" id="movement-quantity" name="quantity" min="1"
+                                required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="movement-description">Descrição da movimentação <span
+                                    style="color: var(--danger-color);">*</span></label>
+                            <input class="form-input" type="text" id="movement-description" name="description" required
+                                placeholder="Ex: Compra inicial do fornecedor X">
+                        </div>
+
+                        <!-- Campos Condicionais -->
+                        <div id="purchase-fields" class="conditional-fields active">
+                            <div class="form-group">
+                                <label class="form-label" for="unit-purchase-price">Custo unitário (R$) <span
+                                        style="color: var(--danger-color);">*</span></label>
+                                <input class="form-input" type="number" id="unit-purchase-price"
+                                    name="unitPurchasePrice" step="0.01" min="0" placeholder="800.00">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="unit-sale-price-purchase">Preço de venda sugerido
+                                    (R$)</label>
+                                <input class="form-input" type="number" id="unit-sale-price-purchase"
+                                    name="unitSalePrice" step="0.01" min="0" placeholder="1200.00">
+                                <small style="color: var(--gray-dark); font-size: var(--font-size-sm);">Opcional -
+                                    atualiza o preço do produto</small>
+                            </div>
+                        </div>
+
+                        <div id="sale-fields" class="conditional-fields">
+                            <div class="form-group">
+                                <label class="form-label" for="unit-sale-price-sale">Preço de venda unitário (R$) <span
+                                        style="color: var(--danger-color);">*</span></label>
+                                <input class="form-input" type="number" id="unit-sale-price-sale" name="unitSalePrice"
+                                    step="0.01" min="0" placeholder="1200.00">
+                            </div>
+                        </div>
+
+                        <div id="adjust-fields" class="conditional-fields">
+                            <div
+                                style="background: var(--warning-color); padding: 10px; border-radius: var(--border-radius); margin-bottom: 15px; color: var(--dark-color);">
+                                <strong>Ajuste:</strong> Use valores positivos para adicionar ao estoque ou negativos
+                                para reduzir.<br>
+                                Exemplo: +1 para adicionar 1 item, -2 para remover 2 itens por dano.
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Registrar Movimentação</button>
+                    </form>
+                </div>
+
+                <div id="movements-list" class="movements-list">
+                    <h3>Histórico de Movimentações</h3>
+                    <div class="loading-state">
+                        <div class="loading-spinner"></div>
+                        Carregando movimentações...
+                    </div>
+                </div>
+            </div>
+
+            <!-- Aba Produtos -->
+            <div id="products-tab" class="tab-content">
+                <h2>Produtos Cadastrados</h2>
+                <div class="action-buttons" style="margin-bottom: var(--spacing-lg);">
+                    <a href="cadastro-produto.html" class="btn btn-primary">Cadastrar Novo Produto</a>
+                </div>
+
+                <div id="products-list" class="products-list-container">
+                    <div class="loading-state">
+                        <div class="loading-spinner"></div>
+                        Carregando produtos...
+                    </div>
+                </div>
+            </div>
+
+            <!-- Aba Inventário -->
+            <div id="inventory-tab" class="tab-content">
+                <h2>Inventário Atual</h2>
+                <div id="inventory-list" class="products-list-container">
+                    <div class="loading-state">
+                        <div class="loading-spinner"></div>
+                        Carregando inventário...
+                    </div>
+                </div>
+            </div>
+
+            <!-- Área de alertas -->
+            <div id="alerts"></div>
+        </div>
+    </main>
+
+    <script src="/js/estoque.js"></script>
+</body>
+
+</html>

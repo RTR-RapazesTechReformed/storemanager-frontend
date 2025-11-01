@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Sistema de Gestão</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/graficosAnalytics.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    <!-- Header Principal -->
+    <header class="main-header">
+        <div class="header-container">
+            <!-- Logo -->
+            <div class="logo-container">
+                <div class="logo-icon">
+                    <p class="storeManagerTitulo">STORE MANAGER</p>
+                </div>
+            </div>
+
+            <!-- Navegação Principal -->
+            <nav class="main-navigation">
+                <button class="nav-button" onclick="location.href='gestao-interna.html'">
+                    <span class="nav-icon">💰</span>
+                    <span class="nav-text">Gestão Interna</span>
+                </button>
+                <button class="nav-button" onclick="location.href='externo.html'">
+                    <span class="nav-icon">🦊</span>
+                    <span class="nav-text">Mercado Externo</span>
+                </button>
+                <button class="nav-button active" onclick="location.href='analytics.html'">
+                    <span class="nav-icon">📊</span>
+                    <span class="nav-text">Analytics</span>
+                </button>
+                <button class="nav-button" onclick="location.href='estoque.html'">
+                    <span class="nav-icon">🏪</span>
+                    <span class="nav-text">Estoque</span>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Conteúdo principal -->
+    <main class="main-container">
+        <div class="content-area">
+            <section class="charts-section">
+
+                <!-- Card 2 -->
+                <div class="chart-card" id="distribuicaoEstoque">
+                    <h2 class="chart-title">Distribuição do Estoque</h2>
+                    <canvas id="inventoryChart"></canvas>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="chart-card" style="grid-column: 1 / -1;">
+                    <h2 class="chart-title">Top 5 Cartas Mais Vendidas</h2>
+                    <canvas id="topCardsChart"></canvas>
+                </div>
+
+        </div>
+
+        <!-- Card 4 -->
+        <div class="chart-card" id="tipoPokemon">
+            <h2 class="chart-title">Distribuição de Tipos de Pokémon nas Vendas</h2>
+            <canvas id="pokemonTypesChart"></canvas>
+        </div>
+
+
+        <div class="container-graficosLucro">
+            <!-- Card 5 -->
+            <div class="chart-card" id="lucroProduto">
+                <h2 class="chart-title">Participação de Lucro por Produto</h2>
+                <canvas id="profitChart"></canvas>
+            </div>
+
+            <!-- Card 6 -->
+            <div class="chart-card full-width" id="vendasLucro">
+                <h2 class="chart-title">Comparativo Vendas vs Lucro</h2>
+                <canvas id="salesProfitChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Sidebar financeira (se existir em analytics também) -->
+        <aside class="financial-sidebar">
+            <!-- ... -->
+        </aside>
+        </section>
+    </main>
+
+    <!-- Scripts -->
+    <script>
+
+        // Estoque por Tipo de Produto (Doughnut Chart)
+        new Chart(document.getElementById("inventoryChart"), {
+            type: 'doughnut',
+            data: {
+                labels: ["Boosters", "Decks", "Cartas Avulsas", "Acessórios"],
+                datasets: [{
+                    data: [300, 120, 500, 80],
+                    backgroundColor: ["#f87171", "#34d399", "#60a5fa", "#fbbf24"]
+                }]
+            }
+        });
+
+        // Top 5 Cartas Mais Vendidas (Bar Chart)
+        new Chart(document.getElementById("topCardsChart"), {
+            type: 'bar',
+            data: {
+                labels: ["Pikachu V", "Charizard EX", "Mewtwo VSTAR", "Gardevoir EX", "Snorlax VMAX"],
+                datasets: [{
+                    label: "Unidades Vendidas",
+                    data: [150, 300, 200, 120, 90],
+                    backgroundColor: "#a78bfa"
+                }]
+            },
+            options: {
+                indexAxis: 'y'
+            }
+        });
+
+
+        new Chart(document.getElementById("pokemonTypesChart"), {
+            type: 'radar',
+            data: {
+                labels: ["Fogo", "Água", "Grama", "Psíquico", "Elétrico", "Dragão"],
+                datasets: [{
+                    label: "Vendas",
+                    data: [120, 180, 90, 150, 200, 80],
+                    borderColor: "#ef4444",
+                    backgroundColor: "rgba(239,68,68,0.2)",
+                }]
+            },
+            options: {
+                elements: {
+                    line: {
+                        borderWidth: 3
+                    }
+                }
+            }
+        });
+
+        new Chart(document.getElementById("profitChart"), {
+            type: 'pie',
+            data: {
+                labels: ["Boosters", "Decks", "Cartas Avulsas", "Acessórios"],
+                datasets: [{
+                    data: [45, 25, 20, 10],
+                    backgroundColor: ["#f87171", "#34d399", "#60a5fa", "#fbbf24"]
+                }]
+            }
+        });
+
+        new Chart(document.getElementById("salesProfitChart"), {
+            type: 'bar',
+            data: {
+                labels: ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun"],
+                datasets: [
+                    {
+                        label: "Vendas",
+                        data: [120, 150, 180, 90, 200, 250],
+                        backgroundColor: "#3b82f6"
+                    },
+                    {
+                        label: "Lucro (R$ mil)",
+                        data: [30, 40, 50, 20, 70, 80],
+                        type: 'line',
+                        borderColor: "#f59e0b",
+                        backgroundColor: "rgba(245,158,11,0.2)",
+                        yAxisID: 'y1'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                interaction: { mode: 'index', intersect: false },
+                stacked: false,
+                scales: {
+                    y: {
+                        type: 'linear',
+                        display: true,
+                        position: 'left'
+                    },
+                    y1: {
+                        type: 'linear',
+                        display: true,
+                        position: 'right',
+                        grid: { drawOnChartArea: false }
+                    }
+                }
+            }
+        });
+
+
+
+
+
+    </script>
+</body>
+
+</html>

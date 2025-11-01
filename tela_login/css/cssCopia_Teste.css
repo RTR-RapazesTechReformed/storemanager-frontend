@@ -1,0 +1,134 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+
+body {
+  margin: 0;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+    font-family: 'Montserrat', sans-serif;
+    overflow: hidden;
+  /* fundo gradiente */
+  background: linear-gradient(135deg, #264f61, #3d7081, #2c9ccc);
+  background-size: 400% 400%;
+  animation: gradientMove 8s ease infinite;
+}
+
+@keyframes gradientMove {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+
+h1 {
+    color: #fff;
+    margin-top: 32px;
+    margin-bottom: 24px;
+    text-align: center;
+}
+
+#logos-container {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 24px;
+    gap: 32px;
+}
+
+#logoRTR img,
+#logoMeruru img {
+    display: flex;
+    height: 120px;
+    width: auto;
+    
+}
+
+#divisoria {
+    border-top: 15px;
+    width: 2px;
+    height: 95px;
+    background: linear-gradient(to bottom, #b0b0b0 0%, #e0e0e0 100%);
+    border-radius: 1px;
+    margin: 0 24px;
+}
+
+#divLogin {
+    background: rgba(25, 41, 44, 0.7);
+    padding: 40px 32px;
+    border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+    min-width: 340px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 22px;
+    margin-left: 50px;
+}
+
+form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+label {
+    color: #fff;
+    font-size: 1rem;
+    margin-bottom: -8px;
+}
+
+input[type="text"],
+input[type="password"] {
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.15);
+    color: #fff;
+    font-size: 1rem;
+    outline: none;
+    transition: background 0.2s;
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus {
+    background: rgba(255,255,255,0.25);
+}
+
+button[type="submit"] {
+    padding: 12px 0;
+    border: none;
+    border-radius: 8px;
+    background: linear-gradient(90deg, #145c5c 0%, #0e3c3c 100%);
+    color: #fff;
+    font-weight: 600;
+    font-size: 1.05rem;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(20,92,92,0.15);
+    transition: background 0.2s, box-shadow 0.2s;
+}
+
+button[type="submit"]:hover,
+button[type="submit"]:focus {
+    background: linear-gradient(90deg, #1a7a7a 0%, #145c5c 100%);
+    box-shadow: 0 4px 16px rgba(20,92,92,0.25);
+}
+
+a h4 {
+    color: #e0e0e0;
+    font-weight: 400;
+    margin: 12px 0 0 0;
+    text-align: center;
+    font-size: 1rem;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+::placeholder {
+    color: #e0e0e0;
+    opacity: 0.8;
+}

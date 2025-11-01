@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestão Interna - StoreManager</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/graficosGestaoInterna.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    <!-- Header Principal -->
+    <header class="main-header">
+        <div class="header-container">
+            <div class="logo-container">
+                <div class="logo-icon">
+                    <p class="storeManagerTitutlo">STORE MANAGER</p>
+                </div>
+            </div>
+
+            <!-- Navegação Principal (NÃO ALTERAR) -->
+            <nav class="main-navigation">
+                <button class="nav-button active" onclick="location.href='gestao-interna.html'">
+                    <span class="nav-text">Gestão Interna</span>
+                </button>
+                <button class="nav-button" onclick="location.href='externo.html'">
+                    <span class="nav-text">Mercado Externo</span>
+                </button>
+                <button class="nav-button" onclick="location.href='analytics.html'">
+                    <span class="nav-text">Analytics</span>
+                </button>
+                <button class="nav-button" onclick="location.href='estoque.html'">
+                    <span class="nav-text">Estoque</span>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Conteúdo Principal -->
+    <main class="dashboard-container">
+
+        <!-- === KPIs Principais === -->
+        <aside class="financial-sidebar">
+            <div class="financial-container sidebar-flex">
+                <div class="financial-box primary-box">
+                    <h4 class="financial-title">Total de Cartas em Estoque</h4>
+                    <div id="company-cash" class="financial-value primary">--</div>
+                </div>
+
+                <div class="financial-box success-box">
+                    <h4 class="financial-title">Total de Booster Boxes</h4>
+                    <div id="semester-profit" class="financial-value success">--</div>
+                </div>
+
+                <div class="financial-box danger-box">
+                    <h4 class="financial-title">Top Pokémon em Estoque</h4>
+                    <div id="total-debts" class="financial-value danger">--</div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- === Gráficos e Listas === -->
+        <section class="charts-container">
+
+            <!-- Gráfico 1: Vendas (Sales Overview) -->
+            <div class="chart-card" id="panoramaVendas">
+                <h3 class="chart-title">Panorama de Vendas (Últimos Meses)</h3>
+                <canvas id="salesChart"></canvas>
+            </div>
+
+            <!-- Gráfico 2: Aquisições Mensais -->
+            <div class="chart-card" id="aquisicoesMensais">
+                <h3 class="chart-title">Aquisições Mensais</h3>
+                <canvas id="collectionsChart"></canvas>
+            </div>
+
+            <!-- Gráfico 3: Envelhecimento de Estoque -->
+            <div class="chart-card" id="envelhecimentoEstoque">
+                <h3 class="chart-title">Envelhecimento de Estoque</h3>
+                <canvas id="weeklyChart"></canvas>
+            </div>
+
+            <!-- Lista de Cartas de Maior Valor -->
+            <div class="chart-card" id="topCards">
+                <h3 class="chart-title">Cartas Mais Valiosas (Mercado Atual)</h3>
+                <div class="top-cards-list" id="top-cards-list">
+                    <p>Carregando cartas...</p>
+                </div>
+            </div>
+
+        </section>
+    </main>
+
+    <!-- Script principal -->
+    <script src="/js/gestao.js"></script>
+
+</body>
+
+</html>

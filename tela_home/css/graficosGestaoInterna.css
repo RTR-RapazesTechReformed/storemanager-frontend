@@ -1,0 +1,108 @@
+.chart-card {
+  position: relative;
+  width: 100%;
+  height: 320px; /* define o limite */
+  overflow: hidden;
+}
+
+.chart-card canvas {
+  position: relative;
+  top: 0;
+  left: 0;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+#panoramaVendas{
+height: 433px; 
+width: 1320px;
+margin-left: 15px;
+margin-bottom: 75px;
+}
+.chart-card{
+    margin-bottom: 2%;
+}
+
+.salesChart{
+    height: 150px; 
+    width: 100%;
+    display: block;
+}
+
+
+#aquisicoesMensais{
+    height: 550px;
+    width: 1320px;
+    margin-left: 15px;
+    margin-bottom: 75px;
+}
+
+
+
+#envelhecimentoEstoque{
+    height: 550px;
+    width: 1320px;
+    margin-left: 15px;
+    margin-bottom: 75px;
+}
+
+#weeklyChart{
+    
+    display: block; 
+}
+
+
+/* Sidebar Gestão Interna */
+
+/* Flex horizontal da sidebar */
+/* Sidebar Financeira - agora rolável normalmente */
+.financial-sidebar {
+    background-color: var(--light-color);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-md);
+    /* Remove sticky e altura fixa */
+    position: static;
+    max-height: none;
+    padding: var(--spacing-md);
+}
+
+/* Flex horizontal das boxes */
+.sidebar-flex {
+    display: flex;
+    gap: var(--spacing-md);
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+/* Boxes individuais */
+.financial-box {
+    flex: 1 1 30%; /* cada box ocupa ~30% da largura, se houver espaço */
+    background-color: var(--white);
+    padding: var(--spacing-md);
+    border-radius: var(--border-radius-lg);
+    text-align: center;
+    box-shadow: var(--shadow-md);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.financial-box:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+/* Cores de destaque para cada box */
+.primary-box { border-top: 4px solid var(--primary-color); }
+.success-box { border-top: 4px solid var(--success-color); }
+.danger-box  { border-top: 4px solid var(--danger-color); }
+
+/* Ajuste tipografia */
+.financial-box .financial-title {
+    font-size: var(--font-size-base);
+    margin-bottom: var(--spacing-sm);
+}
+
+.financial-box .financial-value {
+    font-size: var(--font-size-2xl);
+    font-weight: 700;
+    margin-top: var(--spacing-sm);
+}

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mercado Externo - StoreManager</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/graficosAnalytics.css">
+    <link rel="stylesheet" href="/css/externo.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    <!-- Header Principal -->
+    <header class="main-header">
+        <div class="header-container">
+            <!-- Logo -->
+            <div class="logo-container">
+                <div class="logo-icon">
+                    <p class="storeManagerTitulo">STORE MANAGER</p>
+                </div>
+            </div>
+
+            <!-- Navegação Principal -->
+            <nav class="main-navigation">
+                <button class="nav-button" onclick="location.href='gestao-interna.html'">
+                    <span class="nav-icon">💰</span>
+                    <span class="nav-text">Gestão Interna</span>
+                </button>
+                <button class="nav-button active" onclick="location.href='externo.html'">
+                    <span class="nav-icon">🦊</span>
+                    <span class="nav-text">Mercado Externo</span>
+                </button>
+                <button class="nav-button" onclick="location.href='analytics.html'">
+                    <span class="nav-icon">📊</span>
+                    <span class="nav-text">Analytics</span>
+                </button>
+                <button class="nav-button" onclick="location.href='estoque.html'">
+                    <span class="nav-icon">🏪</span>
+                    <span class="nav-text">Estoque</span>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Conteúdo principal -->
+    <main class="main-container">
+        <div class="content-area">
+            <section class="charts-section">
+
+                <!-- Destaque de Carta em Alta -->
+                <div class="chart-card full-width">
+                    <div class="highlight-box">
+                        ⚡ Carta em Alta: Charizard VMAX – Alta procura esperada nos próximos 3 meses!
+                    </div>
+                </div>
+
+                <!-- Gráfico 1: Preço Médio vs Mercado -->
+                <div class="chart-card full-width">
+                    <h2 class="chart-title">Preço Médio vs Mercado (últimos 6 meses)</h2>
+                    <canvas id="averagePriceChart" width="600" height="400"></canvas>
+                </div>
+
+                <!-- Gráfico 2: Distribuição de Raridade -->
+                <div class="chart-card">
+                    <h2 class="chart-title">Distribuição de Raridade das Cartas</h2>
+                    <canvas id="rarityChart" width="400" height="400"></canvas>
+                </div>
+
+                <!-- Gráfico 3: Cartas com Maior Flutuação de Preço -->
+                <div class="chart-card">
+                    <h2 class="chart-title">Top Cartas por Flutuação de Preço</h2>
+                    <canvas id="priceFluctuationChart" width="400" height="400"></canvas>
+                </div>
+
+                <!-- Gráfico 4: Quantidade de Listagens por Marketplace -->
+                <div class="chart-card full-width">
+                    <h2 class="chart-title">Quantidade de Listagens por Marketplace: [Pikachu]</h2>
+                    <canvas id="listingsChart" width="600" height="400"></canvas>
+                </div>
+
+                <!-- Gráfico 5: Popularidade em Torneios -->
+                <div class="chart-card">
+                    <h2 class="chart-title">Popularidade de Cartas em Torneios</h2>
+                    <canvas id="tournamentChart" width="400" height="400"></canvas>
+                </div>
+
+                <!-- Gráfico 6: Cartas em Maior Demanda Recente -->
+                <div class="chart-card">
+                    <h2 class="chart-title">Cartas em Maior Demanda Recente</h2>
+                    <canvas id="demandChart" width="400" height="400"></canvas>
+                </div>
+
+                <!-- Lista de Cartas Externas -->
+                <div class="chart-card full-width">
+                    <h2 class="chart-title">Lista de Preço Médio por Carta</h2>
+                    <div class="external-cards-list" id="externalCardsList">
+                        <div class="external-card-item">
+                            <span>Charizard VMAX</span>
+                            <span>Preço Médio: R$1.200,00</span>
+                        </div>
+                        <div class="external-card-item">
+                            <span>Pikachu V</span>
+                            <span>Preço Médio: R$450,00</span>
+                        </div>
+                        <div class="external-card-item">
+                            <span>Mewtwo VSTAR</span>
+                            <span>Preço Médio: R$700,00</span>
+                        </div>
+                        <div class="external-card-item">
+                            <span>Gardevoir EX</span>
+                            <span>Preço Médio: R$300,00</span>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+        </div>
+    </main>
+
+    <!-- Scripts -->
+    <script>
+        // 1️⃣ Preço Médio vs Mercado (Linha)
+        new Chart(document.getElementById("averagePriceChart"), {
+            type: 'line',
+            data: {
+                labels: ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun"],
+                datasets: [
+                    { label: "eBay", data: [1200, 1300, 1250, 1400, 1500, 1450], borderColor: "#3b82f6", fill: false },
+                    { label: "TCGPlayer", data: [1150, 1200, 1220, 1380, 1480, 1500], borderColor: "#f59e0b", fill: false },
+                    { label: "Cardmarket", data: [1180, 1250, 1200, 1350, 1480, 1420], borderColor: "#10b981", fill: false }
+                ]
+            },
+            options: { responsive: false }
+        });
+
+        // 2️⃣ Distribuição de Raridade (Doughnut)
+        new Chart(document.getElementById("rarityChart"), {
+            type: 'doughnut',
+            data: {
+                labels: ["Comum", "Rara", "Holo", "Ultra-Rara", "Promo"],
+                datasets: [{ data: [40, 25, 20, 10, 5], backgroundColor: ["#f87171", "#34d399", "#60a5fa", "#fbbf24", "#a78bfa"] }]
+            },
+            options: { responsive: false }
+        });
+
+        // 3️⃣ Cartas com Maior Flutuação de Preço (Bar Horizontal)
+        new Chart(document.getElementById("priceFluctuationChart"), {
+            type: 'bar',
+            data: {
+                labels: ["Charizard VMAX", "Pikachu V", "Mewtwo VSTAR", "Gardevoir EX", "Snorlax VMAX"],
+                datasets: [{ label: "Variação (%)", data: [15, 12, 20, 10, 8], backgroundColor: "#f97316" }]
+            },
+            options: { indexAxis: 'y', responsive: false }
+        });
+
+        // 4️⃣ Quantidade de Listagens por Marketplace (Bar Vertical)
+        new Chart(document.getElementById("listingsChart"), {
+            type: 'bar',
+            data: {
+                labels: ["eBay", "TCGPlayer", "Cardmarket", "Mercado Livre"],
+                datasets: [{ label: "Unidades Listadas", data: [300, 250, 180, 150], backgroundColor: ["#3b82f6", "#f59e0b", "#10b981", "#8b5cf6"] }]
+            },
+            options: { responsive: false }
+        });
+
+        // 5️⃣ Popularidade em Torneios (Bar Horizontal)
+        new Chart(document.getElementById("tournamentChart"), {
+            type: 'bar',
+            data: {
+                labels: ["Pikachu V", "Charizard EX", "Mewtwo VSTAR", "Gardevoir EX", "Snorlax VMAX"],
+                datasets: [{ label: "Aparições em Decks", data: [45, 30, 25, 20, 15], backgroundColor: "#ef4444" }]
+            },
+            options: { indexAxis: 'y', responsive: false }
+        });
+
+        // 6️⃣ Cartas em Maior Demanda Recente (Bar Vertical)
+        new Chart(document.getElementById("demandChart"), {
+            type: 'bar',
+            data: {
+                labels: ["Charizard VMAX", "Mewtwo VSTAR", "Pikachu V", "Gardevoir EX", "Snorlax VMAX"],
+                datasets: [{ label: "Vendas Recentes", data: [120, 100, 90, 70, 60], backgroundColor: "#facc15" }]
+            },
+            options: { responsive: false }
+        });
+    </script>
+</body>
+
+</html>
