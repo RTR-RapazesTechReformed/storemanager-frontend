@@ -8,7 +8,7 @@ document
 
     try {
       const response = await fetch(
-        "http://localhost:8080/store-manager-api/auth/login",
+        "http://localhost:8080/api/store-manager-api/auth/login",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

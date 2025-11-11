@@ -5,7 +5,7 @@
  */
 
 const CONFIG = {
-  API_BASE_URL: "http://localhost:8080/api/dashboard",
+  API_BASE_URL: "http://localhost:8080/api/api/dashboard",
   UPDATE_INTERVAL: 30000,
   STORAGE_PREFIX: "dashboard_",
 };
