@@ -9,7 +9,7 @@ COPY tela_home/html/ /usr/share/nginx/html/
 COPY tela_home/css/ /usr/share/nginx/html/css/
 COPY tela_home/js/ /usr/share/nginx/html/js/
 COPY img/ /usr/share/nginx/html/img/
-# COPY docker/default.conf /etc/nginx/conf.d/default.conf
+COPY default.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
 
