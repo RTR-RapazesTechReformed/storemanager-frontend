@@ -5,7 +5,7 @@
 const user = sessionStorage.getItem("session-id");
 
 const API_CONFIG = {
-  BASE_URL: "http://localhost:8080/api/store-manager-api",
+  BASE_URL: "/api/store-manager-api",
   HEADERS: {
     "Content-Type": "application/json",
     "user-id": user,
