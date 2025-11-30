@@ -5,12 +5,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestão Interna - StoreManager</title>
+
+    <!-- CSS -->
     <link rel="stylesheet" href="../css/styles.css">
     <link rel="stylesheet" href="../css/graficosGestaoInterna.css">
+
+    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body>
+
     <!-- Header Principal -->
     <header class="main-header">
         <div class="header-container">
@@ -20,19 +25,16 @@
                 </div>
             </div>
 
-            <!-- Navegação Principal (NÃO ALTERAR) -->
+            <!-- Navegação Principal -->
             <nav class="main-navigation">
                 <button class="nav-button active" onclick="location.href='gestao-interna.html'">
-                        <span class="nav-text">Gestão Interna</span>
+                    <span class="nav-text">Gestão interna</span>
                 </button>
-                <button class="nav-button" onclick="location.href='externo.html'">
-                          <span class="nav-text">Mercado Externo</span>
-                </button>
-                <button class="nav-button" onclick="location.href='analytics.html'">
-                          <span class="nav-text">Analytics</span>
+                <button class="nav-button active" onclick="location.href='analytics.html'">
+                    <span class="nav-text">Analytics</span>
                 </button>
                 <button class="nav-button" onclick="location.href='estoque.html'">
-                          <span class="nav-text">Estoque</span>
+                    <span class="nav-text">Estoque</span>
                 </button>
             </nav>
         </div>
@@ -64,25 +66,66 @@
         <!-- === Gráficos e Listas === -->
         <section class="charts-container">
 
-            <!-- Gráfico 1: Vendas (Sales Overview) -->
+            <!-- Gráfico 1: Vendas -->
             <div class="chart-card" id="panoramaVendas">
-                <h3 class="chart-title">Panorama de Vendas (Últimos Meses)</h3>
+                <div class="chart-header">
+                    <h3 class="chart-title">Panorama de Vendas (Últimos Meses)</h3>
+                    <div class="chart-filters">
+                        <label>De:
+                            <input type="month" id="sales-start-month">
+                        </label>
+                        <label>Até:
+                            <input type="month" id="sales-end-month">
+                        </label>
+                        <label>Produtos:
+                            <select id="sales-product-filter" multiple size="3"></select>
+                        </label>
+                        <button type="button" id="sales-filter-clear">Limpar</button>
+                        <button type="button" id="sales-product-clear">Limpar Produtos</button>
+                    </div>
+                </div>
+
                 <canvas id="salesChart"></canvas>
             </div>
 
-            <!-- Gráfico 2: Aquisições Mensais -->
-            <div class="chart-card" id="aquisicoesMensais" >
-                <h3 class="chart-title">Aquisições Mensais</h3>
-                <canvas id="collectionsChart"></canvas>
-            </div>
+            <!-- Gráfico 2: Aquisições Mensais + Tabela -->
+            <div class="chart-card" id="aquisicoesMensais">
+    <div class="chart-header">
+        <h3 class="chart-title">Últimas Aquisições (APEX)</h3>
 
-            <!-- Gráfico 3: Envelhecimento de Estoque -->
+        <div class="chart-filters">
+            <label>
+                De:
+                <input type="month" id="acq-start-month">
+            </label>
+            <label>
+                Até:
+                <input type="month" id="acq-end-month">
+            </label>
+            <button type="button" id="acq-filter-clear">Limpar</button>
+            <button type="button" id="acq-save">Salvar</button>
+        </div>
+    </div>
+
+    <!-- Gráfico -->
+    <canvas id="collectionsChart"></canvas>
+
+    <!-- Detalhes (agora com espaço real) -->
+    <div id="acq-details" class="acq-details">
+        <!-- Tabela gerada pelo JS aparece aqui -->
+    </div>
+</div>
+
+            <!-- Gráfico 3: Envelhecimento -->
             <div class="chart-card" id="envelhecimentoEstoque">
-                <h3 class="chart-title">Envelhecimento de Estoque</h3>
+                <div class="chart-header">
+                    <h3 class="chart-title">Envelhecimento de Estoque</h3>
+                    <div id="stock-aging-legend" class="chart-legend-right"></div>
+                </div>
                 <canvas id="weeklyChart"></canvas>
             </div>
 
-            <!-- Lista de Cartas de Maior Valor -->
+            <!-- Produtos mais Valiosos -->
             <div class="chart-card" id="topCards">
                 <h3 class="chart-title">Cartas Mais Valiosas (Mercado Atual)</h3>
                 <div class="top-cards-list" id="top-cards-list">

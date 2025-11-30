@@ -1,93 +1,121 @@
+/* ===== CARDS DE GRÁFICOS ===== */
+
 .chart-card {
   position: relative;
   width: 100%;
-  height: 320px; /* define o limite */
+  max-width: 1320px;
+  margin: 0 auto 32px;
+  padding: 16px 20px 12px;
+  border-radius: var(--border-radius-lg);
+  background-color: var(--white);
+  box-shadow: var(--shadow-md);
+  box-sizing: border-box;
   overflow: hidden;
 }
 
+/* Header do card com título + filtros */
+.chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.chart-title {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+/* Filtros de data (De / Até / Limpar) */
+.chart-filters {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+}
+
+.chart-filters label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.chart-filters input[type="month"] {
+  padding: 2px 4px;
+  font-size: 0.8rem;
+}
+
+.chart-filters button {
+  padding: 4px 8px;
+  border-radius: 4px;
+  border: none;
+  background: var(--primary-color);
+  color: #fff;
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: opacity 0.2s ease;
+}
+
+.chart-filters button:hover {
+  opacity: 0.9;
+}
+
+/* Canvas ocupa o espaço interno do card, abaixo do header */
 .chart-card canvas {
-  position: relative;
-  top: 0;
-  left: 0;
+  display: block;
   width: 100% !important;
-  height: 100% !important;
+  height: calc(100% - 32px) !important; /* 32px ≈ altura do header */
 }
 
-#panoramaVendas{
-height: 433px; 
-width: 1320px;
-margin-left: 15px;
-margin-bottom: 75px;
-}
-.chart-card{
-    margin-bottom: 2%;
+/* Alturas específicas por card */
+#panoramaVendas {
+  height: 420px;
 }
 
-.salesChart{
-    height: 150px; 
-    width: 100%;
-    display: block;
+#aquisicoesMensais,
+#envelhecimentoEstoque {
+  height: 380px;
 }
 
-
-#aquisicoesMensais{
-    height: 550px;
-    width: 1320px;
-    margin-left: 15px;
-    margin-bottom: 75px;
+/* Margem inferior padrão entre cards */
+.chart-card {
+  margin-bottom: 2%;
 }
-
-
-
-#envelhecimentoEstoque{
-    height: 550px;
-    width: 1320px;
-    margin-left: 15px;
-    margin-bottom: 75px;
-}
-
-#weeklyChart{
-    
-    display: block; 
-}
-
 
 /* Sidebar Gestão Interna */
 
-/* Flex horizontal da sidebar */
-/* Sidebar Financeira - agora rolável normalmente */
 .financial-sidebar {
-    background-color: var(--light-color);
-    border-radius: var(--border-radius-lg);
-    box-shadow: var(--shadow-md);
-    /* Remove sticky e altura fixa */
-    position: static;
-    max-height: none;
-    padding: var(--spacing-md);
+  background-color: var(--light-color);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-md);
+  position: static;
+  max-height: none;
+  padding: var(--spacing-md);
 }
 
 /* Flex horizontal das boxes */
 .sidebar-flex {
-    display: flex;
-    gap: var(--spacing-md);
-    justify-content: space-between;
-    flex-wrap: wrap;
+  display: flex;
+  gap: var(--spacing-md);
+  justify-content: space-between;
+  flex-wrap: wrap;
 }
 
 /* Boxes individuais */
 .financial-box {
-    flex: 1 1 30%; /* cada box ocupa ~30% da largura, se houver espaço */
-    background-color: var(--white);
-    padding: var(--spacing-md);
-    border-radius: var(--border-radius-lg);
-    text-align: center;
-    box-shadow: var(--shadow-md);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  flex: 1 1 30%;
+  background-color: var(--white);
+  padding: var(--spacing-md);
+  border-radius: var(--border-radius-lg);
+  text-align: center;
+  box-shadow: var(--shadow-md);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .financial-box:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
 }
 
 /* Cores de destaque para cada box */
@@ -95,14 +123,232 @@ margin-bottom: 75px;
 .success-box { border-top: 4px solid var(--success-color); }
 .danger-box  { border-top: 4px solid var(--danger-color); }
 
-/* Ajuste tipografia */
+/* Tipografia */
 .financial-box .financial-title {
-    font-size: var(--font-size-base);
-    margin-bottom: var(--spacing-sm);
+  font-size: var(--font-size-base);
+  margin-bottom: var(--spacing-sm);
 }
 
 .financial-box .financial-value {
-    font-size: var(--font-size-2xl);
-    font-weight: 700;
-    margin-top: var(--spacing-sm);
+  font-size: var(--font-size-2xl);
+  font-weight: 700;
+  margin-top: var(--spacing-sm);
 }
+
+.chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.chart-legend-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  max-height: 180px;
+  overflow-y: auto;
+  font-size: 0.8rem;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+}
+
+.legend-color {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  margin-right: 6px;
+}
+
+.legend-item--hidden {
+  opacity: 0.4;
+  text-decoration: line-through;
+}
+
+.acq-details {
+    margin-top: 20px;
+    padding: 10px;
+    background: #1a1a1a;
+    border-radius: 8px;
+    color: #fff;
+}
+
+.acq-month-block {
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #333;
+}
+
+.acq-month-title {
+    font-weight: bold;
+    font-size: 1rem;
+    margin-bottom: 8px;
+}
+
+.acq-item {
+    font-size: 0.85rem;
+    padding-left: 8px;
+    margin: 3px 0;
+}
+
+/* === CARD DE AQUISIÇÕES === */
+#aquisicoesMensais {
+    min-height: 700px; /* aumenta a altura mínima */
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* mantém o gráfico grande e confortável */
+#aquisicoesMensais canvas {
+    width: 100% !important;
+    height: 380px !important;
+}
+
+/* área dos detalhes (tabela por mês) */
+#acq-details {
+    margin-top: 10px;
+    padding: 10px;
+    max-height: 280px;         /* limita a altura total */
+    overflow-y: auto;          /* scroll interno bonito */
+    border-top: 1px solid #333;
+}
+
+/* bloco por mês */
+.acq-month-block {
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #444;
+}
+
+/* título do mês */
+.acq-month-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+    color: #ddd;
+}
+
+/* tabela */
+.acq-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.acq-table th, .acq-table td {
+    padding: 6px 8px;
+    border: 1px solid #444;
+}
+
+.acq-table th {
+    background: #2d2d2d;
+    color: #fff;
+    text-align: left;
+}
+
+.acq-table tr:nth-child(even) {
+    background: #202020;
+}
+
+/* Container da lista de cartas valiosas */
+#topCards {
+    display: flex;
+    flex-direction: column;
+}
+
+.top-cards-list {
+    margin-top: 10px;
+    max-height: 320px;    /* altura máxima visível */
+    overflow-y: auto;     /* scroll se passar disso */
+    padding-right: 6px;   /* respiro pro scroll */
+}
+
+/* Cada item de carta */
+.card-item {
+    display: grid;
+    grid-template-columns: auto auto 1fr auto auto auto;
+    gap: 6px;
+    align-items: center;
+    padding: 6px 4px;
+    border-bottom: 1px solid #333;
+    font-size: 0.85rem;
+}
+
+.card-item:last-child {
+    border-bottom: none;
+}
+
+.card-rank {
+    font-weight: bold;
+    width: 28px;
+}
+
+.card-icon {
+    font-size: 1.1rem;
+}
+
+.card-name {
+    font-weight: 500;
+}
+
+.card-avg,
+.card-price,
+.card-stock {
+    white-space: nowrap;
+    font-size: 0.8rem;
+    opacity: 0.9;
+}
+
+.chart-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+    gap: 1rem;
+}
+
+.chart-filters {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+}
+
+.chart-filters label {
+    color: #6b7280; /* cinza suave */
+}
+
+.chart-filters input[type="date"] {
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+    border: 1px solid #d1d5db;
+    background: #fff;
+    font-size: 0.85rem;
+}
+
+.chart-filters button {
+    padding: 0.3rem 0.7rem;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-size: 0.8rem;
+    background: #2563eb;
+    color: #fff;
+    transition: background 0.15s ease;
+}
+
+.chart-filters button:hover {
+    background: #1d4ed8;
+}
+
+.chart-card-body {
+    height: 260px; /* garante espaço pro gráfico */
+}
+
