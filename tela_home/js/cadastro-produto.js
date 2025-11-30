@@ -242,3 +242,47 @@ function clearForm() {
         .forEach((input) => (input.value = ""));
   }
 }
+
+async function scanCardImage(file) {
+  const formData = new FormData();
+  formData.append("image", file);
+
+  const response = await fetch("/scanner-api/scan", {
+    method: "POST",
+    body: formData,
+  });
+
+  if (!response.ok) {
+    throw new Error("Erro ao processar imagem");
+  }
+
+  return await response.json();
+}
+
+async function handleCardImageChange(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  try {
+    const data = await scanCardImage(file);
+
+    document.getElementById("card-title").value = data.title || "";
+    document.getElementById("card-rarity").value = data.rarity || "";
+    document.getElementById("card-code").value = data.code || "";
+    document.getElementById("card-type").value = data.type || "";
+    document.getElementById("card-season").value = data.season || "";
+
+    showAlert("Carta lida automaticamente!", "success");
+  } catch (err) {
+    showAlert("Falha ao ler carta: " + err.message, "error");
+  }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  initializeEventListeners();
+
+  const imageInput = document.getElementById("card-image");
+  if (imageInput) {
+    imageInput.addEventListener("change", handleCardImageChange);
+  }
+});
