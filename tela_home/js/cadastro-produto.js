@@ -245,9 +245,9 @@ function clearForm() {
 
 async function scanCardImage(file) {
   const formData = new FormData();
-  formData.append("image", file);
+  formData.append("file", file);
 
-  const response = await fetch("/scanner-api/scan", {
+  const response = await fetch("/scanner-api/upload", {
     method: "POST",
     body: formData,
   });
