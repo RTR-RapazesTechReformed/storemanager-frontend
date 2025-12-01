@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Gestão de Usuários - StoreManager</title>
 
-    <!-- Mantendo as referências de estilo existentes -->
     <link rel="stylesheet" href="../css/estoque.css" />
     <link rel="stylesheet" href="../css/loja.css" />
   </head>
@@ -19,7 +18,7 @@
         </div>
 
         <nav class="main-navigation">
-          <button class="nav-button" onclick="location.href='gestao_interna.html'">
+          <button class="nav-button active" onclick="location.href='gestao_interna.html'">
             <span class="nav-text">Gestão Interna</span>
           </button>
           <button class="nav-button" onclick="location.href='analytics.html'">
@@ -31,22 +30,17 @@
           <button class="nav-button" onclick="location.href='loja.html'">
             <span class="nav-text">Lojas</span>
           </button>
-          <button class="nav-button active" onclick="location.href='gestao_user.html'">
-            <span class="nav-text">Usuários</span>
-          </button>
         </nav>
       </div>
     </header>
 
     <main class="main-content">
       <div class="container">
-        <!-- Tabs -->
         <div class="tabs">
           <button class="tab active" onclick="showTab('register')">Cadastrar Usuário</button>
           <button class="tab" onclick="showTab('list')">Usuários Cadastrados</button>
         </div>
 
-        <!-- Aba Cadastro -->
         <div id="register-tab" class="tab-content active">
           <h2>Cadastrar Novo Usuário</h2>
 
@@ -83,7 +77,7 @@
                 id="user-password" 
                 name="password" 
                 required 
-                placeholder="A senha deve conter pelo menos uma letra maiúscula, uma letra minúscula, um número e um caractere especial."
+                placeholder="Mínimo 8 caracteres, letras e números"
               />
             </div>
 
@@ -98,8 +92,7 @@
                 <option value="" disabled selected>Selecione a função</option>
                 <option value="admin">Administrador</option>
                 <option value="manager">Gerente</option>
-                <option value="employee">Funcionário</option>
-                <!-- Adicionar mais roles conforme necessário -->
+                <option value="staff">Funcionário</option>
               </select>
             </div>
 
@@ -107,7 +100,6 @@
           </form>
         </div>
 
-        <!-- Aba Lista -->
         <div id="list-tab" class="tab-content">
           <h2>Usuários Cadastrados</h2>
           
@@ -123,7 +115,6 @@
       </div>
     </main>
 
-    <!-- Modal para EDITAR usuário -->
     <div id="edit-modal" class="modal-overlay">
       <div class="modal-content">
         <div class="modal-header">
@@ -169,11 +160,10 @@
               <option value="" disabled selected>Selecione a função</option>
               <option value="admin">Administrador</option>
               <option value="manager">Gerente</option>
-              <option value="employee">Funcionário</option>
+              <option value="staff">Funcionário</option>
             </select>
           </div>
 
-          <!-- Campo específico para store_id, conforme o endpoint PUT -->
           <div class="form-group">
             <label class="form-label" for="edit-store-id">ID da Loja (store_id)</label>
             <input 
@@ -194,7 +184,6 @@
       </div>
     </div>
 
-    <!-- Modal para CONFIRMAR exclusão -->
     <div id="delete-modal" class="modal-overlay confirm-modal">
       <div class="modal-content">
         <div class="modal-header">
