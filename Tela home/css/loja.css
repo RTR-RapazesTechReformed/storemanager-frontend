@@ -1,0 +1,176 @@
+/* Override navbar colors to match gestao_interna */
+.main-header {
+  background: linear-gradient(25deg, #000000, #000000);
+}
+
+.nav-button.active {
+  background-color: #5bf2fd;
+  color: #000000;
+}
+
+/* Estilos para alertas */
+#alerts {
+  position: fixed;
+  top: 80px;
+  right: 20px;
+  z-index: 9999;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.alert {
+  padding: 16px 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  animation: slideIn 0.3s ease-out;
+  font-weight: 500;
+}
+
+.alert-success {
+  background-color: #10b981;
+  color: white;
+  border-left: 4px solid #059669;
+}
+
+.alert-error {
+  background-color: #ef4444;
+  color: white;
+  border-left: 4px solid #dc2626;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(400px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Layout horizontal para lojas */
+#stores-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: var(--spacing-lg);
+}
+
+#stores-list .movement-item {
+  margin-bottom: 0;
+}
+
+@media (max-width: 768px) {
+  #stores-list {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Modal styles */
+.modal-overlay {
+  display: none !important;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 10000;
+}
+
+.modal-overlay.active {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 12px;
+  padding: 30px;
+  max-width: 500px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: slideDown 0.3s ease-out;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: #000;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #6b7280;
+  transition: color 0.2s;
+}
+
+.modal-close:hover {
+  color: #000;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+  justify-content: flex-end;
+}
+
+/* Modal de confirmação de exclusão */
+.confirm-modal .modal-content {
+  max-width: 400px;
+}
+
+.confirm-modal .modal-body {
+  padding: 20px 0;
+  font-size: 1rem;
+  color: #374151;
+  line-height: 1.5;
+}
+
+.confirm-modal .store-name {
+  font-weight: 600;
+  color: #000;
+}
+
+.confirm-modal .btn-danger {
+  background-color: #ef4444;
+  color: white;
+}
+
+.confirm-modal .btn-danger:hover {
+  background-color: #dc2626;
+}
