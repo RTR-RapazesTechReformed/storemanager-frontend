@@ -1,84 +1,149 @@
-/* Container geral dos gráficos */
-.analytics-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-    gap: 2rem;
-    padding: 2rem;
+/* ===== LAYOUT GERAL ===== */
+
+.main-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 40px 0;
 }
 
-/* Cada seção de gráfico */
-.chart-section {
-    background: #fff;
-    border-radius: 12px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    padding: 1.5rem;
+.content-area {
+    width: 1400px;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    gap: 32px;
 }
 
-/* Ajuste do título */
-.chart-section h2 {
-    margin-bottom: 1rem;
-    font-size: 1.2rem;
-    text-align: center;
-}
 
-/* Canvas controlado */
-.chart-section canvas {
-    width: 100% !important;
-    max-width: 500px;
-    /* limite horizontal */
-    height: 300px !important;
-    /* altura fixa */
-}
+/* ===== GRID DOS GRÁFICOS ===== */
 
-#vendasBoosters {
-    height: 250px;
-    width: 400px;
-}
-
-#salesChart {
-    height: 400px;
-}
-
-#distribuicaoEstoque {
-    width: 350px;
-
-}
-
-#tipoPokemon {
-    height: 400px;
-    width: 620px;
-    margin-left: -650px;
-}
-
-#pokemonTypesChart {
-    margin: 80px;
-
-}
-
-#tipoPokemon h2{
-    margin-bottom: -80px;
-}
-
-#vendasLucro {
-    height: 500px;
-    width: 600px;
-}
-
-#lucroProduto {
-    height: 500px;
-    width: 350px;
-}
-
-#profitChart {
-    margin-left: -20px;
+.charts-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
 }
 
 .container-graficosLucro {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+}
+
+.full-width {
+    grid-column: span 2;
+}
+
+
+/* ===== CARDS ===== */
+
+.chart-card {
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 25px 28px;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.09);
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    gap: 18px;
+    min-height: 340px;
+}
+
+.chart-title {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #222;
+}
+
+
+/* ===== FILTROS ===== */
+
+.filter-row {
+    display: flex;
+    flex-wrap: wrap;
     align-items: center;
-    gap: 2rem;
+    gap: 12px;
+}
+
+.filter-row label {
+    font-size: 0.9rem;
+    color: #444;
+}
+
+.filter-row input[type="date"] {
+    padding: 6px 10px;
+    font-size: 0.9rem;
+    color: #333;
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
+    background: #f9fafb;
+}
+
+.filter-btn {
+    padding: 6px 14px;
+    background: #4f46e5;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: 0.15s;
+}
+
+.filter-btn:hover {
+    background: #4338ca;
+}
+
+
+/* ===== TABELA TOP CARTAS ===== */
+
+#topSellingCardsTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+#topSellingCardsTable thead tr {
+    border-bottom: 2px solid #e5e7eb;
+}
+
+#topSellingCardsTable th {
+    text-align: left;
+    padding: 6px 0;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #374151;
+}
+
+#topSellingCardsTable td {
+    padding: 6px 0;
+    border-bottom: 1px solid #f3f4f6;
+    font-size: 0.9rem;
+    color: #4b5563;
+}
+
+
+/* ===== CANVAS ===== */
+/* altura fixa perfeitinha pra NUNCA distorcer */
+
+.chart-card canvas {
+    width: 100% !important;
+    height: 280px !important;
+    max-height: 280px !important;
+}
+
+
+/* ===== RESPONSIVIDADE ===== */
+
+@media (max-width: 1200px) {
+    .content-area {
+        width: 95%;
+    }
+
+    .charts-section,
+    .container-graficosLucro {
+        grid-template-columns: 1fr;
+    }
+
+    .full-width {
+        grid-column: 1;
+    }
 }

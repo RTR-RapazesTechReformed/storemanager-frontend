@@ -1,16 +1,36 @@
-// analytics.js
+// =================== analytics.js ===================
 
+// CONFIG
 const ANALYTICS_CONFIG = {
-    API_BASE_URL: 'http://localhost:8080/api/dash/inventory'
+    API_BASE_URL: 'http://localhost:8080/api/dashboard'
 };
 
-// ===== API =====
+// =================== API ===================
 class AnalyticsAPI {
-    static async getHistoricalInventoryDistribution(date) {
-        // date = objeto Date do JS
-        const iso = date.toISOString(); // compatível com @DateTimeFormat ISO.DATE_TIME
 
+    static async getHistoricalInventoryDistribution(date) {
+        const iso = date.toISOString();
         const url = `${ANALYTICS_CONFIG.API_BASE_URL}/distribution/historical?date=${encodeURIComponent(iso)}`;
+        return this.fetchJSON(url);
+    }
+
+    static async getCardSales(startDate, endDate) {
+        const url = `${ANALYTICS_CONFIG.API_BASE_URL}/sales?start=${startDate}&end=${endDate}`;
+        return this.fetchJSON(url);
+    }
+
+    static async getProfitByCategory(startDate, endDate) {
+        const url = `${ANALYTICS_CONFIG.API_BASE_URL}/profit?start=${startDate}&end=${endDate}`;
+        return this.fetchJSON(url);
+    }
+
+    static async getSpendVsEarn(startDate, endDate) {
+        const url = `${ANALYTICS_CONFIG.API_BASE_URL}/spend-earn?start=${startDate}&end=${endDate}`;
+        return this.fetchJSON(url);
+    }
+
+    static async getStockValuation(startDate, endDate) {
+        const url = `${ANALYTICS_CONFIG.API_BASE_URL}/valuation?start=${startDate}&end=${endDate}`;
         return this.fetchJSON(url);
     }
 
@@ -20,9 +40,11 @@ class AnalyticsAPI {
                 method: 'GET',
                 headers: { 'Content-Type': 'application/json' }
             });
+
             if (!response.ok) {
                 throw new Error(`Erro HTTP ${response.status}`);
             }
+
             return await response.json();
         } catch (err) {
             console.error(`Erro ao chamar API (${url}):`, err);
@@ -31,7 +53,7 @@ class AnalyticsAPI {
     }
 }
 
-// ===== MANAGER DO ANALYTICS =====
+// =================== MANAGER ===================
 class AnalyticsManager {
     constructor() {
         this.charts = {};
@@ -39,17 +61,14 @@ class AnalyticsManager {
     }
 
     async init() {
+        // ----- ESTOQUE -----
         const dateInput = document.getElementById('inventory-date');
         const todayBtn = document.getElementById('inventory-today-btn');
 
         if (dateInput) {
-            // valor padrão = hoje
             const today = new Date();
             dateInput.value = today.toISOString().slice(0, 10);
-
-            dateInput.addEventListener('change', () => {
-                this.loadInventoryDistribution();
-            });
+            dateInput.addEventListener('change', () => this.loadInventoryDistribution());
         }
 
         if (todayBtn && dateInput) {
@@ -60,14 +79,44 @@ class AnalyticsManager {
             });
         }
 
+        // ----- VENDAS (TOP CARTAS) -----
+        const btnSales = document.getElementById('sales-filter-btn');
+        if (btnSales) {
+            btnSales.addEventListener('click', () => this.loadTopSellingCards());
+        }
+
+        // ----- LUCRO POR CATEGORIA -----
+        const btnProfit = document.getElementById('profit-filter-btn');
+        if (btnProfit) {
+            btnProfit.addEventListener('click', () => this.loadProfitByCategory());
+        }
+
+        // ----- GASTO VS GANHO -----
+        const btnSpendEarn = document.getElementById('spend-earn-filter-btn');
+        if (btnSpendEarn) {
+            btnSpendEarn.addEventListener('click', () => this.loadSpendVsEarn());
+        }
+
+        // ----- VALOR DO ESTOQUE -----
+        const btnValuation = document.getElementById('valuation-filter-btn');
+        if (btnValuation) {
+            btnValuation.addEventListener('click', () => this.loadStockValuation());
+        }
+
         await this.loadInventoryDistribution();
+        await this.loadTopSellingCards();
+        await this.loadProfitByCategory();
+        await this.loadSpendVsEarn();
+        await this.loadStockValuation();
     }
 
+    // =================== ESTOQUE ===================
     async loadInventoryDistribution() {
         const canvas = document.getElementById('inventoryChart');
         if (!canvas) return;
 
         let refDate = new Date();
+
         const dateInput = document.getElementById('inventory-date');
         if (dateInput?.value) {
             refDate = new Date(`${dateInput.value}T23:59:59`);
@@ -77,62 +126,26 @@ class AnalyticsManager {
         this.updateInventoryChart(data);
     }
 
-    // ... resto igual ao que já te mandei
-}
-
-class AnalyticsManager {
-    constructor() {
-        this.charts = {};
-        this.init();
-    }
-
-    async init() {
-        // se depois você criar um input de data, é só plugar aqui
-        await this.loadInventoryDistribution();
-    }
-
-    // Carrega dados históricos de distribuição de estoque
-    async loadInventoryDistribution() {
-        const canvas = document.getElementById('inventoryChart');
-        if (!canvas) return;
-
-        // Por enquanto: usa "agora" como data de referência
-        let refDate = new Date();
-
-        // Se você quiser depois usar um <input type="date" id="inventory-date">
-        const dateInput = document.getElementById('inventory-date');
-        if (dateInput?.value) {
-            // monta um Date no fim do dia selecionado
-            refDate = new Date(`${dateInput.value}T23:59:59`);
-        }
-
-        const data = await AnalyticsAPI.getHistoricalInventoryDistribution(refDate);
-        this.updateInventoryChart(data);
-    }
-
-    // Atualiza o gráfico de doughnut de distribuição
     updateInventoryChart(distributionData) {
         const canvas = document.getElementById('inventoryChart');
         if (!canvas) return;
 
-        // Se já existir um chart anterior, destrói
         if (this.charts['inventoryChart']) {
             this.charts['inventoryChart'].destroy();
             this.charts['inventoryChart'] = null;
         }
 
         if (!Array.isArray(distributionData) || distributionData.length === 0) {
-            console.warn('Nenhum dado de distribuição de estoque retornado.');
+            console.warn('Nenhum dado de distribuição retornado.');
             return;
         }
 
-        // DTO esperado do back: { category: 'CARTAS_AVULSAS', totalQuantity: 123 } etc.
         const labels = distributionData.map(item =>
             this.mapCategoryLabel(item.category || item.categoryName || '')
         );
 
         const values = distributionData.map(item =>
-            Number(item.totalQuantity ?? item.total_quantity ?? item.quantity ?? 0)
+            Number(item.totalQuantity ?? item.total_quantity ?? 0)
         );
 
         const ctx = canvas.getContext('2d');
@@ -143,56 +156,271 @@ class AnalyticsManager {
                 labels,
                 datasets: [{
                     data: values,
-                    backgroundColor: [
-                        '#f87171', // vermelho
-                        '#34d399', // verde
-                        '#60a5fa', // azul
-                        '#fbbf24', // amarelo
-                        '#a78bfa'  // roxo extra pra "OUTROS" se aparecer
-                    ]
+                    backgroundColor: ['#f87171', '#34d399', '#60a5fa', '#fbbf24', '#a78bfa']
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
-                    legend: {
-                        position: 'right'
+                    legend: { position: 'right' }
+                }
+            }
+        });
+    }
+
+    // =================== TOP SELLING CARDS ===================
+    async loadTopSellingCards() {
+        const tableBody = document.querySelector('#topSellingCardsTable tbody');
+        if (!tableBody) return;
+
+        const start = document.getElementById('sales-start-date')?.value || "2025-01-01";
+        const end = document.getElementById('sales-end-date')?.value || "2025-12-31";
+
+        const rows = await AnalyticsAPI.getCardSales(start, end);
+
+        tableBody.innerHTML = "";
+
+        if (!Array.isArray(rows) || rows.length === 0) {
+            tableBody.innerHTML = `<tr><td colspan="2">Nenhuma venda encontrada.</td></tr>`;
+            return;
+        }
+
+        rows.forEach(row => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${row.productName}</td>
+                <td>${row.totalSold}</td>
+            `;
+            tableBody.appendChild(tr);
+        });
+    }
+
+    // =================== LUCRO POR CATEGORIA ===================
+    async loadProfitByCategory() {
+        const canvas = document.getElementById('profitChart');
+        if (!canvas) return;
+
+        const start = document.getElementById('profit-start-date')?.value || "2025-01-01";
+        const end = document.getElementById('profit-end-date')?.value || "2025-12-31";
+
+        const rows = await AnalyticsAPI.getProfitByCategory(start, end);
+        this.updateProfitChart(rows);
+    }
+
+    updateProfitChart(rows) {
+        const canvas = document.getElementById('profitChart');
+        if (!canvas) return;
+
+        if (this.charts['profitChart']) {
+            this.charts['profitChart'].destroy();
+            this.charts['profitChart'] = null;
+        }
+
+        if (!rows || rows.length === 0) {
+            console.warn("Nenhum dado de lucro retornado.");
+            return;
+        }
+
+        const labels = rows.map(r => this.mapCategoryLabel(r.category));
+        const values = rows.map(r => Number(r.total_profit ?? r.totalProfit ?? 0));
+
+        const ctx = canvas.getContext('2d');
+
+        this.charts['profitChart'] = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels,
+                datasets: [{
+                    data: values,
+                    backgroundColor: ["#f87171", "#34d399", "#60a5fa", "#fbbf24", "#a78bfa"]
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { position: 'right' } }
+            }
+        });
+    }
+
+    // =================== SPEND VS EARN ===================
+    async loadSpendVsEarn() {
+        const canvas = document.getElementById('spendEarnChart');
+        if (!canvas) return;
+
+        const start = document.getElementById('se-start-date')?.value || "2025-01-01";
+        const end = document.getElementById('se-end-date')?.value || "2025-12-31";
+
+        const rows = await AnalyticsAPI.getSpendVsEarn(start, end);
+
+        this.updateSpendEarnChart(rows);
+    }
+
+    updateSpendEarnChart(rows) {
+        const canvas = document.getElementById('spendEarnChart');
+        if (!canvas) return;
+
+        if (this.charts['spendEarnChart']) {
+            this.charts['spendEarnChart'].destroy();
+            this.charts['spendEarnChart'] = null;
+        }
+
+        if (!rows || rows.length === 0) {
+            console.warn("Nenhum dado de gasto vs ganho retornado.");
+            return;
+        }
+
+        const rawLabels = rows.map(r => r.month_year || r.monthYear || r.month);
+        const labels = rawLabels.map(mk => {
+            if (!mk) return '';
+            if (/^\d{4}-\d{2}$/.test(mk)) {
+                try {
+                    const d = new Date(mk + '-01');
+                    return d.toLocaleDateString('pt-BR', { month: 'short', year: '2-digit' });
+                } catch {
+                    return mk;
+                }
+            }
+            return mk;
+        });
+
+        const spent = rows.map(r => Number(r.total_spent ?? r.totalSpent ?? r.spent ?? 0));
+        const earned = rows.map(r => Number(r.total_earned ?? r.totalEarned ?? r.earned ?? 0));
+
+        const ctx = canvas.getContext('2d');
+
+        this.charts['spendEarnChart'] = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels,
+                datasets: [
+                    {
+                        label: "Gastos",
+                        data: spent,
+                        backgroundColor: "#ef4444",
+                        yAxisID: 'y'
                     },
-                    tooltip: {
-                        callbacks: {
-                            label: (ctx) => {
-                                const label = ctx.label || '';
-                                const value = ctx.parsed || 0;
-                                return `${label}: ${value} unid.`;
-                            }
-                        }
+                    {
+                        label: "Ganhos",
+                        type: "line",
+                        data: earned,
+                        borderColor: "#22c55e",
+                        backgroundColor: "rgba(34,197,94,0.3)",
+                        tension: 0.3,
+                        yAxisID: 'y1'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                interaction: { mode: 'index', intersect: false },
+                stacked: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: { display: true, text: 'Gastos (R$)' }
+                    },
+                    y1: {
+                        beginAtZero: true,
+                        position: 'right',
+                        title: { display: true, text: 'Ganhos (R$)' },
+                        grid: { drawOnChartArea: false }
                     }
                 }
             }
         });
     }
 
-    // Mapeia código da categoria do back pra label bonitinha
+    // =================== VALOR DO ESTOQUE ===================
+    async loadStockValuation() {
+        const canvas = document.getElementById('stockValuationChart');
+        if (!canvas) return;
+
+        const start = document.getElementById('valuation-start-date')?.value || "2025-01-01";
+        const end = document.getElementById('valuation-end-date')?.value || "2025-12-31";
+
+        const rows = await AnalyticsAPI.getStockValuation(start, end);
+
+        this.updateStockValuationChart(rows);
+    }
+
+    updateStockValuationChart(rows) {
+        const canvas = document.getElementById('stockValuationChart');
+        if (!canvas) return;
+
+        if (this.charts['stockValuationChart']) {
+            this.charts['stockValuationChart'].destroy();
+            this.charts['stockValuationChart'] = null;
+        }
+
+        if (!rows || rows.length === 0) {
+            console.warn("Nenhum dado de valuation retornado.");
+            return;
+        }
+
+        const rawLabels = rows.map(r => r.month_year || r.monthYear || r.month);
+        const labels = rawLabels.map(mk => {
+            if (!mk) return '';
+            if (/^\d{4}-\d{2}$/.test(mk)) {
+                try {
+                    const d = new Date(mk + '-01');
+                    return d.toLocaleDateString('pt-BR', { month: 'short', year: '2-digit' });
+                } catch {
+                    return mk;
+                }
+            }
+            return mk;
+        });
+
+        const values = rows.map(r => Number(r.stock_value ?? r.stockValue ?? 0));
+
+        const ctx = canvas.getContext('2d');
+
+        this.charts['stockValuationChart'] = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels,
+                datasets: [{
+                    label: 'Valor estimado do estoque (R$)',
+                    data: values,
+                    borderColor: '#3b82f6',
+                    backgroundColor: 'rgba(59,130,246,0.25)',
+                    tension: 0.3,
+                    fill: true,
+                    pointRadius: 3
+                }]
+            },
+            options: {
+                responsive: true,
+                interaction: { mode: 'index', intersect: false },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: { display: true, text: 'Valor (R$)' }
+                    },
+                    x: {
+                        title: { display: true, text: 'Mês' }
+                    }
+                }
+            }
+        });
+    }
+
+    // =================== HELPERS ===================
     mapCategoryLabel(code) {
         switch ((code || '').toUpperCase()) {
-            case 'CARTAS_AVULSAS':
-                return 'Cartas Avulsas';
-            case 'BOOSTER_BOX':
-                return 'Booster Box';
-            case 'BOOSTER':
-                return 'Boosters';
-            case 'ACCESSORY':
-                return 'Acessórios';
-            case 'OUTROS':
-                return 'Outros';
-            default:
-                return code || 'Desconhecido';
+            case 'CARTAS_AVULSAS': return 'Cartas Avulsas';
+            case 'BOOSTER_BOX': return 'Booster Box';
+            case 'BOOSTER': return 'Boosters';
+            case 'ACCESSORY': return 'Acessórios';
+            case 'OUTROS': return 'Outros';
+            default: return code || 'Desconhecido';
         }
     }
 }
 
-// ===== BOOT =====
+// =================== BOOT ===================
 document.addEventListener('DOMContentLoaded', () => {
     window.analyticsManager = new AnalyticsManager();
 });

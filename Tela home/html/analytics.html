@@ -67,10 +67,26 @@
 
 
                 <!-- Card 3 -->
-                <div class="chart-card" style="grid-column: 1 / -1;">
-                    <h2 class="chart-title">Top 5 Cartas Mais Vendidas</h2>
-                    <canvas id="topCardsChart"></canvas>
+                <div class="chart-card" id="topSellingCardContainer">
+                    <h2 class="chart-title">Top Cartas Mais Vendidas</h2>
+
+                    <div class="date-filter">
+                        <input type="date" id="sales-start-date" />
+                        <input type="date" id="sales-end-date" />
+                        <button id="sales-filter-btn">Filtrar</button>
+                    </div>
+
+                    <table class="table-vendas" id="topSellingCardsTable">
+                        <thead>
+                            <tr>
+                                <th>Produto</th>
+                                <th>Total Vendido</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
                 </div>
+        </div>
 
         </div>
 
@@ -83,11 +99,42 @@
             </div>
 
             <!-- Card 6 -->
-            <div class="chart-card full-width" id="vendasLucro">
-                <h2 class="chart-title">Comparativo Vendas vs Lucro</h2>
-                <canvas id="salesProfitChart"></canvas>
+            <!-- Card: Comparativo Gastos vs Ganhos -->
+            <div class="chart-card" id="spendEarnCard">
+                <h2 class="chart-title">Comparativo Gastos vs Ganhos</h2>
+
+                <div class="filter-row">
+                    <label for="se-start-date">Início:</label>
+                    <input type="date" id="se-start-date">
+
+                    <label for="se-end-date">Fim:</label>
+                    <input type="date" id="se-end-date">
+
+                    <button id="spend-earn-filter-btn" class="filter-btn">
+                        Filtrar
+                    </button>
+                </div>
+
+                <canvas id="spendEarnChart"></canvas>
             </div>
+
         </div>
+
+         <div class="chart-card full-width">
+                    <h2 class="chart-title">Valor Estimado do Estoque ao Longo do Tempo</h2>
+
+                    <div class="filter-row">
+                        <label for="valuation-start-date">Início:</label>
+                        <input type="date" id="valuation-start-date">
+
+                        <label for="valuation-end-date">Fim:</label>
+                        <input type="date" id="valuation-end-date">
+
+                        <button id="valuation-filter-btn" class="filter-btn">Filtrar</button>
+                    </div>
+
+                    <canvas id="stockValuationChart"></canvas>
+                </div>
 
         <!-- Sidebar financeira (se existir em analytics também) -->
         <aside class="financial-sidebar">
