@@ -41,7 +41,7 @@ projeto-dashboard/
 - Sidebar financeira com dados roláveis
 
 ### Interatividade
-- Navegação entre seções (Gestão Interna, Mercado Externo, Analytics, Estoque)
+- Navegação entre seções (Gestão Interna, Analytics, Estoque)
 - Animações suaves de transição
 - Hover effects em elementos interativos
 - Sistema de loading states
