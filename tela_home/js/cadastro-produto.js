@@ -266,7 +266,7 @@ async function handleCardImageChange(event) {
   try {
     const data = await scanCardImage(file);
 
-    const card = data?.database_match || {};
+    const card = data?.database_results.database_match || {};
 
     document.getElementById("card-title").value = card.title || "";
     document.getElementById("card-rarity").value = card.rarity || "";
