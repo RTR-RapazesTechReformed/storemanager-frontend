@@ -272,9 +272,10 @@ async function handleCardImageChange(event) {
 
     document.getElementById("card-title").value = card.title || "";
     document.getElementById("card-rarity").value = card.rarity || "";
-    document.getElementById("card-code").value = card.code || "";
-    document.getElementById("card-type").value = card.type || "";
+    document.getElementById("card-collection").value = card.code || "";
+    document.getElementById("card-type").value = card.pokemon_type || "";
     document.getElementById("card-season").value = card.season || "";
+    document.getElementById("card-nationality").value = card.nationality || "";
 
     showAlert("Carta lida automaticamente!", "success");
   } catch (err) {
