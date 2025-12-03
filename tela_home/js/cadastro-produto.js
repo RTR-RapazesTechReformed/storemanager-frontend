@@ -268,6 +268,8 @@ async function handleCardImageChange(event) {
 
     const card = data?.database_results.database_match || {};
 
+    console.log(card);
+
     document.getElementById("card-title").value = card.title || "";
     document.getElementById("card-rarity").value = card.rarity || "";
     document.getElementById("card-code").value = card.code || "";
