@@ -266,11 +266,13 @@ async function handleCardImageChange(event) {
   try {
     const data = await scanCardImage(file);
 
-    document.getElementById("card-title").value = data.title || "";
-    document.getElementById("card-rarity").value = data.rarity || "";
-    document.getElementById("card-code").value = data.code || "";
-    document.getElementById("card-type").value = data.type || "";
-    document.getElementById("card-season").value = data.season || "";
+    const card = data?.database_match || {};
+
+    document.getElementById("card-title").value = card.title || "";
+    document.getElementById("card-rarity").value = card.rarity || "";
+    document.getElementById("card-code").value = card.code || "";
+    document.getElementById("card-type").value = card.type || "";
+    document.getElementById("card-season").value = card.season || "";
 
     showAlert("Carta lida automaticamente!", "success");
   } catch (err) {
