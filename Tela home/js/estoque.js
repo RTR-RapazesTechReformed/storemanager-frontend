@@ -4,39 +4,60 @@
 
 // Configurações da API
 const API_CONFIG = {
-    BASE_URL: 'http://localhost:8080/store-manager-api',
-    HEADERS: {
-        'Content-Type': 'application/json',
-        'user-id': 'admin-user-id' // ID fixo para testes
-    }
+    BASE_URL: 'http://localhost:8080/store-manager-api'
 };
+
+function getHeaders() {
+    const headers = {
+        'Content-Type': 'application/json'
+    };
+    const sessionUserId = sessionStorage.getItem('user-id');
+    if (sessionUserId) headers['user-id'] = sessionUserId;
+    return headers;
+}
 
 // Estado da aplicação
 let currentTab = 'movements';
-let currentMovementType = 'IN';
 let products = [];
-let movements = [];
-let inventory = [];
+let deleteProductId = null;
+let deleteProductName = null;
+// movements, inventory e currentMovementType gerenciados por modules separados
 
 // Inicialização
 document.addEventListener('DOMContentLoaded', function() {
     initializeEventListeners();
     loadProducts();
-    loadMovements();
-    loadInventory();
+    
+    // Inicializar módulo de movimentações
+    if (typeof window.initMovementsModule === 'function') {
+        window.initMovementsModule();
+    }
+    
+    // Iniciar movimentações com auto-reload
+    if (typeof window.loadMovements === 'function') {
+        window.startMovementsAutoReload();
+    }
+    
+    // Carregar inventário
+    if (typeof window.loadInventory === 'function') {
+        window.loadInventory();
+    }
 });
 
 // Event Listeners
 function initializeEventListeners() {
-    // Formulário de movimentação
-    document.getElementById('movement-form').addEventListener('submit', handleMovementSubmit);
+    // Event listeners específicos de produtos
+    // Movimentações gerenciadas por movements.js
     
-    // Toggle de tipo de movimentação
-    document.querySelectorAll('.toggle-option').forEach(option => {
-        option.addEventListener('click', function() {
-            setMovementType(this.dataset.type);
+    // Fechar modal ao clicar fora
+    const deleteModal = document.getElementById('delete-product-modal');
+    if (deleteModal) {
+        deleteModal.addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeDeleteProductModal();
+            }
         });
-    });
+    }
 }
 
 // Navegação entre abas
@@ -57,9 +78,15 @@ function showTab(tabName) {
     
     // Recarregar dados se necessário
     if (tabName === 'inventory') {
-        loadInventory();
+        if (typeof window.loadInventory === 'function') {
+            window.loadInventory();
+        }
     } else if (tabName === 'products') {
         loadProducts();
+    } else if (tabName === 'movements') {
+        if (typeof window.loadMovements === 'function') {
+            window.loadMovements();
+        }
     }
 }
 
@@ -82,7 +109,7 @@ function showAlert(message, type = 'success') {
 async function loadProducts() {
     try {
         const response = await fetch(`${API_CONFIG.BASE_URL}/products`, {
-            headers: API_CONFIG.HEADERS
+            headers: getHeaders()
         });
         
         if (!response.ok) {
@@ -124,21 +151,45 @@ function renderProducts() {
 
 function updateProductSelect() {
     const select = document.getElementById('movement-product');
-    select.innerHTML = '<option value="">Selecione um produto</option>' +
-        products.map(product => 
-            `<option value="${product.id}">${product.name}</option>`
-        ).join('');
+    if (select) {
+        select.innerHTML = '<option value="">Selecione um produto</option>' +
+            products.map(product => 
+                `<option value="${product.id}">${product.name}</option>`
+            ).join('');
+    }
 }
 
-async function deleteProduct(productId) {
-    if (!confirm('Tem certeza que deseja excluir este produto?')) {
+// Expor função globalmente para ser usada por movements.js
+window.updateProductSelect = updateProductSelect;
+
+function deleteProduct(productId) {
+    const product = products.find(p => p.id === productId);
+    
+    if (!product) {
+        showAlert('Produto não encontrado', 'error');
         return;
     }
+    
+    deleteProductId = productId;
+    deleteProductName = product.name;
+    
+    document.getElementById('delete-product-name').textContent = product.name;
+    document.getElementById('delete-product-modal').classList.add('active');
+}
+
+function closeDeleteProductModal() {
+    document.getElementById('delete-product-modal').classList.remove('active');
+    deleteProductId = null;
+    deleteProductName = null;
+}
+
+async function confirmDeleteProduct() {
+    if (!deleteProductId) return;
     
     try {
         const response = await fetch(`${API_CONFIG.BASE_URL}/products/${productId}`, {
             method: 'DELETE',
-            headers: API_CONFIG.HEADERS
+            headers: getHeaders()
         });
         
         if (!response.ok) {
@@ -146,192 +197,13 @@ async function deleteProduct(productId) {
         }
         
         showAlert('Produto excluído com sucesso!');
+        closeDeleteProductModal();
         loadProducts();
         
     } catch (error) {
         console.error('Erro ao excluir produto:', error);
         showAlert('Erro ao excluir produto: ' + error.message, 'error');
     }
-}
-
-// === MOVIMENTAÇÕES ===
-
-function setMovementType(type) {
-    currentMovementType = type;
-    
-    // Atualizar botões
-    document.querySelectorAll('.toggle-option').forEach(option => {
-        option.classList.remove('active');
-    });
-    document.querySelector(`[data-type="${type}"]`).classList.add('active');
-    
-    // Mostrar/ocultar campos condicionais
-    document.querySelectorAll('.conditional-fields').forEach(field => {
-        field.classList.remove('active');
-    });
-    
-    // Resetar campos obrigatórios
-    document.getElementById('unit-purchase-price').required = false;
-    document.getElementById('unit-sale-price-sale').required = false;
-    
-    if (type === 'IN') {
-        document.getElementById('purchase-fields').classList.add('active');
-        document.getElementById('unit-purchase-price').required = true;
-        // Permitir quantidade negativa para ajustes
-        document.getElementById('movement-quantity').min = "1";
-    } else if (type === 'OUT') {
-        document.getElementById('sale-fields').classList.add('active');
-        document.getElementById('unit-sale-price-sale').required = true;
-        document.getElementById('movement-quantity').min = "1";
-    } else if (type === 'ADJUST') {
-        document.getElementById('adjust-fields').classList.add('active');
-        // Para ajustes, permitir valores negativos
-        document.getElementById('movement-quantity').min = "-999";
-    }
-}
-
-async function handleMovementSubmit(event) {
-    event.preventDefault();
-    
-    const formData = new FormData(event.target);
-    const movementData = {
-        productId: formData.get('productId'),
-        userId: API_CONFIG.HEADERS['user-id'],
-        quantity: parseInt(formData.get('quantity')),
-        type: currentMovementType,
-        description: formData.get('description')
-    };
-    
-    // Adicionar campos condicionais baseados no tipo
-    if (currentMovementType === 'IN') {
-        const purchasePrice = formData.get('unitPurchasePrice');
-        const salePrice = formData.get('unitSalePrice');
-        
-        if (purchasePrice) {
-            movementData.unitPurchasePrice = parseFloat(purchasePrice);
-        }
-        if (salePrice) {
-            movementData.unitSalePrice = parseFloat(salePrice);
-        }
-    } else if (currentMovementType === 'OUT') {
-        const salePrice = formData.get('unitSalePrice');
-        if (salePrice) {
-            movementData.unitSalePrice = parseFloat(salePrice);
-        }
-    }
-    
-    try {
-        const response = await fetch(`${API_CONFIG.BASE_URL}/inventory-movements`, {
-            method: 'POST',
-            headers: API_CONFIG.HEADERS,
-            body: JSON.stringify(movementData)
-        });
-        
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.message || `Erro HTTP: ${response.status}`);
-        }
-        
-        const newMovement = await response.json();
-        showAlert('Movimentação registrada com sucesso!');
-        event.target.reset();
-        setMovementType('IN'); // Reset para entrada
-        loadMovements();
-        loadInventory();
-        
-    } catch (error) {
-        console.error('Erro ao registrar movimentação:', error);
-        showAlert('Erro ao registrar movimentação: ' + error.message, 'error');
-    }
-}
-
-async function loadMovements() {
-    try {
-        const response = await fetch(`${API_CONFIG.BASE_URL}/inventory-movements`, {
-            headers: API_CONFIG.HEADERS
-        });
-        
-        if (!response.ok) {
-            throw new Error(`Erro HTTP: ${response.status}`);
-        }
-        
-        movements = await response.json();
-        renderMovements();
-        
-    } catch (error) {
-        console.error('Erro ao carregar movimentações:', error);
-        showAlert('Erro ao carregar movimentações: ' + error.message, 'error');
-    }
-}
-
-function renderMovements() {
-    const container = document.getElementById('movements-list');
-    
-    if (movements.length === 0) {
-        container.innerHTML = '<div class="loading">Nenhuma movimentação registrada</div>';
-        return;
-    }
-    
-    container.innerHTML = movements.map(movement => {
-        const product = products.find(p => p.id === movement.productId);
-        const productName = product ? product.name : 'Produto não encontrado';
-        
-        return `
-            <div class="movement-item ${movement.type.toLowerCase()}">
-                <h4>${getMovementTypeLabel(movement.type)}</h4>
-                <p><strong>Produto:</strong> ${productName}</p>
-                <p><strong>Quantidade:</strong> ${movement.quantity}</p>
-                <p><strong>Descrição:</strong> ${movement.description}</p>
-                ${movement.unitPurchasePrice ? `<p><strong>Preço de Compra:</strong> R$ ${movement.unitPurchasePrice.toFixed(2)}</p>` : ''}
-                ${movement.unitSalePrice ? `<p><strong>Preço de Venda:</strong> R$ ${movement.unitSalePrice.toFixed(2)}</p>` : ''}
-                <p><strong>Data:</strong> ${new Date(movement.createdAt).toLocaleString('pt-BR')}</p>
-            </div>
-        `;
-    }).join('');
-}
-
-// === INVENTÁRIO ===
-
-async function loadInventory() {
-    try {
-        const response = await fetch(`${API_CONFIG.BASE_URL}/inventory`, {
-            headers: API_CONFIG.HEADERS
-        });
-        
-        if (!response.ok) {
-            throw new Error(`Erro HTTP: ${response.status}`);
-        }
-        
-        inventory = await response.json();
-        renderInventory();
-        
-    } catch (error) {
-        console.error('Erro ao carregar inventário:', error);
-        showAlert('Erro ao carregar inventário: ' + error.message, 'error');
-    }
-}
-
-function renderInventory() {
-    const container = document.getElementById('inventory-list');
-    
-    if (inventory.length === 0) {
-        container.innerHTML = '<div class="loading">Nenhum item no inventário</div>';
-        return;
-    }
-    
-    container.innerHTML = inventory.map(item => {
-        const stockStatus = getStockStatus(item.quantity);
-        
-        return `
-            <div class="product-card">
-                <h3>${item.productName}</h3>
-                <p><strong>Quantidade:</strong> ${item.quantity} <span class="stock-status ${stockStatus.class}">${stockStatus.label}</span></p>
-                <p><strong>Preço:</strong> R$ ${item.productPrice ? item.productPrice.toFixed(2) : 'N/A'}</p>
-                ${item.productDescription ? `<p><strong>Descrição:</strong> ${item.productDescription}</p>` : ''}
-                <p><strong>Última atualização:</strong> ${new Date(item.updatedAt).toLocaleString('pt-BR')}</p>
-            </div>
-        `;
-    }).join('');
 }
 
 // === FUNÇÕES AUXILIARES ===
@@ -382,4 +254,7 @@ function editProduct(productId) {
     // Implementar edição de produto
     showAlert('Funcionalidade de edição em desenvolvimento', 'error');
 }
+
+window.closeDeleteProductModal = closeDeleteProductModal;
+window.confirmDeleteProduct = confirmDeleteProduct;
 

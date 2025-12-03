@@ -298,6 +298,228 @@ body {
     gap: var(--spacing-lg);
 }
 
+/* Grid de Inventário */
+.inventory-grid {
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 20px !important;
+    padding: 20px 0 !important;
+    width: 100% !important;
+}
+
+.inventory-card {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+    border-left: 4px solid #008B8B;
+}
+
+.inventory-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.inventory-card h3 {
+    margin: 0 0 15px 0;
+    color: #333;
+    font-size: 1.1em;
+    font-weight: 600;
+}
+
+.inventory-card p {
+    margin: 10px 0;
+    color: #666;
+    font-size: 0.95em;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.inventory-card p strong {
+    color: #333;
+    font-weight: 600;
+}
+
+.inventory-card .stock-status {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 0.85em;
+    font-weight: 600;
+    margin-left: 8px;
+}
+
+.inventory-card .stock-status.alto {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.inventory-card .stock-status.medio {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.inventory-card .stock-status.baixo {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.inventory-card .stock-status.zerado {
+    background-color: #f5c6cb;
+    color: #721c24;
+    font-weight: 700;
+}
+
+/* Responsive para o grid de inventário */
+@media (max-width: 1400px) {
+    .inventory-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 1024px) {
+    .inventory-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 640px) {
+    .inventory-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Grid de Movimentações */
+.movements-grid {
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 20px !important;
+    padding: 20px 0 !important;
+    width: 100% !important;
+}
+
+.movement-card {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+    border-left: 4px solid #6c757d;
+}
+
+.movement-card.in {
+    border-left-color: #28a745;
+}
+
+.movement-card.out {
+    border-left-color: #dc3545;
+}
+
+.movement-card.adjust {
+    border-left-color: #ffc107;
+}
+
+.movement-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.movement-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 15px;
+    gap: 10px;
+}
+
+.movement-header h4 {
+    margin: 0;
+    color: #333;
+    font-size: 1.05em;
+    font-weight: 600;
+    flex: 1;
+}
+
+.movement-type-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.75em;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.movement-type-badge.in {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.movement-type-badge.out {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.movement-type-badge.adjust {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.movement-card p {
+    margin: 8px 0;
+    color: #666;
+    font-size: 0.9em;
+}
+
+.movement-card p strong {
+    color: #333;
+    font-weight: 600;
+}
+
+.movement-total {
+    font-size: 1.05em !important;
+    font-weight: 600 !important;
+    color: var(--primary-color) !important;
+    background-color: rgba(0, 139, 139, 0.1);
+    padding: 8px !important;
+    border-radius: 4px;
+    margin: 12px 0 !important;
+}
+
+.movement-description {
+    font-style: italic;
+    color: #777 !important;
+    margin-top: 12px !important;
+    padding-top: 12px;
+    border-top: 1px solid #eee;
+}
+
+.movement-date {
+    font-size: 0.85em !important;
+    color: #999 !important;
+    margin-top: 8px !important;
+}
+
+/* Responsive para o grid de movimentações */
+@media (max-width: 1400px) {
+    .movements-grid {
+        grid-template-columns: repeat(3, 1fr) !important;
+    }
+}
+
+@media (max-width: 1024px) {
+    .movements-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+}
+
+@media (max-width: 640px) {
+    .movements-grid {
+        grid-template-columns: 1fr !important;
+    }
+}
+
 /* Stock Status */
 .stock-status {
     display: inline-block;
