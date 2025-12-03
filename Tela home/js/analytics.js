@@ -65,6 +65,7 @@ class AnalyticsManager {
         const dateInput = document.getElementById('inventory-date');
         const todayBtn = document.getElementById('inventory-today-btn');
 
+
         if (dateInput) {
             const today = new Date();
             dateInput.value = today.toISOString().slice(0, 10);
@@ -107,7 +108,8 @@ class AnalyticsManager {
         await this.loadTopSellingCards();
         await this.loadProfitByCategory();
         await this.loadSpendVsEarn();
-        await this.loadStockValuation();
+        setTimeout(() => this.loadStockValuation(), 10);
+        
     }
 
     // =================== ESTOQUE ===================
@@ -171,78 +173,101 @@ class AnalyticsManager {
 
     // =================== TOP SELLING CARDS ===================
     async loadTopSellingCards() {
-        const tableBody = document.querySelector('#topSellingCardsTable tbody');
-        if (!tableBody) return;
+    const tbody = document.querySelector("#topSellingCardsTable tbody");
+    if (!tbody) return;
 
-        const start = document.getElementById('sales-start-date')?.value || "2025-01-01";
-        const end = document.getElementById('sales-end-date')?.value || "2025-12-31";
+    const start = document.getElementById("sales-start-date")?.value || "2025-01-01";
+    const end   = document.getElementById("sales-end-date")?.value || "2025-12-31";
 
-        const rows = await AnalyticsAPI.getCardSales(start, end);
+    const rows = await AnalyticsAPI.getCardSales(start, end);
 
-        tableBody.innerHTML = "";
-
-        if (!Array.isArray(rows) || rows.length === 0) {
-            tableBody.innerHTML = `<tr><td colspan="2">Nenhuma venda encontrada.</td></tr>`;
-            return;
-        }
-
-        rows.forEach(row => {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td>${row.productName}</td>
-                <td>${row.totalSold}</td>
-            `;
-            tableBody.appendChild(tr);
-        });
+    if (!Array.isArray(rows) || rows.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="2">Nenhuma venda encontrada.</td></tr>`;
+        return;
     }
+
+    tbody.innerHTML = rows.map(r => `
+        <tr>
+            <td>${r.product_name ?? r.productName}</td>
+            <td>${r.total_sold   ?? r.totalSold}</td>
+        </tr>
+    `).join("");
+}
+
 
     // =================== LUCRO POR CATEGORIA ===================
     async loadProfitByCategory() {
         const canvas = document.getElementById('profitChart');
-        if (!canvas) return;
+        if (!canvas) return; // se o card NÃO existe ainda, simplesmente para
 
-        const start = document.getElementById('profit-start-date')?.value || "2025-01-01";
-        const end = document.getElementById('profit-end-date')?.value || "2025-12-31";
+        // não chame a API se os inputs não existem (evita chamada dupla)
+        const startInput = document.getElementById('profit-start-date');
+        const endInput = document.getElementById('profit-end-date');
+
+        const start = startInput?.value || "2025-01-01";
+        const end = endInput?.value || "2025-12-31";
 
         const rows = await AnalyticsAPI.getProfitByCategory(start, end);
+
+        // importante: resetar o canvas ANTES
+        canvas.width = canvas.width;
+        canvas.height = 420;
+
         this.updateProfitChart(rows);
     }
 
+
     updateProfitChart(rows) {
-        const canvas = document.getElementById('profitChart');
-        if (!canvas) return;
+    const canvas = document.getElementById('profitChart');
+    if (!canvas) return;
 
-        if (this.charts['profitChart']) {
-            this.charts['profitChart'].destroy();
-            this.charts['profitChart'] = null;
-        }
-
-        if (!rows || rows.length === 0) {
-            console.warn("Nenhum dado de lucro retornado.");
-            return;
-        }
-
-        const labels = rows.map(r => this.mapCategoryLabel(r.category));
-        const values = rows.map(r => Number(r.total_profit ?? r.totalProfit ?? 0));
-
-        const ctx = canvas.getContext('2d');
-
-        this.charts['profitChart'] = new Chart(ctx, {
-            type: 'pie',
-            data: {
-                labels,
-                datasets: [{
-                    data: values,
-                    backgroundColor: ["#f87171", "#34d399", "#60a5fa", "#fbbf24", "#a78bfa"]
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { legend: { position: 'right' } }
-            }
-        });
+    // destrói gráfico anterior se existir
+    if (this.charts['profitChart']) {
+        this.charts['profitChart'].destroy();
+        this.charts['profitChart'] = null;
     }
+
+    if (!rows || rows.length === 0) {
+        console.warn("Nenhum dado de lucro retornado.");
+        return;
+    }
+
+    // labels = categorias tratadas
+    const labels = rows.map(r => this.mapCategoryLabel(r.category));
+
+    // valores = tenta vários nomes de campo, pra ficar à prova de mudança
+    const values = rows.map(r =>
+        Number(
+            r.total_profit      ??
+            r.totalProfit       ??
+            r.total_quantity    ??   // <-- esse é o do teu print
+            r.totalQuantity     ??
+            0
+        )
+    );
+
+    const ctx = canvas.getContext('2d');
+
+    this.charts['profitChart'] = new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels,
+            datasets: [{
+                data: values,
+                backgroundColor: ["#f87171", "#34d399", "#60a5fa", "#fbbf24", "#a78bfa"]
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { position: 'right' }
+            }
+        }
+    });
+}
+
+
 
     // =================== SPEND VS EARN ===================
     async loadSpendVsEarn() {
@@ -359,23 +384,20 @@ class AnalyticsManager {
             return;
         }
 
-        const rawLabels = rows.map(r => r.month_year || r.monthYear || r.month);
-        const labels = rawLabels.map(mk => {
-            if (!mk) return '';
-            if (/^\d{4}-\d{2}$/.test(mk)) {
-                try {
-                    const d = new Date(mk + '-01');
-                    return d.toLocaleDateString('pt-BR', { month: 'short', year: '2-digit' });
-                } catch {
-                    return mk;
-                }
-            }
-            return mk;
+        // labels e values OK
+        const labels = rows.map(r => {
+            const mk = r.month;
+            const d = new Date(mk + "-01");
+            return d.toLocaleDateString('pt-BR', { month: 'short', year: '2-digit' });
         });
 
-        const values = rows.map(r => Number(r.stock_value ?? r.stockValue ?? 0));
+        const values = rows.map(r => Number(r.total_stock_value ?? 0));
 
         const ctx = canvas.getContext('2d');
+
+        // 🚨 RESET OBRIGATÓRIO
+        canvas.width = canvas.width;
+        canvas.height = 420;
 
         this.charts['stockValuationChart'] = new Chart(ctx, {
             type: 'line',
@@ -393,19 +415,16 @@ class AnalyticsManager {
             },
             options: {
                 responsive: true,
-                interaction: { mode: 'index', intersect: false },
+                maintainAspectRatio: false,
                 scales: {
-                    y: {
-                        beginAtZero: true,
-                        title: { display: true, text: 'Valor (R$)' }
-                    },
-                    x: {
-                        title: { display: true, text: 'Mês' }
-                    }
+                    y: { beginAtZero: true, title: { text: "Valor (R$)", display: true } },
+                    x: { title: { text: "Mês", display: true } }
                 }
             }
         });
     }
+
+
 
     // =================== HELPERS ===================
     mapCategoryLabel(code) {

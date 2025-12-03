@@ -1,149 +1,142 @@
-/* ===== LAYOUT GERAL ===== */
+/* ===== LAYOUT GERAL DA PÁGINA ===== */
 
 .main-container {
-    width: 100%;
     display: flex;
     justify-content: center;
-    padding: 40px 0;
+    padding: 2rem;
+    background-color: #f3f4f6;
 }
 
-.content-area {
-    width: 1400px;
+.analytics-column {
+    width: 100%;
+    max-width: 1200px;
     display: flex;
     flex-direction: column;
-    gap: 32px;
+    gap: 1.8rem;
 }
-
-
-/* ===== GRID DOS GRÁFICOS ===== */
-
-.charts-section {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 32px;
-}
-
-.container-graficosLucro {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 32px;
-}
-
-.full-width {
-    grid-column: span 2;
-}
-
 
 /* ===== CARDS ===== */
 
 .chart-card {
     background: #ffffff;
-    border-radius: 14px;
-    padding: 25px 28px;
-    box-shadow: 0 3px 12px rgba(0,0,0,0.09);
+    border-radius: 12px;
+    padding: 1.5rem 1.8rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
     display: flex;
     flex-direction: column;
-    gap: 18px;
-    min-height: 340px;
+    gap: 1rem;
+}
+
+/* card “full-width” continua igual, só pra semântica */
+.chart-card.full-width {
+    width: 100%;
+}
+
+/* ===== CABEÇALHO DO CARD (título + filtros) ===== */
+
+.chart-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    flex-wrap: wrap;
 }
 
 .chart-title {
-    font-size: 1.3rem;
+    margin: 0;
+    font-size: 1.2rem;
     font-weight: 600;
-    color: #222;
 }
 
+/* ===== FILTROS (inputs e botões) ===== */
 
-/* ===== FILTROS ===== */
-
+.chart-filters,
+.date-filter,
 .filter-row {
     display: flex;
-    flex-wrap: wrap;
     align-items: center;
-    gap: 12px;
+    gap: 0.75rem;
+    flex-wrap: wrap;
 }
 
+.chart-filters label,
 .filter-row label {
     font-size: 0.9rem;
-    color: #444;
 }
 
+.chart-filters input[type="date"],
+.date-filter input[type="date"],
 .filter-row input[type="date"] {
-    padding: 6px 10px;
+    padding: 0.25rem 0.4rem;
     font-size: 0.9rem;
-    color: #333;
-    border-radius: 8px;
-    border: 1px solid #d1d5db;
-    background: #f9fafb;
 }
 
-.filter-btn {
-    padding: 6px 14px;
-    background: #4f46e5;
-    color: white;
+#inventory-today-btn,
+.filter-btn,
+#sales-filter-btn {
+    padding: 0.35rem 0.8rem;
+    border-radius: 6px;
     border: none;
-    border-radius: 8px;
     cursor: pointer;
-    font-weight: 600;
-    transition: 0.15s;
+    background-color: #2563eb;
+    color: #fff;
+    font-size: 0.9rem;
 }
 
-.filter-btn:hover {
-    background: #4338ca;
+#inventory-today-btn:hover,
+.filter-btn:hover,
+#sales-filter-btn:hover {
+    background-color: #1d4ed8;
 }
 
+/* ===== ÁREA DO GRÁFICO ===== */
 
-/* ===== TABELA TOP CARTAS ===== */
+.chart-card-body {
+    position: relative;
+    width: 100%;
+    height: 380px;      /* altura fixa pro gráfico */
+    margin-top: 0.5rem;
+}
 
-#topSellingCardsTable {
+/* canvas ocupa 100% da área acima */
+.chart-card canvas {
+    display: block;
+    width: 100% !important;
+    height: 100% !important;
+}
+
+/* ===== TABELA DE TOP VENDAS ===== */
+
+.table-vendas {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 10px;
+    margin-top: 0.75rem;
+    font-size: 0.9rem;
 }
 
-#topSellingCardsTable thead tr {
-    border-bottom: 2px solid #e5e7eb;
+.table-vendas thead {
+    background-color: #f3f4f6;
 }
 
-#topSellingCardsTable th {
+.table-vendas th,
+.table-vendas td {
+    padding: 0.55rem 0.5rem;
+    border-bottom: 1px solid #e5e7eb;
     text-align: left;
-    padding: 6px 0;
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: #374151;
 }
 
-#topSellingCardsTable td {
-    padding: 6px 0;
-    border-bottom: 1px solid #f3f4f6;
-    font-size: 0.9rem;
-    color: #4b5563;
-}
+/* ===== RESPONSIVO ===== */
 
-
-/* ===== CANVAS ===== */
-/* altura fixa perfeitinha pra NUNCA distorcer */
-
-.chart-card canvas {
-    width: 100% !important;
-    height: 280px !important;
-    max-height: 280px !important;
-}
-
-
-/* ===== RESPONSIVIDADE ===== */
-
-@media (max-width: 1200px) {
-    .content-area {
-        width: 95%;
+@media (max-width: 768px) {
+    .main-container {
+        padding: 1rem;
     }
 
-    .charts-section,
-    .container-graficosLucro {
-        grid-template-columns: 1fr;
+    .chart-card {
+        padding: 1.2rem;
     }
 
-    .full-width {
-        grid-column: 1;
+    .chart-card-body {
+        height: 300px;
     }
 }

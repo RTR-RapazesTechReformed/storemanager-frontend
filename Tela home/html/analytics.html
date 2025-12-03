@@ -26,9 +26,6 @@
                 <button class="nav-button" onclick="location.href='gestao_interna.html'">
                     <span class="nav-text">Gestão Interna</span>
                 </button>
-                <button class="nav-button" onclick="location.href='externo.html'">
-                    <span class="nav-text">Mercado Externo</span>
-                </button>
                 <button class="nav-button active" onclick="location.href='analytics.html'">
                     <span class="nav-text">Analytics</span>
                 </button>
@@ -41,102 +38,100 @@
 
     <!-- Conteúdo principal -->
     <main class="main-container">
-        <div class="content-area">
-            <section class="charts-section">
+        <div class="analytics-column">
 
-                <!-- Card 2 -->
-                <div class="chart-card" id="distribuicaoEstoque">
-                    <div class="chart-card-header">
-                        <h2 class="chart-title">Distribuição do Estoque</h2>
+            <!-- CARD 1 - Distribuição -->
+            <div class="chart-card">
+                <h2 class="chart-title">Distribuição do Estoque</h2>
 
-                        <div class="chart-filters">
-                            <label for="inventory-date">Data de referência:</label>
-                            <input type="date" id="inventory-date">
-                            <button id="inventory-today-btn" type="button">Hoje</button>
-                        </div>
-                    </div>
-
-                    <div class="chart-card-body">
-                        <canvas id="inventoryChart"></canvas>
-                    </div>
+                <div class="filter-row">
+                    <label>Data:</label>
+                    <input type="date" id="inventory-date">
+                    <button id="inventory-today-btn" class="filter-btn">Hoje</button>
                 </div>
 
-
-                <!-- Card 3 -->
-                <div class="chart-card" id="topSellingCardContainer">
-                    <h2 class="chart-title">Top Cartas Mais Vendidas</h2>
-
-                    <div class="date-filter">
-                        <input type="date" id="sales-start-date" />
-                        <input type="date" id="sales-end-date" />
-                        <button id="sales-filter-btn">Filtrar</button>
-                    </div>
-
-                    <table class="table-vendas" id="topSellingCardsTable">
-                        <thead>
-                            <tr>
-                                <th>Produto</th>
-                                <th>Total Vendido</th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
+                <div class="chart-card-body">
+                    <canvas id="inventoryChart"></canvas>
                 </div>
-        </div>
-
-        </div>
-
-
-        <div class="container-graficosLucro">
-            <!-- Card 5 -->
-            <div class="chart-card" id="lucroProduto">
-                <h2 class="chart-title">Participação de Lucro por Produto</h2>
-                <canvas id="profitChart"></canvas>
             </div>
 
-            <!-- Card 6 -->
-            <!-- Card: Comparativo Gastos vs Ganhos -->
-            <div class="chart-card" id="spendEarnCard">
+            <!-- CARD 2 - Top Vendas -->
+            <div class="chart-card">
+                <h2 class="chart-title">Top Produtos Mais Vendidos</h2>
+
+                <div class="filter-row">
+                    <input type="date" id="sales-start-date">
+                    <input type="date" id="sales-end-date">
+                    <button id="sales-filter-btn" class="filter-btn">Filtrar</button>
+                </div>
+
+                <table class="table-vendas" id="topSellingCardsTable">
+                    <thead>
+                        <tr>
+                            <th>Produto</th>
+                            <th>Total Vendido</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+
+            <!-- CARD 3 - Lucro -->
+            <div class="chart-card">
+                <h2 class="chart-title">Participação de Lucro por Produto</h2>
+                <div class="filter-row">
+                    <label>Início:</label>
+                    <input type="date" id="profit-start-date">
+                    <label>Fim:</label>
+                    <input type="date" id="profit-end-date">
+                    <button id="profit-filter-btn" class="filter-btn">Filtrar</button>
+                </div>
+                <div class="chart-card-body">
+                    <canvas id="profitChart"></canvas>
+                </div>
+            </div>
+
+            <!-- CARD 4 - Gasto vs Ganho -->
+            <div class="chart-card">
                 <h2 class="chart-title">Comparativo Gastos vs Ganhos</h2>
 
                 <div class="filter-row">
-                    <label for="se-start-date">Início:</label>
+                    <label>Início:</label>
                     <input type="date" id="se-start-date">
-
-                    <label for="se-end-date">Fim:</label>
+                    <label>Fim:</label>
                     <input type="date" id="se-end-date">
-
-                    <button id="spend-earn-filter-btn" class="filter-btn">
-                        Filtrar
-                    </button>
+                    <button id="spend-earn-filter-btn" class="filter-btn">Filtrar</button>
                 </div>
 
-                <canvas id="spendEarnChart"></canvas>
+                <div class="chart-card-body">
+                    <canvas id="spendEarnChart"></canvas>
+                </div>
+            </div>
+
+            <!-- CARD 5 - Valuation -->
+            <div class="chart-card">
+                <h2 class="chart-title">Valor Estimado do Estoque ao Longo do Tempo</h2>
+
+                <div class="filter-row">
+                    <label>Início:</label>
+                    <input type="date" id="valuation-start-date">
+
+                    <label>Fim:</label>
+                    <input type="date" id="valuation-end-date">
+
+                    <button id="valuation-filter-btn" class="filter-btn">Filtrar</button>
+                </div>
+
+                <div class="chart-card-body">
+                    <canvas id="stockValuationChart"></canvas>
+                </div>
             </div>
 
         </div>
+    </main>
 
-         <div class="chart-card full-width">
-                    <h2 class="chart-title">Valor Estimado do Estoque ao Longo do Tempo</h2>
+    </main>
 
-                    <div class="filter-row">
-                        <label for="valuation-start-date">Início:</label>
-                        <input type="date" id="valuation-start-date">
-
-                        <label for="valuation-end-date">Fim:</label>
-                        <input type="date" id="valuation-end-date">
-
-                        <button id="valuation-filter-btn" class="filter-btn">Filtrar</button>
-                    </div>
-
-                    <canvas id="stockValuationChart"></canvas>
-                </div>
-
-        <!-- Sidebar financeira (se existir em analytics também) -->
-        <aside class="financial-sidebar">
-            <!-- ... -->
-        </aside>
-        </section>
     </main>
 
     <script src="../js/analytics.js"></script>
