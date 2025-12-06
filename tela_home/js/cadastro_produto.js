@@ -242,3 +242,58 @@ function clearForm() {
         .forEach((input) => (input.value = ""));
   }
 }
+
+async function scanCardImage(file) {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const response = await fetch("/scanner-api/upload", {
+    method: "POST",
+    body: formData,
+  });
+
+  if (!response.ok) {
+    throw new Error("Erro ao processar imagem");
+  }
+
+  return await response.json();
+}
+
+async function handleCardImageChange(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  try {
+    const data = await scanCardImage(file);
+
+    const card = data?.database_results.database_match || {};
+
+    const fields = [
+      ["card-title", card.title],
+      ["card-season", card.season],
+      ["card-type", card.pokemon_type],
+      ["card-collection", card.collection_abbreviation],
+      ["card-code", card.code],
+      ["card-rarity", card.rarity],
+      ["card-nationality", card.nationality],
+    ];
+
+    fields.forEach(([id, value]) => {
+      const el = document.getElementById(id);
+      if (el) el.value = value || "";
+    });
+
+    console.log("Carta lida com sucesso:", card);
+  } catch (err) {
+    console.error("Falha ao ler carta: " + err.message, "error");
+    showAlert("Falha ao ler carta: " + err.message, "error");
+  }
+}
+document.addEventListener("DOMContentLoaded", () => {
+  initializeEventListeners();
+
+  const imageInput = document.getElementById("card-image");
+  if (imageInput) {
+    imageInput.addEventListener("change", handleCardImageChange);
+  }
+});
