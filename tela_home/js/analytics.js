@@ -1,6 +1,10 @@
 // =================== analytics.js ===================
 
 // CONFIG
+// ====== CONFIGURAÇÃO DE ENDPOINT DA API ======
+// Para produção/deploy  "/api/dashboard"
+// Para rodar local, use: "http://localhost:8080"
+
 const ANALYTICS_CONFIG = {
   API_BASE_URL: "/api/dashboard",
 };

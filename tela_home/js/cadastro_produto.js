@@ -4,6 +4,10 @@
  */
 const user = sessionStorage.getItem("session-id");
 
+// ====== CONFIGURAÇÃO DE ENDPOINT DA API ======
+// Para produção/deploy  "/api/store-manager-api"
+// Para rodar local, use: "http://localhost:8080"
+
 const API_CONFIG = {
   BASE_URL: "/api/store-manager-api",
   HEADERS: {
@@ -246,6 +250,10 @@ function clearForm() {
 async function scanCardImage(file) {
   const formData = new FormData();
   formData.append("file", file);
+
+  // ====== CONFIGURAÇÃO DE ENDPOINT DA API SCANNER ======
+  // Para produção/deploy  "/scanner-api/upload"
+  // Para rodar local, use: "http://localhost:5000"
 
   const response = await fetch("/scanner-api/upload", {
     method: "POST",

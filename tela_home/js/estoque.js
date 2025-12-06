@@ -3,6 +3,11 @@
  */
 
 // Configurações da API
+
+// ====== CONFIGURAÇÃO DE ENDPOINT DA API ======
+// Para produção/deploy  "/api/store-manager-api"
+// Para rodar local, use: "http://localhost:8080"
+
 const API_CONFIG = {
   BASE_URL: "/api/store-manager-api",
 };

@@ -5,6 +5,10 @@
 // Pega o ID do usuário logado da sessão, como no exemplo fornecido.
 const loggedInUserId = sessionStorage.getItem("user-id");
 
+// ====== CONFIGURAÇÃO DE ENDPOINT DA API ======
+// Para produção/deploy  "/api/store-manager-api"
+// Para rodar local, use: "http://localhost:8080"
+
 const API_CONFIG = {
   BASE_URL: "/api/store-manager-api",
   HEADERS: {

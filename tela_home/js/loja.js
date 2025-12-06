@@ -2,6 +2,12 @@
  * Sistema de Gestão de Lojas - Integrado com Spring Boot API
  */
 
+// ====== CONFIGURAÇÃO DA API ======
+// Para produção/deploy, use os caminhos relativos (proxy Nginx):
+//   API_BASE_URL: "/api/store-manager-api"
+// Para rodar local, use os endpoints locais, por exemplo:
+//   API_BASE_URL: "http://localhost:8080"
+
 const API_CONFIG = {
   BASE_URL: "/api/store-manager-api",
   HEADERS: {
