@@ -338,64 +338,68 @@ function mostrarCamposIA() {
   areaIA.scrollIntoView({ behavior: "smooth" });
 }
 
-// ... mantenha sua função calcularPreco() aqui ...
+// 3. Chama o Modelo para prever o preço
 async function calcularPreco() {
-  // 1. Pegar os elementos
-  const raridade = document.getElementById("card-rarity").value;
+  const raridade = document.getElementById("card-rarity-ia").value;
   const subTipo = document.getElementById("card-subtype").value;
   const resultDiv = document.getElementById("resultado-ia");
 
-  // Feedback visual que está carregando
+  // Loading State
   resultDiv.style.display = "block";
   resultDiv.innerHTML =
-    '<p style="text-align:center">Consultando a Emma IA... 🤖</p>';
+    '<p style="text-align:center; color: #666;">Consultando o oráculo de dados... 🤖</p>';
 
   try {
-    // 2. Chamar a API Python (FastAPI)
-    const response = await fetch("/price-model-api/predict", {
+    const response = await fetch("http://localhost:8000/api/predict", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        raridade: raridade,
-        sub_tipo: subTipo,
-      }),
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ raridade: raridade, sub_tipo: subTipo }),
     });
 
-    // Se a API der erro (ex: raridade desconhecida)
     if (!response.ok) {
       const erro = await response.json();
-      alert("Erro na IA: " + erro.detail);
-      resultDiv.style.display = "none"; // Esconde se der erro
-      return;
+      throw new Error(erro.detail || "Erro na API");
     }
 
-    // 3. Mostrar o Resultado Bonitão
     const data = await response.json();
 
-    // Recria o HTML do resultado com os valores
+    // Renderiza o Resultado
     resultDiv.innerHTML = `
-            <h3 style="color: #3c5aa6; margin-top: 0; text-align: center;">💎 Estimativa de Valor</h3>
-            <div style="display: flex; justify-content: space-around; text-align: center; margin-top: 10px;">
-                <div style="padding: 10px; background: #e8f5e9; border-radius: 8px;">
-                    <small style="color: #2e7d32;">Mínimo</small><br>
-                    <span style="color: #2e7d32; font-weight: bold; font-size: 1.2em;">$${data.min_price}</span>
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 10px;">
+                <h4 style="margin:0; color: #3c5aa6;">Estimativa de Mercado</h4>
+                <small style="color: #999;">Moeda: ${data.currency}</small>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; text-align: center;">
+                <div style="background: #e8f5e9; padding: 10px; border-radius: 8px;">
+                    <span style="display:block; font-size: 0.8em; color: #2e7d32;">Mínimo</span>
+                    <strong style="color: #2e7d32; font-size: 1.1em;">$${data.min_price}</strong>
                 </div>
-                <div style="padding: 10px; background: #e3f2fd; border-radius: 8px; transform: scale(1.1); box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-                    <small style="color: #1565c0;">Médio</small><br>
-                    <span style="color: #1565c0; font-weight: bold; font-size: 1.4em;">$${data.fair_price}</span>
+                <div style="background: #e3f2fd; padding: 10px; border-radius: 8px; border: 1px solid #90caf9;">
+                    <span style="display:block; font-size: 0.8em; color: #1565c0;">Justo</span>
+                    <strong style="color: #1565c0; font-size: 1.3em;">$${data.fair_price}</strong>
                 </div>
-                <div style="padding: 10px; background: #ffebee; border-radius: 8px;">
-                    <small style="color: #c62828;">Máximo</small><br>
-                    <span style="color: #c62828; font-weight: bold; font-size: 1.2em;">$${data.max_price}</span>
+                <div style="background: #ffebee; padding: 10px; border-radius: 8px;">
+                    <span style="display:block; font-size: 0.8em; color: #c62828;">Máximo</span>
+                    <strong style="color: #c62828; font-size: 1.1em;">$${data.max_price}</strong>
                 </div>
             </div>
-            <p style="text-align: center; font-size: 0.8em; color: #666; margin-top: 10px;">Baseado em dados de mercado.</p>
+            <div style="margin-top: 15px; text-align: center;">
+                <button type="button" onclick="aplicarPreco(${data.fair_price})" style="font-size: 0.9em; text-decoration: underline; background: none; border: none; color: #555; cursor: pointer;">
+                    Usar Preço Justo no Formulário ⬆️
+                </button>
+            </div>
         `;
   } catch (error) {
-    console.error("Erro:", error);
-    alert("Erro ao conectar com o servidor. O backend está rodando?");
-    resultDiv.style.display = "none";
+    resultDiv.innerHTML = `<p style="color: red; text-align: center;">Erro: ${error.message}</p>`;
+  }
+}
+
+// 4. Bônus: Preenche o campo de preço principal automaticamente
+function aplicarPreco(valor) {
+  // Procura o input de preço original do seu form
+  const inputPreco = document.getElementById("card-price");
+  if (inputPreco) {
+    inputPreco.value = valor.toFixed(2);
+    alert(`Preço de $${valor} aplicado!`);
   }
 }
