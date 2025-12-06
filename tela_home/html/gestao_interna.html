@@ -7,8 +7,8 @@
     <title>Gestão Interna - StoreManager</title>
 
     <!-- CSS -->
-    <link rel="stylesheet" href="../css/styles.css">
-    <link rel="stylesheet" href="../css/graficosGestaoInterna.css">
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/graficosGestaoInterna.css">
 
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -90,31 +90,31 @@
 
             <!-- Gráfico 2: Aquisições Mensais + Tabela -->
             <div class="chart-card" id="aquisicoesMensais">
-    <div class="chart-header">
-        <h3 class="chart-title">Últimas Aquisições (APEX)</h3>
+                <div class="chart-header">
+                    <h3 class="chart-title">Últimas Aquisições (APEX)</h3>
 
-        <div class="chart-filters">
-            <label>
-                De:
-                <input type="month" id="acq-start-month">
-            </label>
-            <label>
-                Até:
-                <input type="month" id="acq-end-month">
-            </label>
-            <button type="button" id="acq-filter-clear">Limpar</button>
-            <button type="button" id="acq-save">Salvar</button>
-        </div>
-    </div>
+                    <div class="chart-filters">
+                        <label>
+                            De:
+                            <input type="month" id="acq-start-month">
+                        </label>
+                        <label>
+                            Até:
+                            <input type="month" id="acq-end-month">
+                        </label>
+                        <button type="button" id="acq-filter-clear">Limpar</button>
+                        <button type="button" id="acq-save">Salvar</button>
+                    </div>
+                </div>
 
-    <!-- Gráfico -->
-    <canvas id="collectionsChart"></canvas>
+                <!-- Gráfico -->
+                <canvas id="collectionsChart"></canvas>
 
-    <!-- Detalhes (agora com espaço real) -->
-    <div id="acq-details" class="acq-details">
-        <!-- Tabela gerada pelo JS aparece aqui -->
-    </div>
-</div>
+                <!-- Detalhes (agora com espaço real) -->
+                <div id="acq-details" class="acq-details">
+                    <!-- Tabela gerada pelo JS aparece aqui -->
+                </div>
+            </div>
 
             <!-- Gráfico 3: Envelhecimento -->
             <div class="chart-card" id="envelhecimentoEstoque">
@@ -137,7 +137,8 @@
     </main>
 
     <!-- Script principal -->
-    <script src="../js/gestao.js"></script>
+    <script src="/js/gestao.js"></script>
 
 </body>
+
 </html>

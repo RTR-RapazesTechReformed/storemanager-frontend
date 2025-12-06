@@ -1,29 +1,31 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Estoque - StoreManager</title>
-    <link rel="stylesheet" href="../css/estoque.css">
+    <link rel="stylesheet" href="/css/estoque.css">
 </head>
+
 <body>
     <!-- Header Global -->
     <header class="main-header">
-    <div class="header-container">
-        <!-- Logo / Título -->
-        <div class="logo-container">
-            <div class="logo-icon">RTR</div>
-            <div class="logo-text">StoreManager</div>
-        </div>
+        <div class="header-container">
+            <!-- Logo / Título -->
+            <div class="logo-container">
+                <div class="logo-icon">RTR</div>
+                <div class="logo-text">StoreManager</div>
+            </div>
 
-        <!-- Navegação -->
-        <nav class="main-navigation">
-            <button class="nav-button" onclick="location.href='gestao_interna.html'">Gestão Interna</button>
-            <button class="nav-button" onclick="location.href='analytics.html'">Analytics</button>
-            <button class="nav-button active" onclick="location.href='estoque.html'">Estoque</button>
-        </nav>
-    </div>
-</header>
+            <!-- Navegação -->
+            <nav class="main-navigation">
+                <button class="nav-button" onclick="location.href='gestao_interna.html'">Gestão Interna</button>
+                <button class="nav-button" onclick="location.href='analytics.html'">Analytics</button>
+                <button class="nav-button active" onclick="location.href='estoque.html'">Estoque</button>
+            </nav>
+        </div>
+    </header>
 
     <main class="main-content">
         <div class="container">
@@ -47,45 +49,59 @@
 
                     <form id="movement-form">
                         <div class="form-group">
-                            <label class="form-label" for="movement-product">Produto <span style="color: var(--danger-color);">*</span></label>
+                            <label class="form-label" for="movement-product">Produto <span
+                                    style="color: var(--danger-color);">*</span></label>
                             <select class="form-select" id="movement-product" name="productId" required>
                                 <option value="">Selecione um produto</option>
                             </select>
                         </div>
 
                         <div class="form-group">
-                            <label class="form-label" for="movement-quantity">Quantidade <span style="color: var(--danger-color);">*</span></label>
-                            <input class="form-input" type="number" id="movement-quantity" name="quantity" min="1" required>
+                            <label class="form-label" for="movement-quantity">Quantidade <span
+                                    style="color: var(--danger-color);">*</span></label>
+                            <input class="form-input" type="number" id="movement-quantity" name="quantity" min="1"
+                                required>
                         </div>
 
                         <div class="form-group">
-                            <label class="form-label" for="movement-description">Descrição da movimentação <span style="color: var(--danger-color);">*</span></label>
-                            <input class="form-input" type="text" id="movement-description" name="description" required placeholder="Ex: Compra inicial do fornecedor X">
+                            <label class="form-label" for="movement-description">Descrição da movimentação <span
+                                    style="color: var(--danger-color);">*</span></label>
+                            <input class="form-input" type="text" id="movement-description" name="description" required
+                                placeholder="Ex: Compra inicial do fornecedor X">
                         </div>
 
                         <!-- Campos Condicionais -->
                         <div id="purchase-fields" class="conditional-fields active">
                             <div class="form-group">
-                                <label class="form-label" for="unit-purchase-price">Custo unitário (R$) <span style="color: var(--danger-color);">*</span></label>
-                                <input class="form-input" type="number" id="unit-purchase-price" name="unitPurchasePrice" step="0.01" min="0" placeholder="800.00">
+                                <label class="form-label" for="unit-purchase-price">Custo unitário (R$) <span
+                                        style="color: var(--danger-color);">*</span></label>
+                                <input class="form-input" type="number" id="unit-purchase-price"
+                                    name="unitPurchasePrice" step="0.01" min="0" placeholder="800.00">
                             </div>
                             <div class="form-group">
-                                <label class="form-label" for="unit-sale-price-purchase">Preço de venda sugerido (R$)</label>
-                                <input class="form-input" type="number" id="unit-sale-price-purchase" name="unitSalePrice" step="0.01" min="0" placeholder="1200.00">
-                                <small style="color: var(--gray-dark); font-size: var(--font-size-sm);">Opcional - atualiza o preço do produto</small>
+                                <label class="form-label" for="unit-sale-price-purchase">Preço de venda sugerido
+                                    (R$)</label>
+                                <input class="form-input" type="number" id="unit-sale-price-purchase"
+                                    name="unitSalePrice" step="0.01" min="0" placeholder="1200.00">
+                                <small style="color: var(--gray-dark); font-size: var(--font-size-sm);">Opcional -
+                                    atualiza o preço do produto</small>
                             </div>
                         </div>
 
                         <div id="sale-fields" class="conditional-fields">
                             <div class="form-group">
-                                <label class="form-label" for="unit-sale-price-sale">Preço de venda unitário (R$) <span style="color: var(--danger-color);">*</span></label>
-                                <input class="form-input" type="number" id="unit-sale-price-sale" name="unitSalePrice" step="0.01" min="0" placeholder="1200.00">
+                                <label class="form-label" for="unit-sale-price-sale">Preço de venda unitário (R$) <span
+                                        style="color: var(--danger-color);">*</span></label>
+                                <input class="form-input" type="number" id="unit-sale-price-sale" name="unitSalePrice"
+                                    step="0.01" min="0" placeholder="1200.00">
                             </div>
                         </div>
 
                         <div id="adjust-fields" class="conditional-fields">
-                            <div style="background: var(--warning-color); padding: 10px; border-radius: var(--border-radius); margin-bottom: 15px; color: var(--dark-color);">
-                                <strong>Ajuste:</strong> Use valores positivos para adicionar ao estoque ou negativos para reduzir.<br>
+                            <div
+                                style="background: var(--warning-color); padding: 10px; border-radius: var(--border-radius); margin-bottom: 15px; color: var(--dark-color);">
+                                <strong>Ajuste:</strong> Use valores positivos para adicionar ao estoque ou negativos
+                                para reduzir.<br>
                                 Exemplo: +1 para adicionar 1 item, -2 para remover 2 itens.
                             </div>
                         </div>
@@ -171,7 +187,7 @@
             <div class="modal-body">
                 <form id="edit-product-form">
                     <input type="hidden" id="edit-product-id">
-                    
+
                     <div class="form-group">
                         <label class="form-label" for="edit-product-name">Nome do Produto</label>
                         <input class="form-input" type="text" id="edit-product-name">
@@ -210,7 +226,7 @@
 
                     <div id="edit-card-fields" class="card-edit-fields" style="display: none;">
                         <h4 style="margin: 15px 0 10px; color: #333; font-size: 0.95em;">Detalhes da Carta</h4>
-                        
+
                         <div class="form-group">
                             <label class="form-label" for="edit-card-title">Título</label>
                             <input class="form-input" type="text" id="edit-card-title">
@@ -239,7 +255,7 @@
 
                     <div id="edit-other-fields" class="other-edit-fields" style="display: none;">
                         <h4 style="margin: 15px 0 10px; color: #333; font-size: 0.95em;">Detalhes do Produto</h4>
-                        
+
                         <div class="form-group">
                             <label class="form-label" for="edit-other-nationality">Nacionalidade</label>
                             <input class="form-input" type="text" id="edit-other-nationality">
@@ -257,7 +273,8 @@
                     </div>
 
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" onclick="closeEditProductModal()">Cancelar</button>
+                        <button type="button" class="btn btn-secondary"
+                            onclick="closeEditProductModal()">Cancelar</button>
                         <button type="submit" class="btn btn-primary">Salvar Alterações</button>
                     </div>
                 </form>
@@ -285,9 +302,10 @@
         </div>
     </div>
 
-    <script src="../js/logout.js"></script>
-    <script src="../js/inventory.js"></script>
-    <script src="../js/movements.js"></script>
-    <script src="../js/estoque.js"></script>
+    <script src="/js/logout.js"></script>
+    <script src="/js/inventory.js"></script>
+    <script src="/js/movements.js"></script>
+    <script src="/js/estoque.js"></script>
 </body>
+
 </html>
