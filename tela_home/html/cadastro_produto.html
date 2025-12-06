@@ -283,76 +283,76 @@
                             <input type="text" id="card-nationality" name="nationality" placeholder="Ex: Japonês">
                         </div>
                     </div>
-                </div>
 
-                <div class="form-actions">
-                    <button type="submit" class="btn btn-primary">Cadastrar Produto</button>
-                    <a href="estoque.html" class="btn btn-secondary">Voltar ao Sistema</a>
-                </div>
-
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="card-category">Categoria da Carta <span class="required">*</span></label>
-                        <select id="card-category" name="category" onchange="verificarCategoria()"
-                            style="width: 100%; padding: 8px;">
-                            <option value="">Selecione...</option>
-                            <option value="Pokemon">Pokémon</option>
-                            <option value="Trainer">Treinador</option>
-                            <option value="Energy">Energia</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="card-type">Tipo (Ex: Fogo, Item)</label>
-                        <input type="text" id="card-type" name="pokemon_type" placeholder="Ex: Elétrico">
-                    </div>
-                </div>
-
-                <div id="btn-step-container" style="text-align: center; margin: 15px 0; display: none;">
-                    <button type="button" onclick="mostrarCamposIA()"
-                        style="background-color: #6c757d; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">
-                        ⬇️ Preencher Detalhes da Carta
-                    </button>
-                </div>
-
-                <div id="ai-setup-area"
-                    style="display: none; background-color: #f8f9fa; padding: 15px; border-radius: 8px; border-left: 4px solid #3c5aa6; margin-bottom: 20px;">
-                    <h4 style="margin-top: 0; color: #3c5aa6;">Parâmetros de Precificação (IA)</h4>
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="card-subtype">Sub-Tipo <span class="required">*</span></label>
-                            <select id="card-subtype" name="subtype" style="width: 100%; padding: 8px;">
-                                <option value="Basic">Básico (Comum)</option>
-                                <option value="ex">Pokémon ex</option>
-                                <option value="Stage 1">Estágio 1</option>
-                                <option value="Stage 2">Estágio 2</option>
+                            <label for="card-category">Categoria da Carta <span class="required">*</span></label>
+                            <select id="card-category" name="category" onchange="verificarCategoria()"
+                                style="width: 100%; padding: 8px;">
+                                <option value="">Selecione...</option>
+                                <option value="Pokemon">Pokémon</option>
                                 <option value="Trainer">Treinador</option>
-                                <option value="Item">Item</option>
+                                <option value="Energy">Energia</option>
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="card-rarity">Raridade <span class="required">*</span></label>
-                            <select id="card-rarity" name="rarity" style="width: 100%; padding: 8px;">
-                                <option value="Common">Comum</option>
-                                <option value="Uncommon">Incomum</option>
-                                <option value="Rare">Rara</option>
-                                <option value="Double Rare">Double Rare</option>
-                                <option value="Ultra Rare">Ultra Rare</option>
-                                <option value="Illustration Rare">Illustration Rare</option>
-                                <option value="Special Illustration Rare">Special Illustration Rare</option>
-                                <option value="Hyper Rare">Hyper Rare</option>
-                            </select>
+                            <label for="card-type">Tipo (Ex: Fogo, Item)</label>
+                            <input type="text" id="card-type" name="pokemon_type" placeholder="Ex: Elétrico">
                         </div>
                     </div>
-                    <div class="form-actions" style="text-align: center; margin-top: 15px;">
-                        <button type="button" onclick="calcularPreco()"
-                            style="background-color: #ffcb05; color: #3c5aa6; font-weight: bold; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px;">
-                            🔮 Prever Preço com IA
+
+                    <div id="btn-step-container" style="text-align: center; margin: 15px 0; display: none;">
+                        <button type="button" onclick="mostrarCamposIA()"
+                            style="background-color: #6c757d; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">
+                            ⬇️ Preencher Detalhes da Carta
                         </button>
                     </div>
+
+                    <div id="ai-setup-area"
+                        style="display: none; background-color: #f8f9fa; padding: 15px; border-radius: 8px; border-left: 4px solid #3c5aa6; margin-bottom: 20px;">
+                        <h4 style="margin-top: 0; color: #3c5aa6;">Parâmetros de Precificação (IA)</h4>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="card-subtype">Sub-Tipo <span class="required">*</span></label>
+                                <select id="card-subtype" name="subtype" style="width: 100%; padding: 8px;">
+                                    <option value="Basic">Básico (Comum)</option>
+                                    <option value="ex">Pokémon ex</option>
+                                    <option value="Stage 1">Estágio 1</option>
+                                    <option value="Stage 2">Estágio 2</option>
+                                    <option value="Trainer">Treinador</option>
+                                    <option value="Item">Item</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="card-rarity">Raridade <span class="required">*</span></label>
+                                <select id="card-rarity" name="rarity" style="width: 100%; padding: 8px;">
+                                    <option value="Common">Comum</option>
+                                    <option value="Uncommon">Incomum</option>
+                                    <option value="Rare">Rara</option>
+                                    <option value="Double Rare">Double Rare</option>
+                                    <option value="Ultra Rare">Ultra Rare</option>
+                                    <option value="Illustration Rare">Illustration Rare</option>
+                                    <option value="Special Illustration Rare">Special Illustration Rare</option>
+                                    <option value="Hyper Rare">Hyper Rare</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-actions" style="text-align: center; margin-top: 15px;">
+                            <button type="button" onclick="calcularPreco()"
+                                style="background-color: #ffcb05; color: #3c5aa6; font-weight: bold; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px;">
+                                🔮 Prever Preço com IA
+                            </button>
+                        </div>
+                    </div>
+                    <div id="resultado-ia" style="display: none; margin-top: 20px;"></div>
                 </div>
-                <div id="resultado-ia" style="display: none; margin-top: 20px;"></div>
         </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Cadastrar Produto</button>
+            <a href="estoque.html" class="btn btn-secondary">Voltar ao Sistema</a>
+        </div>
+
         </form>
     </div>
 
