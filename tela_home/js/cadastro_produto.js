@@ -384,10 +384,10 @@ async function calcularPreco() {
                 </div>
             </div>
             <div style="margin-top: 15px; text-align: center;">
-                <button type="button" onclick="aplicarPreco(${data.fair_price})" style="font-size: 0.9em; text-decoration: underline; background: none; border: none; color: #555; cursor: pointer;">
-                    Usar Preço Justo no Formulário ⬆️
-                </button>
-            </div>
+        <button type="button" class="btn-preco-justo" onclick="aplicarPreco(${data.fair_price})">
+            Usar Preço Justo no Formulário
+        </button>
+    </div>
         `;
   } catch (error) {
     resultDiv.innerHTML = `<p style="color: red; text-align: center;">Erro: ${error.message}</p>`;
@@ -396,8 +396,7 @@ async function calcularPreco() {
 
 // 4. Bônus: Preenche o campo de preço principal automaticamente
 function aplicarPreco(valor) {
-  // Procura o input de preço original do seu form
-  const inputPreco = document.getElementById("card-price");
+  const inputPreco = document.getElementById("product-price");
   if (inputPreco) {
     inputPreco.value = valor.toFixed(2);
     alert(`Preço de $${valor} aplicado!`);
