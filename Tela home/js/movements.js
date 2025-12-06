@@ -7,18 +7,15 @@ let movements = [];
 let movementsInterval = null;
 let currentMovementType = 'IN';
 
-// Mostrar alerta próximo ao formulário
 function showFormAlert(message, type = 'success') {
     const alertsContainer = document.getElementById('form-alerts');
     if (!alertsContainer) {
-        // Fallback para alertas globais se não encontrar container do form
         if (typeof showAlert === 'function') {
             showAlert(message, type);
         }
         return;
     }
-    
-    // Limpar alertas anteriores
+
     alertsContainer.innerHTML = '';
     
     const alert = document.createElement('div');
@@ -32,40 +29,31 @@ function showFormAlert(message, type = 'success') {
     }, 5000);
 }
 
-// Inicializar event listeners
 window.initMovementsModule = function() {
-    // Formulário de movimentação
     const form = document.getElementById('movement-form');
     if (form) {
         form.addEventListener('submit', handleMovementSubmit);
     }
     
-    // Toggle de tipo de movimentação
     document.querySelectorAll('.toggle-option').forEach(option => {
         option.addEventListener('click', function() {
             setMovementType(this.dataset.type);
         });
     });
-    
-    console.log('Módulo de movimentações inicializado');
 }
 
-// Gerenciar tipo de movimentação
 function setMovementType(type) {
     currentMovementType = type;
     
-    // Atualizar botões
     document.querySelectorAll('.toggle-option').forEach(option => {
         option.classList.remove('active');
     });
     document.querySelector(`[data-type="${type}"]`).classList.add('active');
     
-    // Mostrar/ocultar campos condicionais
     document.querySelectorAll('.conditional-fields').forEach(field => {
         field.classList.remove('active');
     });
     
-    // Resetar campos obrigatórios
     document.getElementById('unit-purchase-price').required = false;
     document.getElementById('unit-sale-price-sale').required = false;
     
@@ -81,36 +69,25 @@ function setMovementType(type) {
         document.getElementById('movement-quantity').placeholder = "Ex: 5";
     } else if (type === 'ADJUST') {
         document.getElementById('adjust-fields').classList.add('active');
-        // Para ajustes, permitir valores negativos
         document.getElementById('movement-quantity').min = "-999";
         document.getElementById('movement-quantity').placeholder = "Ex: +5 ou -3";
     }
 }
 
-// Submeter formulário de movimentação
 async function handleMovementSubmit(event) {
     event.preventDefault();
     
     const formData = new FormData(event.target);
     
-    console.log('=== DADOS DO FORMULÁRIO ===');
-    console.log('Tipo:', currentMovementType);
-    console.log('Product ID:', formData.get('productId'));
-    console.log('Quantity:', formData.get('quantity'));
-    console.log('Description:', formData.get('description'));
-    
-    // Montar objeto com os nomes corretos da API (snake_case)
+
     const movementData = {
         product_id: formData.get('productId'),
         user_id: sessionStorage.getItem('user-id') || 'unknown',
-        quantity: Math.abs(parseInt(formData.get('quantity'))), // SEMPRE POSITIVO para API
+        quantity: Math.abs(parseInt(formData.get('quantity'))),
         type: currentMovementType,
         description: formData.get('description')
     };
     
-    console.log('Quantidade (sempre positiva para API):', movementData.quantity);
-    
-    // Adicionar campos condicionais baseados no tipo
     if (currentMovementType === 'IN') {
         const purchasePrice = formData.get('unitPurchasePrice');
         const salePrice = formData.get('unitSalePrice');
@@ -127,7 +104,6 @@ async function handleMovementSubmit(event) {
         }
         
     } else if (currentMovementType === 'OUT') {
-        // Para saídas, o campo é 'unit-sale-price-sale'
         const salePriceElement = document.getElementById('unit-sale-price-sale');
         const salePrice = salePriceElement ? salePriceElement.value : null;
         
@@ -139,12 +115,8 @@ async function handleMovementSubmit(event) {
         }
         
     } else if (currentMovementType === 'ADJUST') {
-        // Para AJUSTES, manter o sinal que o usuário digitou (pode ser + ou -)
-        movementData.quantity = parseInt(formData.get('quantity')); // Mantém sinal original
-        console.log('Quantidade para ajuste (mantém sinal):', movementData.quantity);
+        movementData.quantity = parseInt(formData.get('quantity'));
     }
-    
-    console.log('=== DADOS FINAIS A ENVIAR ===', movementData);
     
     try {
         await window.createMovement(movementData);
@@ -153,51 +125,23 @@ async function handleMovementSubmit(event) {
         
     } catch (error) {
         console.error('Erro ao registrar movimentação:', error);
-        // Erro já tratado em createMovement
     }
 }
 
 window.loadMovements = async function() {
-    console.log('=== CARREGANDO MOVIMENTAÇÕES ===');
     try {
+        const response = await fetch(`${API_CONFIG.BASE_URL}/inventory-audits`, {
+            headers: getHeaders()
+        });
         
-        const [movementsResponse, productsResponse] = await Promise.all([
-            fetch(`${API_CONFIG.BASE_URL}/inventory-movements`, {
-                headers: getHeaders()
-            }),
-            fetch(`${API_CONFIG.BASE_URL}/products`, {
-                headers: getHeaders()
-            })
-        ]);
         
-        console.log('Response status (movements):', movementsResponse.status);
-        console.log('Response status (products):', productsResponse.status);
-        
-        if (!movementsResponse.ok) {
-            throw new Error(`Erro HTTP ao carregar movimentações: ${movementsResponse.status}`);
+        if (!response.ok) {
+            throw new Error(`Erro HTTP ao carregar movimentações: ${response.status}`);
         }
         
-        movements = await movementsResponse.json();
-        console.log('Movimentações recebidas:', movements.length);
+        movements = await response.json();
         
-        let productsMap = {};
-        if (productsResponse.ok) {
-            const products = await productsResponse.json();
-            productsMap = products.reduce((acc, p) => {
-                acc[p.id] = p.name;
-                return acc;
-            }, {});
-        }
-        
-        // Enriquecer movimentações com nome do produto 
-        // TODO : Retornar nome do produto diretamente da API de movimentações
-        movements = movements.map(m => ({
-            ...m,
-            product_name: m.product_name || productsMap[m.product_id] || 'Produto não encontrado'
-        }));
-        
-        // Ordenar por data mais recente primeiro e pegar apenas as 40 últimas
-        movements.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+        movements.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
         movements = movements.slice(0, 40);
         
         renderMovements();
@@ -217,36 +161,33 @@ function renderMovements() {
         container.innerHTML = '<div class="loading">Nenhuma movimentação registrada</div>';
         return;
     }
-    
-    console.log('Renderizando movimentações. Total:', movements.length);
-    console.log('Primeira movimentação:', movements[0]);
-    
+
     container.innerHTML = `
         <div class="movements-grid">
             ${movements.map(movement => {
                 const productName = movement.product_name || 'Produto não encontrado';
                 const quantity = movement.quantity || 0;
-                const type = movement.type || 'UNKNOWN';
+                const type = movement.movement_type || 'UNKNOWN';
                 const description = movement.description || 'Sem descrição';
-                const createdAt = movement.created_at || movement.updated_at;
-                
-                // Determinar quantidade com sinal correto para exibição
+                const userName = movement.user_name || 'Desconhecido';
+                const quantityAfter = movement.quantity_after || 0;
+                const status = movement.status || 'UNKNOWN';
+                const errorMessage = movement.error_message;
+                const timestamp = movement.timestamp;
+            
                 let displayQuantity;
                 if (type === 'OUT') {
-                    // VENDA: exibir como negativo
                     displayQuantity = -Math.abs(quantity);
                 } else if (type === 'IN') {
-                    // COMPRA: exibir como positivo
                     displayQuantity = Math.abs(quantity);
                 } else {
-                    // AJUSTE: manter como está
                     displayQuantity = quantity;
                 }
                 
                 let dateFormatted = 'N/A';
-                if (createdAt) {
+                if (timestamp) {
                     try {
-                        const date = new Date(createdAt);
+                        const date = new Date(timestamp);
                         dateFormatted = date.toLocaleDateString('pt-BR', {
                             day: '2-digit',
                             month: '2-digit',
@@ -255,14 +196,22 @@ function renderMovements() {
                             minute: '2-digit'
                         });
                     } catch (e) {
-                        console.error('Erro ao formatar data:', createdAt, e);
+                        console.error('Erro ao formatar data:', timestamp, e);
                     }
                 }
                 
                 const typeClass = type.toLowerCase();
                 const typeLabel = getMovementTypeLabel(type);
+                const statusClass = status.toLowerCase();
+                const statusLabel = status === 'PROCESSED' ? 'Sucesso' : 'Falha';
+             
+                let cardClass = '';
+                if (status === 'FAILED') {
+                    cardClass = 'failed';
+                } else {
+                    cardClass = type === 'ADJUST' ? typeClass : 'success';
+                }
                 
-                // Calcular valores unitário e total
                 let priceInfo = '';
                 if (type === 'IN' && movement.unit_purchase_price) {
                     const unitPrice = movement.unit_purchase_price;
@@ -280,15 +229,23 @@ function renderMovements() {
                     `;
                 }
                 
+                const errorInfo = errorMessage ? `<p class="movement-error"><strong>Erro:</strong> ${errorMessage}</p>` : '';
+                
                 return `
-                    <div class="movement-card ${typeClass}">
+                    <div class="movement-card ${cardClass}">
                         <div class="movement-header">
                             <h4>${productName}</h4>
-                            <span class="movement-type-badge ${typeClass}">${typeLabel}</span>
+                            <div class="movement-badges">
+                                <span class="movement-type-badge ${typeClass}">${typeLabel}</span>
+                                <span class="movement-status-badge ${statusClass}">${statusLabel}</span>
+                            </div>
                         </div>
-                        <p><strong>Quantidade:</strong> ${displayQuantity > 0 ? '+' : ''}${displayQuantity}</p>
+                        <p><strong>Quantidade Movimentada:</strong> ${displayQuantity > 0 ? '+' : ''}${displayQuantity}</p>
+                        <p><strong>Quantidade Atual:</strong> ${quantityAfter}</p>
                         ${priceInfo}
                         <p class="movement-description">${description}</p>
+                        ${errorInfo}
+                        <p><strong>Responsável:</strong> ${userName}</p>
                         <p class="movement-date"><strong>Data:</strong> ${dateFormatted}</p>
                     </div>
                 `;
@@ -306,10 +263,7 @@ function getMovementTypeLabel(type) {
     return labels[type] || type;
 }
 
-// Criar nova movimentação
 window.createMovement = async function(movementData) {
-    console.log('=== CRIANDO MOVIMENTAÇÃO ===');
-    console.log('Dados a enviar:', JSON.stringify(movementData, null, 2));
     
     try {
         const response = await fetch(`${API_CONFIG.BASE_URL}/inventory-movements`, {
@@ -317,8 +271,6 @@ window.createMovement = async function(movementData) {
             headers: getHeaders(),
             body: JSON.stringify(movementData)
         });
-        
-        console.log('Response status (create movement):', response.status);
         
         if (!response.ok) {
             const errorText = await response.text();
@@ -333,11 +285,9 @@ window.createMovement = async function(movementData) {
         }
         
         const newMovement = await response.json();
-        console.log('Movimentação criada:', newMovement);
         
         showFormAlert('Movimentação registrada com sucesso!', 'success');
-        
-        // Recarregar movimentações e inventário
+
         window.loadMovements();
         if (typeof window.loadInventory === 'function') {
             window.loadInventory();
@@ -374,11 +324,8 @@ function startMovementsAutoReload() {
         );
         
         if (!isMovementsTabActive || !isTyping) {
-            console.log('Auto-recarregando movimentações...');
             window.loadMovements();
-        } else {
-            console.log('Auto-reload pausado (usuário está preenchendo formulário)');
-        }
+        } 
     }, 10000); // 10 segundos
 } 
 
@@ -389,6 +336,5 @@ function stopMovementsAutoReload() {
     }
 }
 
-// Expor funções globalmente
 window.startMovementsAutoReload = startMovementsAutoReload;
 window.stopMovementsAutoReload = stopMovementsAutoReload;

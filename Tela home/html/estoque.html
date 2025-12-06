@@ -86,7 +86,7 @@
                         <div id="adjust-fields" class="conditional-fields">
                             <div style="background: var(--warning-color); padding: 10px; border-radius: var(--border-radius); margin-bottom: 15px; color: var(--dark-color);">
                                 <strong>Ajuste:</strong> Use valores positivos para adicionar ao estoque ou negativos para reduzir.<br>
-                                Exemplo: +1 para adicionar 1 item, -2 para remover 2 itens por dano.
+                                Exemplo: +1 para adicionar 1 item, -2 para remover 2 itens.
                             </div>
                         </div>
 
@@ -109,8 +109,32 @@
             <!-- Aba Produtos -->
             <div id="products-tab" class="tab-content">
                 <h2>Produtos Cadastrados</h2>
-                <div class="action-buttons" style="margin-bottom: var(--spacing-lg);">
+                <div class="products-header">
                     <a href="cadastro_produto.html" class="btn btn-primary">Cadastrar Novo Produto</a>
+                    <div class="products-filters">
+                        <select id="filter-type" class="filter-select">
+                            <option value="">Todos os Tipos</option>
+                            <option value="CARD">Cartas</option>
+                            <option value="BOOSTER_BOX">Booster Box</option>
+                            <option value="ACCESSORY">Acessórios</option>
+                            <option value="OTHER">Outros</option>
+                        </select>
+                        <select id="filter-condition" class="filter-select">
+                            <option value="">Todas as Condições</option>
+                            <option value="MINT">Mint</option>
+                            <option value="LIGHTLY_PLAYED">Lightly Played</option>
+                            <option value="MODERATELY_PLAYED">Moderately Played</option>
+                            <option value="HEAVILY_PLAYED">Heavily Played</option>
+                            <option value="DAMAGED">Damaged</option>
+                            <option value="SEALED">Sealed</option>
+                            <option value="OPENED">Opened</option>
+                            <option value="USED">Used</option>
+                        </select>
+                        <select id="filter-store" class="filter-select">
+                            <option value="">Todas as Lojas</option>
+                        </select>
+                        <input type="text" id="filter-search" class="filter-input" placeholder="Buscar produto...">
+                    </div>
                 </div>
 
                 <div id="products-list" class="products-list-container">
@@ -136,6 +160,130 @@
             <div id="alerts"></div>
         </div>
     </main>
+
+    <!-- Modal de Edição de Produto -->
+    <div id="edit-product-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Editar Produto</h3>
+                <button class="modal-close" onclick="closeEditProductModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="edit-product-form">
+                    <input type="hidden" id="edit-product-id">
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="edit-product-name">Nome do Produto</label>
+                        <input class="form-input" type="text" id="edit-product-name">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="edit-product-description">Descrição</label>
+                        <textarea class="form-input" id="edit-product-description" rows="3"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="edit-product-price">Preço (R$)</label>
+                        <input class="form-input" type="number" id="edit-product-price" step="0.01" min="0">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="edit-product-store">Loja</label>
+                        <select class="form-select" id="edit-product-store">
+                            <option value="">Carregando lojas...</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="edit-product-condition">Condição</label>
+                        <select class="form-select" id="edit-product-condition">
+                            <option value="MINT">Mint</option>
+                            <option value="LIGHTLY_PLAYED">Lightly Played</option>
+                            <option value="MODERATELY_PLAYED">Moderately Played</option>
+                            <option value="HEAVILY_PLAYED">Heavily Played</option>
+                            <option value="DAMAGED">Damaged</option>
+                            <option value="SEALED">Sealed</option>
+                            <option value="OPENED">Opened</option>
+                            <option value="USED">Used</option>
+                        </select>
+                    </div>
+
+                    <div id="edit-card-fields" class="card-edit-fields" style="display: none;">
+                        <h4 style="margin: 15px 0 10px; color: #333; font-size: 0.95em;">Detalhes da Carta</h4>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="edit-card-title">Título</label>
+                            <input class="form-input" type="text" id="edit-card-title">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="edit-card-code">Código</label>
+                            <input class="form-input" type="text" id="edit-card-code">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="edit-card-rarity">Raridade</label>
+                            <input class="form-input" type="text" id="edit-card-rarity">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="edit-card-type">Tipo Pokémon</label>
+                            <input class="form-input" type="text" id="edit-card-type">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="edit-card-nationality">Nacionalidade</label>
+                            <input class="form-input" type="text" id="edit-card-nationality">
+                        </div>
+                    </div>
+
+                    <div id="edit-other-fields" class="other-edit-fields" style="display: none;">
+                        <h4 style="margin: 15px 0 10px; color: #333; font-size: 0.95em;">Detalhes do Produto</h4>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="edit-other-nationality">Nacionalidade</label>
+                            <input class="form-input" type="text" id="edit-other-nationality">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="edit-other-package">Conteúdo da Embalagem</label>
+                            <textarea class="form-input" id="edit-other-package" rows="2"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="edit-other-info">Informações Extras</label>
+                            <textarea class="form-input" id="edit-other-info" rows="2"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" onclick="closeEditProductModal()">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Confirmação de Exclusão -->
+    <div id="delete-product-modal" class="modal">
+        <div class="modal-content modal-small">
+            <div class="modal-header">
+                <h3>Confirmar Exclusão</h3>
+                <button class="modal-close" onclick="closeDeleteProductModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Tem certeza que deseja excluir o produto <strong id="delete-product-name"></strong>?</p>
+                <p style="color: var(--danger-color); font-size: 0.9em; margin-top: 10px;">
+                    <strong>Atenção:</strong> Esta ação não pode ser desfeita.
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeDeleteProductModal()">Cancelar</button>
+                <button class="btn btn-danger" onclick="confirmDeleteProduct()">Excluir Produto</button>
+            </div>
+        </div>
+    </div>
 
     <script src="../js/logout.js"></script>
     <script src="../js/inventory.js"></script>
