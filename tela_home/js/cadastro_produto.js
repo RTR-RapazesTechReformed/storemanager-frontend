@@ -347,10 +347,10 @@ async function calcularPreco() {
   // Loading State
   resultDiv.style.display = "block";
   resultDiv.innerHTML =
-    '<p style="text-align:center; color: #666;">Consultando o oráculo de dados... 🤖</p>';
+    '<p style="text-align:center; color: #666;">Consultando o modelo de precificação...</p>';
 
   try {
-    const response = await fetch("http://localhost:8000/api/predict", {
+    const response = await fetch("/price-model-api/predict", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ raridade: raridade, sub_tipo: subTipo }),
