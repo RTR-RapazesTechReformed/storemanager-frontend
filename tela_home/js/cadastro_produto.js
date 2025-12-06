@@ -352,7 +352,7 @@ async function calcularPreco() {
 
   try {
     // 2. Chamar a API Python (FastAPI)
-    const response = await fetch("http://localhost:8000/api/predict", {
+    const response = await fetch("/price-model-api/predict", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
