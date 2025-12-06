@@ -287,24 +287,19 @@
                     <div class="form-row">
                         <div class="form-group">
                             <label for="card-category">Categoria da Carta <span class="required">*</span></label>
-                            <select id="card-category" name="category" onchange="verificarCategoria()"
-                                style="width: 100%; padding: 8px;">
-                                <option value="">Selecione...</option>
-                                <option value="Pokemon">Pokémon</option>
-                                <option value="Trainer">Treinador</option>
-                                <option value="Energy">Energia</option>
+                            <select id="card-category" name="category" required onchange="verificarCategoria()">
+                                <option value="">Selecione a Categoria</option>
+                                <option value="pokemon">Pokémon</option>
+                                <option value="treinador">Treinador</option>
+                                <option value="energia">Energia</option>
                             </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="card-type">Tipo (Ex: Fogo, Item)</label>
-                            <input type="text" id="card-type" name="pokemon_type" placeholder="Ex: Elétrico">
                         </div>
                     </div>
 
                     <div id="btn-step-container" style="text-align: center; margin: 15px 0; display: none;">
                         <button type="button" onclick="mostrarCamposIA()"
                             style="background-color: #6c757d; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">
-                            ⬇️ Preencher Detalhes da Carta
+                            Pedir ajuda com Precificação para Modelo
                         </button>
                     </div>
 
@@ -324,23 +319,24 @@
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label for="card-rarity">Raridade <span class="required">*</span></label>
-                                <select id="card-rarity" name="rarity" style="width: 100%; padding: 8px;">
-                                    <option value="Common">Comum</option>
-                                    <option value="Uncommon">Incomum</option>
-                                    <option value="Rare">Rara</option>
+                                <label for="card-rarity-ia">Raridade Oficial <span class="required">*</span></label>
+                                <select id="card-rarity-ia" name="rarity" style="width: 100%; padding: 8px;">
+                                    <option value="Common">Common (Comum)</option>
+                                    <option value="Uncommon">Uncommon (Incomum)</option>
+                                    <option value="Rare">Rare (Rara)</option>
                                     <option value="Double Rare">Double Rare</option>
                                     <option value="Ultra Rare">Ultra Rare</option>
                                     <option value="Illustration Rare">Illustration Rare</option>
                                     <option value="Special Illustration Rare">Special Illustration Rare</option>
                                     <option value="Hyper Rare">Hyper Rare</option>
+                                    <option value="ACE SPEC Rare">ACE SPEC Rare</option>
                                 </select>
                             </div>
                         </div>
                         <div class="form-actions" style="text-align: center; margin-top: 15px;">
                             <button type="button" onclick="calcularPreco()"
                                 style="background-color: #ffcb05; color: #3c5aa6; font-weight: bold; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px;">
-                                🔮 Prever Preço com IA
+                                Prever Preço
                             </button>
                         </div>
                     </div>
