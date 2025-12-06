@@ -4,11 +4,11 @@
  */
 
 // ====== CONFIGURAÇÃO DE ENDPOINT DA API ======
-// Para produção/deploy  "/api/dashboard"
+// Para produção/deploy  "/api/store-manager-api/dashboard"
 // Para rodar local, use: "http://localhost:8080"
 
 const CONFIG = {
-  API_BASE_URL: "/api/dashboard",
+  API_BASE_URL: "/api/store-manager-api/dashboard",
   UPDATE_INTERVAL: 30000,
   STORAGE_PREFIX: "dashboard_",
 };
