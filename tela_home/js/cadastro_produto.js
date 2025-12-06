@@ -305,3 +305,97 @@ document.addEventListener("DOMContentLoaded", () => {
     imageInput.addEventListener("change", handleCardImageChange);
   }
 });
+
+// Função chamada quando o usuário muda o Dropdown "Categoria"
+function verificarCategoria() {
+  const categoria = document.getElementById("card-category").value;
+  const btnContainer = document.getElementById("btn-step-container");
+  const areaIA = document.getElementById("ai-setup-area");
+
+  // Se escolheu algo válido (não está vazio)
+  if (categoria !== "") {
+    // Mostra o botão de "Preencher Detalhes"
+    btnContainer.style.display = "block";
+  } else {
+    // Se voltou para "Selecione...", esconde tudo
+    btnContainer.style.display = "none";
+    areaIA.style.display = "none";
+  }
+}
+
+// Função chamada quando clica no botão cinza "Preencher Detalhes"
+function mostrarCamposIA() {
+  const areaIA = document.getElementById("ai-setup-area");
+  const btnContainer = document.getElementById("btn-step-container");
+
+  // Mostra a área da IA
+  areaIA.style.display = "block";
+
+  // Opcional: Esconder o botão que foi clicado para limpar a tela
+  btnContainer.style.display = "none";
+
+  // Animaçãozinha suave (scroll)
+  areaIA.scrollIntoView({ behavior: "smooth" });
+}
+
+// ... mantenha sua função calcularPreco() aqui ...
+async function calcularPreco() {
+  // 1. Pegar os elementos
+  const raridade = document.getElementById("card-rarity").value;
+  const subTipo = document.getElementById("card-subtype").value;
+  const resultDiv = document.getElementById("resultado-ia");
+
+  // Feedback visual que está carregando
+  resultDiv.style.display = "block";
+  resultDiv.innerHTML =
+    '<p style="text-align:center">Consultando a Emma IA... 🤖</p>';
+
+  try {
+    // 2. Chamar a API Python (FastAPI)
+    const response = await fetch("http://localhost:8000/api/predict", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        raridade: raridade,
+        sub_tipo: subTipo,
+      }),
+    });
+
+    // Se a API der erro (ex: raridade desconhecida)
+    if (!response.ok) {
+      const erro = await response.json();
+      alert("Erro na IA: " + erro.detail);
+      resultDiv.style.display = "none"; // Esconde se der erro
+      return;
+    }
+
+    // 3. Mostrar o Resultado Bonitão
+    const data = await response.json();
+
+    // Recria o HTML do resultado com os valores
+    resultDiv.innerHTML = `
+            <h3 style="color: #3c5aa6; margin-top: 0; text-align: center;">💎 Estimativa de Valor</h3>
+            <div style="display: flex; justify-content: space-around; text-align: center; margin-top: 10px;">
+                <div style="padding: 10px; background: #e8f5e9; border-radius: 8px;">
+                    <small style="color: #2e7d32;">Mínimo</small><br>
+                    <span style="color: #2e7d32; font-weight: bold; font-size: 1.2em;">$${data.min_price}</span>
+                </div>
+                <div style="padding: 10px; background: #e3f2fd; border-radius: 8px; transform: scale(1.1); box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                    <small style="color: #1565c0;">Médio</small><br>
+                    <span style="color: #1565c0; font-weight: bold; font-size: 1.4em;">$${data.fair_price}</span>
+                </div>
+                <div style="padding: 10px; background: #ffebee; border-radius: 8px;">
+                    <small style="color: #c62828;">Máximo</small><br>
+                    <span style="color: #c62828; font-weight: bold; font-size: 1.2em;">$${data.max_price}</span>
+                </div>
+            </div>
+            <p style="text-align: center; font-size: 0.8em; color: #666; margin-top: 10px;">Baseado em dados de mercado.</p>
+        `;
+  } catch (error) {
+    console.error("Erro:", error);
+    alert("Erro ao conectar com o servidor. O backend está rodando?");
+    resultDiv.style.display = "none";
+  }
+}
