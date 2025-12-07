@@ -309,23 +309,6 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-// Função chamada quando o usuário muda o Dropdown "Categoria"
-function verificarCategoria() {
-  const categoria = document.getElementById("card-category").value;
-  const btnContainer = document.getElementById("btn-step-container");
-  const areaIA = document.getElementById("ai-setup-area");
-
-  // Se escolheu algo válido (não está vazio)
-  if (categoria !== "") {
-    // Mostra o botão de "Preencher Detalhes"
-    btnContainer.style.display = "block";
-  } else {
-    // Se voltou para "Selecione...", esconde tudo
-    btnContainer.style.display = "none";
-    areaIA.style.display = "none";
-  }
-}
-
 // Função chamada quando clica no botão cinza "Preencher Detalhes"
 function mostrarCamposIA() {
   const areaIA = document.getElementById("ai-setup-area");
