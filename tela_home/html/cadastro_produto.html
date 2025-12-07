@@ -7,116 +7,6 @@
     <title>Cadastrar Produto - StoreManager</title>
     <link rel="stylesheet" href="/css/cadastroProduto.css">
     <link rel="stylesheet" href="/css/estoque.css">
-
-    <style>
-        .card-fields,
-        .other-fields {
-            display: none;
-        }
-
-        .container {
-            max-width: 800px;
-            margin: 50px auto;
-            padding: 20px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-
-        .form-row {
-            display: flex;
-            gap: 20px;
-        }
-
-        .form-row>.form-group {
-            flex: 1;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-
-        input[type="text"],
-        input[type="number"],
-        select,
-        textarea {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-
-        .btn-primary {
-            background-color: #007bff;
-            color: white;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .btn-secondary {
-            background-color: #6c757d;
-            color: white;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 4px;
-            text-decoration: none;
-            display: inline-block;
-        }
-
-        #alerts {
-            margin-top: 20px;
-        }
-
-        .alert {
-            padding: 15px;
-            margin-bottom: 15px;
-            border-radius: 4px;
-        }
-
-        .alert-success {
-            background-color: #d4edda;
-            color: #155724;
-            border-color: #c3e6cb;
-        }
-
-        .alert-error {
-            background-color: #f8d7da;
-            color: #721c24;
-            border-color: #f5c6cb;
-        }
-
-        .card-fields,
-        .other-fields {
-            border: 1px solid #007bff;
-            padding: 15px;
-            margin-top: 20px;
-            border-radius: 5px;
-        }
-
-        .card-fields h3,
-        .other-fields h3 {
-            margin-top: 0;
-            color: #007bff;
-        }
-
-        .required {
-            color: red;
-        }
-
-        .form-actions {
-            margin-top: 20px;
-            display: flex;
-            gap: 10px;
-        }
-    </style>
 </head>
 
 <body>
@@ -236,10 +126,32 @@
                 <!-- CAMPOS EXCLUSIVOS PARA CARTA -->
                 <div id="card-fields" class="card-fields">
                     <h3>Informações da Carta</h3>
+                    <button id="openCamBtn">Abrir Câmera</button>
+                    <div id="cameraBox" style="display:none; position:relative; width:400px;">
+                        <!-- O VÍDEO (ID CORRETO) -->
+                        <video id="video" width="400" autoplay playsinline style="border:1px solid #ccc;"></video>
+                        <!-- OVERLAY DO RECORTE  -->
+                        <br>
+                        <button id="openCamBtn">Capturar</button>
+                        <!-- CANVAS PARA SNAPSHOT REAL (OCULTO) -->
+                        <canvas id="snapshot" width="400" height="300" style="display:none;"></canvas>
+                    </div>
 
-                    <div class="form-group">
-                        <label for="card-image">Imagem da Carta</label>
-                        <input type="file" id="card-image" accept="image/*">
+                    <label>Upload da Imagem da Carta</label>
+                    <div id="cardUploadArea" class="upload-area-small">
+                        <div id="cardUploadText">Clique ou arraste a imagem da carta aqui</div>
+                        <input id="cardFileInput" type="file" accept="image/*" style="display:none;">
+                    </div>
+
+                    <div class="small-preview" id="cardPreviewBlock" style="display:none;">
+                        <!-- apenas a imagem original enviada pelo usuário -->
+                        <img id="cardOriginalPreview" alt="Pré-visualização da Carta" src="" />
+
+                        <div style="margin-top:10px;">
+                            <button type="button" id="cardProcessBtn" class="btn-primary" disabled>Processar
+                                Carta</button>
+                            <span id="cardLoading" class="note hidden"></span>
+                        </div>
                     </div>
 
                     <div class="form-group">
