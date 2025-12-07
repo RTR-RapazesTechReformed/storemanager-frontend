@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cadastro de Lojas - StoreManager</title>
+
+  <link rel="stylesheet" href="/css/estoque.css" />
+  <link rel="stylesheet" href="/css/loja.css" />
+</head>
+
+<body>
+  <header class="main-header">
+    <div class="header-container">
+      <div class="logo-container">
+        <div class="logo-icon">RTR</div>
+        <div class="logo-text">StoreManager</div>
+      </div>
+
+      <nav class="main-navigation">
+        <button class="nav-button" onclick="location.href='gestao_interna.html'">
+          <span class="nav-text">Gestão Interna</span>
+        </button>
+        <button class="nav-button" onclick="location.href='analytics.html'">
+          <span class="nav-text">Analytics</span>
+        </button>
+        <button class="nav-button" onclick="location.href='estoque.html'">
+          <span class="nav-text">Estoque</span>
+        </button>
+        <button class="nav-button active" onclick="location.href='loja.html'">
+          <span class="nav-text">Lojas</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="main-content">
+    <div class="container">
+      <!-- Tabs -->
+      <div class="tabs">
+        <button class="tab active" onclick="showTab('register')">Cadastrar Loja</button>
+        <button class="tab" onclick="showTab('list')">Lojas Cadastradas</button>
+      </div>
+
+      <!-- Aba Cadastro -->
+      <div id="register-tab" class="tab-content active">
+        <h2>Cadastrar Nova Loja</h2>
+
+        <form id="store-form" class="movement-form">
+          <div class="form-group">
+            <label class="form-label" for="store-name">Nome da Loja <span
+                style="color: var(--danger-color);">*</span></label>
+            <input class="form-input" type="text" id="store-name" name="name" required placeholder="Ex: Epic Games" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="store-cep">CEP <span style="color: var(--danger-color);">*</span></label>
+            <input class="form-input" type="text" id="store-cep" name="cep" required placeholder="Ex: 69908002"
+              maxlength="8" />
+            <small style="color: var(--gray-dark); font-size: var(--font-size-sm);">Digite apenas números</small>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="store-number">Número <span
+                style="color: var(--danger-color);">*</span></label>
+            <input class="form-input" type="text" id="store-number" name="number" required placeholder="Ex: 387" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="store-complement">Complemento</label>
+            <input class="form-input" type="text" id="store-complement" name="complement" placeholder="Ex: Bloco C" />
+            <small style="color: var(--gray-dark); font-size: var(--font-size-sm);">Campo opcional</small>
+          </div>
+
+          <button type="submit" class="btn btn-primary">Cadastrar Loja</button>
+        </form>
+      </div>
+
+      <!-- Aba Lista -->
+      <div id="list-tab" class="tab-content">
+        <h2>Lojas Cadastradas</h2>
+
+        <div id="stores-list" class="movements-list">
+          <div class="loading-state">
+            <div class="loading-spinner"></div>
+            Carregando lojas...
+          </div>
+        </div>
+      </div>
+
+      <div id="alerts"></div>
+    </div>
+  </main>
+
+  <!-- Modal para EDITAR loja -->
+  <div id="edit-modal" class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Editar Loja</h2>
+        <button class="modal-close" onclick="closeEditModal()">&times;</button>
+      </div>
+
+      <form id="edit-form" class="movement-form">
+        <div class="form-group">
+          <label class="form-label" for="edit-name">Nome da Loja <span
+              style="color: var(--danger-color);">*</span></label>
+          <input class="form-input" type="text" id="edit-name" name="name" required placeholder="Ex: Epic Games" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="edit-cep">CEP <span style="color: var(--danger-color);">*</span></label>
+          <input class="form-input" type="text" id="edit-cep" name="cep" required placeholder="Ex: 69908002"
+            maxlength="8" />
+          <small style="color: var(--gray-dark); font-size: var(--font-size-sm);">Digite apenas números</small>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="edit-number">Número <span style="color: var(--danger-color);">*</span></label>
+          <input class="form-input" type="text" id="edit-number" name="number" required placeholder="Ex: 387" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="edit-complement">Complemento</label>
+          <input class="form-input" type="text" id="edit-complement" name="complement" placeholder="Ex: Bloco C" />
+          <small style="color: var(--gray-dark); font-size: var(--font-size-sm);">Campo opcional</small>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary" onclick="closeEditModal()">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Confirmar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal para CONFIRMAR exclusão -->
+  <div id="delete-modal" class="modal-overlay confirm-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Confirmar Exclusão</h2>
+        <button class="modal-close" onclick="closeDeleteModal()">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <p>Tem certeza que deseja excluir a loja <span class="store-name" id="delete-store-name"></span>?</p>
+        <p style="color: #6b7280; font-size: 0.9rem; margin-top: 10px;">Esta ação não pode ser desfeita.</p>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn btn-secondary" onclick="closeDeleteModal()">Cancelar</button>
+        <button type="button" class="btn btn-danger" onclick="confirmDelete()">Excluir</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/loja.js"></script>
+</body>
+
+</html>
