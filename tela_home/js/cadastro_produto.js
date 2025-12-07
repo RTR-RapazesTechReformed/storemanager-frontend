@@ -305,3 +305,100 @@ document.addEventListener("DOMContentLoaded", () => {
     imageInput.addEventListener("change", handleCardImageChange);
   }
 });
+
+// Função chamada quando o usuário muda o Dropdown "Categoria"
+function verificarCategoria() {
+  const categoria = document.getElementById("card-category").value;
+  const btnContainer = document.getElementById("btn-step-container");
+  const areaIA = document.getElementById("ai-setup-area");
+
+  // Se escolheu algo válido (não está vazio)
+  if (categoria !== "") {
+    // Mostra o botão de "Preencher Detalhes"
+    btnContainer.style.display = "block";
+  } else {
+    // Se voltou para "Selecione...", esconde tudo
+    btnContainer.style.display = "none";
+    areaIA.style.display = "none";
+  }
+}
+
+// Função chamada quando clica no botão cinza "Preencher Detalhes"
+function mostrarCamposIA() {
+  const areaIA = document.getElementById("ai-setup-area");
+  const btnContainer = document.getElementById("btn-step-container");
+
+  // Mostra a área da IA
+  areaIA.style.display = "block";
+
+  // Opcional: Esconder o botão que foi clicado para limpar a tela
+  btnContainer.style.display = "none";
+
+  // Animaçãozinha suave (scroll)
+  areaIA.scrollIntoView({ behavior: "smooth" });
+}
+
+// 3. Chama o Modelo para prever o preço
+async function calcularPreco() {
+  const raridade = document.getElementById("card-rarity-ia").value;
+  const subTipo = document.getElementById("card-subtype").value;
+  const resultDiv = document.getElementById("resultado-ia");
+
+  // Loading State
+  resultDiv.style.display = "block";
+  resultDiv.innerHTML =
+    '<p style="text-align:center; color: #666;">Consultando o modelo de precificação...</p>';
+
+  try {
+    const response = await fetch("/price-model-api/predict", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ raridade: raridade, sub_tipo: subTipo }),
+    });
+
+    if (!response.ok) {
+      const erro = await response.json();
+      throw new Error(erro.detail || "Erro na API");
+    }
+
+    const data = await response.json();
+
+    // Renderiza o Resultado
+    resultDiv.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 10px;">
+                <h4 style="margin:0; color: #3c5aa6;">Estimativa de Mercado</h4>
+                <small style="color: #999;">Moeda: ${data.currency}</small>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; text-align: center;">
+                <div style="background: #e8f5e9; padding: 10px; border-radius: 8px;">
+                    <span style="display:block; font-size: 0.8em; color: #2e7d32;">Mínimo</span>
+                    <strong style="color: #2e7d32; font-size: 1.1em;">$${data.min_price}</strong>
+                </div>
+                <div style="background: #e3f2fd; padding: 10px; border-radius: 8px; border: 1px solid #90caf9;">
+                    <span style="display:block; font-size: 0.8em; color: #1565c0;">Justo</span>
+                    <strong style="color: #1565c0; font-size: 1.3em;">$${data.fair_price}</strong>
+                </div>
+                <div style="background: #ffebee; padding: 10px; border-radius: 8px;">
+                    <span style="display:block; font-size: 0.8em; color: #c62828;">Máximo</span>
+                    <strong style="color: #c62828; font-size: 1.1em;">$${data.max_price}</strong>
+                </div>
+            </div>
+            <div style="margin-top: 15px; text-align: center;">
+        <button type="button" class="btn-preco-justo" onclick="aplicarPreco(${data.fair_price})">
+            Usar Preço Justo no Formulário
+        </button>
+    </div>
+        `;
+  } catch (error) {
+    resultDiv.innerHTML = `<p style="color: red; text-align: center;">Erro: ${error.message}</p>`;
+  }
+}
+
+// 4. Bônus: Preenche o campo de preço principal automaticamente
+function aplicarPreco(valor) {
+  const inputPreco = document.getElementById("product-price");
+  if (inputPreco) {
+    inputPreco.value = valor.toFixed(2);
+    alert(`Preço de $${valor} aplicado!`);
+  }
+}

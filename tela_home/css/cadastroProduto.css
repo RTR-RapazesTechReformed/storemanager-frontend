@@ -11,6 +11,7 @@ body {
     background-color: #f5f5f5;
     color: #2c3e50;
 }
+
 #card-fields,
 #other-fields,
 #existing-product-id-group {
@@ -23,7 +24,8 @@ body {
     justify-content: space-between;
     align-items: center;
     padding: 20px 30px;
-    background-color: #0a3d62; /* Azul mais escuro */
+    background-color: #0a3d62;
+    /* Azul mais escuro */
     color: #fff;
 }
 
@@ -53,7 +55,7 @@ body {
 }
 
 .main-navigation button:hover {
-    background-color: rgba(255,255,255,0.2);
+    background-color: rgba(255, 255, 255, 0.2);
 }
 
 .main-navigation button.active {
@@ -73,7 +75,7 @@ body {
     background: #fff;
     padding: 20px 25px;
     border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
     margin-bottom: 25px;
 }
 
@@ -91,7 +93,7 @@ body {
     background: #fff;
     padding: 30px;
     border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
 /* FORM GROUP */
@@ -238,4 +240,21 @@ body {
         margin-left: 0;
         margin-top: 5px;
     }
+}
+
+.btn-preco-justo {
+    background: linear-gradient(90deg, #3c5aa6 0%, #2e7d32 100%);
+    color: #fff;
+    border: none;
+    padding: 10px 24px;
+    border-radius: 6px;
+    font-size: 1em;
+    font-weight: bold;
+    box-shadow: 0 2px 8px rgba(60, 90, 166, 0.08);
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.btn-preco-justo:hover {
+    background: linear-gradient(90deg, #2e7d32 0%, #3c5aa6 100%);
 }
