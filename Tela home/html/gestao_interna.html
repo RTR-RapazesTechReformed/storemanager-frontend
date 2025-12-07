@@ -45,21 +45,53 @@
 
         <!-- === KPIs Principais === -->
         <aside class="financial-sidebar">
-            <div class="financial-container sidebar-flex">
-                <div class="financial-box primary-box">
-                    <h4 class="financial-title">Total de Cartas em Estoque</h4>
-                    <div id="company-cash" class="financial-value primary">--</div>
-                </div>
+            <div class="financial-box primary-box">
+                <h4 class="financial-title">Cartas — KPIs do Dia</h4>
 
-                <div class="financial-box success-box">
-                    <h4 class="financial-title">Total de Booster Boxes</h4>
-                    <div id="semester-profit" class="financial-value success">--</div>
-                </div>
+                <div class="kpi-stack">
+                    <div class="kpi-row">
+                        <span class="kpi-label">Total no Sistema:</span>
+                        <span id="kpi-total-cartas" class="kpi-value primary">--</span>
+                    </div>
 
-                <div class="financial-box danger-box">
-                    <h4 class="financial-title">Top Pokémon em Estoque</h4>
-                    <div id="total-debts" class="financial-value danger">--</div>
+                    <div class="kpi-row">
+                        <span class="kpi-label">Vendidas Hoje:</span>
+                        <span id="kpi-vendidas-hoje" class="kpi-value primary">--</span>
+                    </div>
+
+                    <div class="kpi-row">
+                        <span class="kpi-label">Cadastradas Hoje:</span>
+                        <span id="kpi-cadastradas-hoje" class="kpi-value primary">--</span>
+                    </div>
                 </div>
+            </div>
+
+
+            <div class="financial-box success-box">
+                <h4 class="financial-title">KPIs – Booster Boxes</h4>
+
+                <div class="kpi-stack">
+                    <div class="kpi-row">
+                        <span class="kpi-label">Total no Sistema:</span>
+                        <span id="kpi-boxes-total" class="kpi-value success">--</span>
+                    </div>
+
+                    <div class="kpi-row">
+                        <span class="kpi-label">Vendidas Hoje:</span>
+                        <span id="kpi-boxes-vendidas-hoje" class="kpi-value success">--</span>
+                    </div>
+
+                    <div class="kpi-row">
+                        <span class="kpi-label">Cadastradas Hoje:</span>
+                        <span id="kpi-boxes-cadastradas-hoje" class="kpi-value success">--</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="financial-box danger-box">
+                <h4 class="financial-title">Top Pokémon em Estoque</h4>
+                <div id="total-debts" class="financial-value danger">--</div>
+            </div>
             </div>
         </aside>
 
@@ -90,31 +122,31 @@
 
             <!-- Gráfico 2: Aquisições Mensais + Tabela -->
             <div class="chart-card" id="aquisicoesMensais">
-    <div class="chart-header">
-        <h3 class="chart-title">Últimas Aquisições (APEX)</h3>
+                <div class="chart-header">
+                    <h3 class="chart-title">Últimas Aquisições (APEX)</h3>
 
-        <div class="chart-filters">
-            <label>
-                De:
-                <input type="month" id="acq-start-month">
-            </label>
-            <label>
-                Até:
-                <input type="month" id="acq-end-month">
-            </label>
-            <button type="button" id="acq-filter-clear">Limpar</button>
-            <button type="button" id="acq-save">Salvar</button>
-        </div>
-    </div>
+                    <div class="chart-filters">
+                        <label>
+                            De:
+                            <input type="month" id="acq-start-month">
+                        </label>
+                        <label>
+                            Até:
+                            <input type="month" id="acq-end-month">
+                        </label>
+                        <button type="button" id="acq-filter-clear">Limpar</button>
+                        <button type="button" id="acq-save">Salvar</button>
+                    </div>
+                </div>
 
-    <!-- Gráfico -->
-    <canvas id="collectionsChart"></canvas>
+                <!-- Gráfico -->
+                <canvas id="collectionsChart"></canvas>
 
-    <!-- Detalhes (agora com espaço real) -->
-    <div id="acq-details" class="acq-details">
-        <!-- Tabela gerada pelo JS aparece aqui -->
-    </div>
-</div>
+                <!-- Detalhes (agora com espaço real) -->
+                <div id="acq-details" class="acq-details">
+                    <!-- Tabela gerada pelo JS aparece aqui -->
+                </div>
+            </div>
 
             <!-- Gráfico 3: Envelhecimento -->
             <div class="chart-card" id="envelhecimentoEstoque">
@@ -140,4 +172,5 @@
     <script src="../js/gestao.js"></script>
 
 </body>
+
 </html>

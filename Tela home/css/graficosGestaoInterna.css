@@ -360,6 +360,76 @@
     justify-content: center;
     padding: 40px 0;
 }
+.kpi-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    margin-top: 0.6rem;
+}
+
+.kpi-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 1rem;
+}
+
+.kpi-row {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.kpi-card {
+    flex: 1;
+    background: white;
+    padding: 1.4rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    text-align: center;
+}
+
+.kpi-card h3 {
+    font-size: 1rem;
+    margin-bottom: .6rem;
+    color: #555;
+}
+
+.kpi-card p {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: #2563eb;
+}
+
+
+.kpi-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    margin-top: 0.6rem;
+}
+
+.kpi-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 1rem;
+}
+
+.kpi-label {
+    color: #555;
+}
+
+.kpi-value {
+    font-weight: bold;
+}
+
+
+.kpi-label {
+    color: #555;
+}
+
+.kpi-value {
+    font-weight: bold;
+}
 
 .content-area {
     width: 1400px;
