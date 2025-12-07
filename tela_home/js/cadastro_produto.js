@@ -247,6 +247,9 @@ function clearForm() {
   }
 }
 
+const SCANNER_API_URL = "/scanner-api/upload"; // Para produção
+// const SCANNER_API_URL = "http://localhost:5000/upload"; // Para local
+
 async function scanCardImage(file) {
   const formData = new FormData();
   formData.append("file", file);
@@ -438,15 +441,6 @@ const cardUploadArea = document.getElementById("cardUploadArea"); // se ainda us
 const frameBox = document.getElementById("frame-box"); // o div overlay que já colocou
 const snapshotCanvas = document.getElementById("snapshot");
 let streamRef = null;
-
-// REMOVER
-
-if (!video) {
-  alert("Elemento de vídeo não encontrado!");
-}
-if (!frameBox) {
-  alert("Overlay de recorte (frame-box) não encontrado!");
-}
 
 /* ===== Inicia câmera ===== */
 async function startCamera() {
@@ -686,7 +680,7 @@ async function processCardImage() {
   form.append("file", cardFile);
 
   try {
-    const res = await fetch("/upload", { method: "POST", body: form });
+    const res = await fetch(SCANNER_API_URL, { method: "POST", body: form });
     if (!res.ok) {
       const txt = await res.text();
       throw new Error(`Erro servidor ${res.status}: ${txt}`);
