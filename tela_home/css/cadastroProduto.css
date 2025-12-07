@@ -440,3 +440,37 @@ textarea {
     font-weight: bold;
     color: #0a3d62;
 }
+
+/* TOOLTIP */
+.tooltip-info {
+    position: relative;
+    cursor: pointer;
+    margin-left: 6px;
+    display: inline-block;
+}
+
+.tooltip-info .tooltip-text {
+    visibility: hidden;
+    width: 220px;
+    background: #3c5aa6;
+    color: #fff;
+    text-align: left;
+    border-radius: 6px;
+    padding: 8px 12px;
+    position: absolute;
+    z-index: 10;
+    bottom: 125%;
+    /* acima do ícone */
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0;
+    transition: opacity 0.2s;
+    font-size: 0.95em;
+    box-shadow: 0 2px 8px rgba(60, 90, 166, 0.08);
+}
+
+.tooltip-info:hover .tooltip-text,
+.tooltip-info:focus .tooltip-text {
+    visibility: visible;
+    opacity: 1;
+}
