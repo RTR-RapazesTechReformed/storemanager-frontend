@@ -427,6 +427,7 @@ const cardUploadText = document.getElementById("cardUploadText");
 const camBox = document.getElementById("cameraBox");
 const canvas = document.getElementById("canvas");
 const openCamBtn = document.getElementById("openCamBtn");
+const captureBtn = document.getElementById("captureBtn");
 
 /* ===== CONFIG ===== */
 const CROP_FRAC = { xs: 0.09, ys: 0.93, xe: 0.22, ye: 0.97 }; // use seus valores
@@ -437,6 +438,15 @@ const cardUploadArea = document.getElementById("cardUploadArea"); // se ainda us
 const frameBox = document.getElementById("frame-box"); // o div overlay que já colocou
 const snapshotCanvas = document.getElementById("snapshot");
 let streamRef = null;
+
+// REMOVER
+
+if (!video) {
+  alert("Elemento de vídeo não encontrado!");
+}
+if (!frameBox) {
+  alert("Overlay de recorte (frame-box) não encontrado!");
+}
 
 /* ===== Inicia câmera ===== */
 async function startCamera() {
@@ -589,6 +599,12 @@ openCamBtn.onclick = async () => {
   });
 
   video.srcObject = stream;
+};
+
+captureBtn.onclick = () => {
+  snapshotCanvas
+    .getContext("2d")
+    .drawImage(video, 0, 0, snapshotCanvas.width, snapshotCanvas.height);
 };
 
 let cardFile = null;
