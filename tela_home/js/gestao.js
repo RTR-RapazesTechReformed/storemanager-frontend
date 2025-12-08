@@ -362,9 +362,11 @@ class DashboardManager {
 
         const sortedMonths = [...months].sort();
 
+        // ⭐ CORRIGIDO: Formatar meses corretamente
         const labels = sortedMonths.map(m => {
-            const d = new Date(m + "-01");
-            return d.toLocaleDateString("pt-BR", {
+            const [year, month] = m.split('-');
+            const date = new Date(year, parseInt(month) - 1, 1);
+            return date.toLocaleDateString("pt-BR", {
                 month: "short",
                 year: "2-digit"
             });
@@ -451,65 +453,156 @@ class DashboardManager {
         this.charts.investmentChart?.destroy();
 
         if (list.length === 0) {
-            this.charts.investmentChart = null;
-            return;
+          this.charts.investmentChart = null;
+          return;
         }
 
         const monthTotals = {};
 
         list.forEach(i => {
-            const m = this.normalizeYM(i.month);
-            if (!m) return;
+          const m = this.normalizeYM(i.month);
+          if (!m) return;
 
-            const totalInvested = Number(i.totalInvested ?? i.total_invested ?? 0);
-            monthTotals[m] = (monthTotals[m] ?? 0) + totalInvested;
+          const totalInvested = Number(i.totalInvested ?? i.total_invested ?? 0);
+          monthTotals[m] = (monthTotals[m] ?? 0) + totalInvested;
         });
 
         const sortedMonths = Object.keys(monthTotals).sort();
 
+        // ⭐ CORRIGIDO: Formatar meses corretamente
         const labels = sortedMonths.map(m => {
-            const d = new Date(m + "-01");
-            return d.toLocaleDateString("pt-BR", {
-                month: "short",
-                year: "2-digit"
-            });
+          const [year, month] = m.split('-');
+          const date = new Date(year, parseInt(month) - 1, 1);
+          return date.toLocaleDateString("pt-BR", {
+            month: "short",
+            year: "2-digit",
+          });
         });
 
+        // ⭐ NOVO: Renderizar tabela de investimentos por mês
+        this.renderInvestmentByMonthTable(list, sortedMonths);
+
         this.charts.investmentChart = new Chart(canvas.getContext("2d"), {
-            type: "bar",
-            data: {
-                labels,
-                datasets: [{
-                    label: "Investimento Total em Estoque (R$)",
-                    data: sortedMonths.map(m => monthTotals[m]),
-                    backgroundColor: "#52C41A",
-                    borderColor: "#3d8b13",
-                    borderWidth: 1,
-                    borderRadius: 4
-                }]
+          type: "bar",
+          data: {
+            labels,
+            datasets: [{
+              label: "Investimento Total em Estoque (R$)",
+              data: sortedMonths.map(m => monthTotals[m]),
+              backgroundColor: "#52C41A",
+              borderColor: "#3d8b13",
+              borderWidth: 1,
+              borderRadius: 4
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                display: true,
+                position: "top"
+              }
             },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        display: true,
-                        position: "top"
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            callback: (value) => {
-                                return "R$ " + value.toLocaleString("pt-BR", { maximumFractionDigits: 0 });
-                            }
-                        }
-                    }
+            scales: {
+              y: {
+                beginAtZero: true,
+                ticks: {
+                  callback: (value) => {
+                    return "R$ " + value.toLocaleString("pt-BR", { maximumFractionDigits: 0 });
+                  }
                 }
+              }
             }
+          }
         });
-    }
+      }
+
+      // ⭐ NOVO: Renderizar tabela de investimentos por mês
+      renderInvestmentByMonthTable(list, sortedMonths) {
+        let summaryContainer = document.getElementById("investment-by-month-table");
+        
+        // Se não existir, criar o container
+        if (!summaryContainer) {
+          const chartCard = document.querySelector("#investmentChart").closest(".chart-card");
+          summaryContainer = document.createElement("div");
+          summaryContainer.id = "investment-by-month-table";
+          summaryContainer.style.marginTop = "30px";
+          chartCard.appendChild(summaryContainer);
+        }
+
+        // Agrupar produtos por mês
+        const productsByMonth = {};
+        
+        sortedMonths.forEach(month => {
+          productsByMonth[month] = normalizeList(list).filter(item => {
+            const itemMonth = this.normalizeYM(item.month);
+            return itemMonth === month;
+          });
+        });
+
+        // Construir HTML
+        let html = '<div style="padding: 10px 0;">';
+        
+        sortedMonths.forEach(month => {
+          // ⭐ CORRIGIDO: Formatar mês corretamente
+          const [year, monthNum] = month.split('-');
+          const monthDate = new Date(year, parseInt(monthNum) - 1, 1);
+          const monthLabel = monthDate.toLocaleDateString("pt-BR", {
+            month: "long",
+            year: "numeric"
+          }).charAt(0).toUpperCase() + monthDate.toLocaleDateString("pt-BR", {
+            month: "long",
+            year: "numeric"
+          }).slice(1);
+
+          const products = productsByMonth[month];
+          const totalMonthly = products.reduce((sum, p) => sum + Number(p.totalInvested ?? p.total_invested ?? 0), 0);
+
+          html += `
+            <div style="margin-bottom: 25px; border: 1px solid #e0e0e0; border-radius: 6px; padding: 15px; background: #fafafa;">
+              <h4 style="margin: 0 0 12px 0; color: #222; font-size: 14px; font-weight: 600;">
+                ${monthLabel}
+                <span style="float: right; color: #52C41A; font-weight: 700;">
+                  Total: R$ ${totalMonthly.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
+                </span>
+              </h4>
+              <div style="clear: both;"></div>
+          `;
+
+          if (products.length === 0) {
+            html += '<p style="color: #999; font-size: 12px; margin: 8px 0;">Nenhum produto inserido</p>';
+          } else {
+            html += '<ul style="list-style: none; padding: 0; margin: 0;">';
+            products.forEach(product => {
+              const productName = product.product_name ?? product.productName ?? "Produto desconhecido";
+              const quantity = Number(product.quantity ?? 0);
+              const totalPrice = Number(product.totalInvested ?? product.total_invested ?? 0);
+              
+              const quantityDisplay = quantity > 0 ? `<span style="color: #999; margin-left: 8px;">(${quantity} un.)</span>` : '';
+              
+              html += `
+                <li style="padding: 8px 0; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center; font-size: 13px;">
+                  <span style="flex: 1;">
+                    <strong style="color: #333;">${productName}</strong>
+                    ${quantityDisplay}
+                  </span>
+                  <span style="color: #52C41A; font-weight: 600; white-space: nowrap; margin-left: 10px;">
+                    R$ ${totalPrice.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
+                  </span>
+                </li>
+              `;
+            });
+            html += '</ul>';
+          }
+
+          html += '</div>';
+        });
+
+        html += '</div>';
+
+        summaryContainer.innerHTML = html;
+      }
 
     // ======================================================
     // AQUISIÇÕES / INVESTIMENTOS

@@ -37,8 +37,8 @@
     </header>
 
     <!-- Conteúdo principal -->
-    <main class="main-container">
-        <div class="analytics-column">
+    <main class="analytics-main">
+        <div class="analytics-container">
 
             <!-- CARD 1 - Distribuição -->
             <div class="chart-card">
@@ -48,6 +48,14 @@
                     <label>Data:</label>
                     <input type="date" id="inventory-date">
                     <button id="inventory-today-btn" class="filter-btn">Hoje</button>
+
+                    <!-- ⭐ NOVO: Botões de visualização -->
+                    <div style="margin-left: auto; display: flex; gap: 8px;">
+                        <button id="chart-type-doughnut" class="chart-type-btn" data-type="doughnut" title="Rosca">⬤
+                            Rosca</button>
+                        <button id="chart-type-bar" class="chart-type-btn active" data-type="bar" title="Barras">📊 Barras</button>
+                        <button id="chart-type-pie" class="chart-type-btn" data-type="pie" title="Pizza">🥧 Pizza</button>
+                    </div>
                 </div>
 
                 <div class="chart-card-body">
@@ -58,12 +66,6 @@
             <!-- CARD 2 - Top Vendas -->
             <div class="chart-card">
                 <h2 class="chart-title">Top Produtos Mais Vendidos</h2>
-
-                <div class="filter-row">
-                    <input type="date" id="sales-start-date">
-                    <input type="date" id="sales-end-date">
-                    <button id="sales-filter-btn" class="filter-btn">Filtrar</button>
-                </div>
 
                 <table class="table-vendas" id="topSellingCardsTable">
                     <thead>
@@ -85,6 +87,13 @@
                     <label>Fim:</label>
                     <input type="date" id="profit-end-date">
                     <button id="profit-filter-btn" class="filter-btn">Filtrar</button>
+
+                    <!-- ⭐ NOVO: Botões de visualização -->
+                    <div style="margin-left: auto; display: flex; gap: 8px;">
+                        <button id="chart-type-profit-bar" class="chart-type-btn active" data-type="bar" title="Barras">📊 Barras</button>
+                        <button id="chart-type-profit-doughnut" class="chart-type-btn" data-type="doughnut" title="Rosca">⬭ Rosca</button>
+                        <button id="chart-type-profit-pie" class="chart-type-btn" data-type="pie" title="Pizza">🥧 Pizza</button>
+                    </div>
                 </div>
                 <div class="chart-card-body">
                     <canvas id="profitChart"></canvas>
@@ -128,10 +137,6 @@
             </div>
 
         </div>
-    </main>
-
-    </main>
-
     </main>
 
     <script src="../js/analytics.js"></script>
