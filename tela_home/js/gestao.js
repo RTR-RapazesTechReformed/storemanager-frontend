@@ -56,7 +56,6 @@ class DashboardAPI {
         return this.fetchJSON(`${CONFIG.API_BASE_URL}/top-pokemon-by-stock`);
     }
 
-    // ⚠️ NOVO ENDPOINT
     static getMonthlyInvestments() {
         return this.fetchJSON(`${CONFIG.API_BASE_URL}/monthly-investments`);
     }
@@ -82,6 +81,8 @@ class DashboardManager {
         this.charts = {};
         this.salesOverviewRaw = [];
         this.monthlyInvestmentsRaw = [];
+        this.selectedSalesProducts = new Set();
+        this.maxProductsInChart = 8;
         this.init();
     }
 
@@ -90,7 +91,9 @@ class DashboardManager {
     // -------------------------
     async init() {
         this.registerSalesFilters();
+        this.registerInvestmentFilters();
         this.registerAcquisitionsFilters();
+        this.registerProductSelectors();
 
         this.applyDefaultMonthRange();
 
@@ -103,10 +106,11 @@ class DashboardManager {
     // ======================================================
     getLastFiveMonthsRange() {
         const endDate = new Date();
-        endDate.setDate(1);
+        // ⭐ CORRIGIDO: Usar o mês atual, não o primeiro dia
         const end = endDate.toISOString().slice(0, 7);
 
         const startDate = new Date(endDate);
+        // ⭐ CORRIGIDO: Subtrair 4 meses para obter 5 meses no total (atual + 4 anteriores)
         startDate.setMonth(startDate.getMonth() - 4);
         const start = startDate.toISOString().slice(0, 7);
 
@@ -119,6 +123,8 @@ class DashboardManager {
         const ids = [
             ["sales-start-month", start],
             ["sales-end-month", end],
+            ["inv-start-month", start],
+            ["inv-end-month", end],
             ["acq-start-month", start],
             ["acq-end-month", end]
         ];
@@ -177,7 +183,8 @@ class DashboardManager {
             });
 
             this.updateSalesChart(this.getFilteredSalesOverview());
-            this.updateAcquisitionsChart(this.getFilteredMonthlyInvestments());
+            this.updateInvestmentChart(this.getFilteredMonthlyInvestments());
+            this.updateAcquisitionsChart(normalizeList(stockAging)); // ⭐ CORRIGIDO: Usar stockAging diretamente
 
         } catch (err) {
             console.error("Erro ao carregar dados iniciais:", err);
@@ -192,12 +199,10 @@ class DashboardManager {
     }
 
     updateKPIs({ cartasKpis, boostersKpis, topPokemon, topCardKpi, topCollectionKpi }) {
-
         const map = [
             ["kpi-total-cartas", cartasKpis?.total],
             ["kpi-vendidas-hoje", cartasKpis?.vendidasHoje],
             ["kpi-cadastradas-hoje", cartasKpis?.cadastradasHoje],
-
             ["kpi-boxes-total", boostersKpis?.total],
             ["kpi-boxes-vendidas-hoje", boostersKpis?.vendidasHoje],
             ["kpi-boxes-cadastradas-hoje", boostersKpis?.cadastradasHoje],
@@ -208,31 +213,24 @@ class DashboardManager {
             if (el) el.textContent = this.sanitizeKpiValue(value);
         });
 
-        // TOP CARD
         if (topCardKpi) {
             document.getElementById("kpi-topcard-nome").textContent =
                 this.sanitizeKpiValue(topCardKpi.nome_carta ?? topCardKpi.nomeCarta);
-
             document.getElementById("kpi-topcard-qtd").textContent =
                 this.sanitizeKpiValue(topCardKpi.quantidade_atual ?? topCardKpi.quantidadeAtual);
-
             document.getElementById("kpi-topcard-vendas").textContent =
                 this.sanitizeKpiValue(topCardKpi.vendas_ultimo_mes ?? topCardKpi.vendasUltimoMes);
         }
 
-        // TOP COLEÇÃO  ⭐⭐⭐ AQUI AGORA FUNCIONA PERFEITO ⭐⭐⭐
         if (topCollectionKpi) {
             document.getElementById("kpi-colecao-nome").textContent =
                 this.sanitizeKpiValue(topCollectionKpi.colecao ?? topCollectionKpi.nomeColecao);
-
             document.getElementById("kpi-colecao-vendas").textContent =
                 this.sanitizeKpiValue(topCollectionKpi.vendidas_ultimo_mes ?? topCollectionKpi.vendasUltimoMes);
-
             document.getElementById("kpi-colecao-estoque").textContent =
                 this.sanitizeKpiValue(topCollectionKpi.estoque_atual ?? topCollectionKpi.estoqueAtual);
         }
 
-        // TOP POKEMON
         const topName =
             topPokemon?.pokemonName ??
             topPokemon?.productName ??
@@ -280,6 +278,60 @@ class DashboardManager {
         });
     }
 
+    // ======================================================
+    // ⭐ NOVO: PRODUCT SELECTION CONTROL
+    // ======================================================
+    registerProductSelectors() {
+        document.getElementById("sales-product-clear")?.addEventListener("click", () => {
+            this.selectedSalesProducts.clear();
+            this.updateProductSelector();
+            this.updateSalesChart(this.getFilteredSalesOverview());
+        });
+    }
+
+    updateProductSelector() {
+        const container = document.getElementById("products-list-container");
+        const countSpan = document.getElementById("products-count");
+        
+        if (!container) return;
+
+        const allProducts = [...new Set(
+            normalizeList(this.salesOverviewRaw).map(i => i.product_name ?? i.productName)
+        )].sort();
+
+        container.innerHTML = "";
+
+        allProducts.forEach(product => {
+            const isSelected = this.selectedSalesProducts.has(product);
+            
+            const btn = document.createElement("button");
+            btn.type = "button";
+            btn.className = `product-button ${isSelected ? "active" : "inactive"}`;
+            btn.textContent = product;
+            btn.title = product;
+
+            btn.addEventListener("click", () => {
+                if (isSelected) {
+                    this.selectedSalesProducts.delete(product);
+                } else {
+                    if (this.selectedSalesProducts.size < this.maxProductsInChart) {
+                        this.selectedSalesProducts.add(product);
+                    } else {
+                        alert(`Máximo de ${this.maxProductsInChart} produtos permitidos`);
+                        return;
+                    }
+                }
+
+                this.updateProductSelector();
+                this.updateSalesChart(this.getFilteredSalesOverview());
+            });
+
+            container.appendChild(btn);
+        });
+
+        countSpan.textContent = this.selectedSalesProducts.size;
+    }
+
     updateSalesChart(list) {
         const canvas = document.getElementById("salesChart");
         if (!canvas) return;
@@ -318,43 +370,68 @@ class DashboardManager {
             });
         });
 
-        const colors = ["#20B2AA", "#FF6F61", "#4D96FF", "#FFD700", "#6A5ACD", "#32CD32"];
+        const colors = ["#20B2AA", "#FF6F61", "#4D96FF", "#FFD700", "#6A5ACD", "#32CD32", "#FF8C00", "#DC143C"];
 
-        const datasets = [...productMap.entries()].map(([name, vals], i) => ({
-            label: name,
-            data: sortedMonths.map(m => vals[m] ?? 0),
-            borderColor: colors[i % colors.length],
-            backgroundColor: colors[i % colors.length],
-            fill: false,
-            tension: 0.3
-        }));
+        let productsToShow = [...productMap.keys()];
+
+        if (this.selectedSalesProducts.size > 0) {
+            productsToShow = productsToShow.filter(p => this.selectedSalesProducts.has(p));
+        } else {
+            productsToShow = productsToShow.slice(0, this.maxProductsInChart);
+        }
+
+        const datasets = productsToShow.map((name, i) => {
+            const vals = productMap.get(name) || {};
+            return {
+                label: name,
+                data: sortedMonths.map(m => vals[m] ?? 0),
+                borderColor: colors[i % colors.length],
+                backgroundColor: colors[i % colors.length],
+                fill: false,
+                tension: 0.3,
+                borderWidth: 2,
+                pointRadius: 4,
+                pointHoverRadius: 6
+            };
+        });
 
         this.charts.salesChart = new Chart(canvas.getContext("2d"), {
             type: "line",
             data: { labels, datasets },
-            options: { responsive: true }
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: "top"
+                    }
+                }
+            }
         });
+
+        this.updateProductSelector();
     }
 
     // ======================================================
-    // AQUISIÇÕES / INVESTIMENTOS
+    // INVESTIMENTO TOTAL POR MÊS
     // ======================================================
-    registerAcquisitionsFilters() {
+    registerInvestmentFilters() {
         const refresh = () =>
-            this.updateAcquisitionsChart(this.getFilteredMonthlyInvestments());
+            this.updateInvestmentChart(this.getFilteredMonthlyInvestments());
 
-        document.getElementById("acq-start-month")?.addEventListener("change", refresh);
-        document.getElementById("acq-end-month")?.addEventListener("change", refresh);
+        document.getElementById("inv-start-month")?.addEventListener("change", refresh);
+        document.getElementById("inv-end-month")?.addEventListener("change", refresh);
 
-        document.getElementById("acq-filter-clear")?.addEventListener("click", () => {
+        document.getElementById("inv-filter-clear")?.addEventListener("click", () => {
             this.applyDefaultMonthRange();
             refresh();
         });
     }
 
     getFilteredMonthlyInvestments() {
-        const start = this.normalizeYM(document.getElementById("acq-start-month")?.value);
-        const end = this.normalizeYM(document.getElementById("acq-end-month")?.value);
+        const start = this.normalizeYM(document.getElementById("inv-start-month")?.value);
+        const end = this.normalizeYM(document.getElementById("inv-end-month")?.value);
 
         return normalizeList(this.monthlyInvestmentsRaw).filter(i => {
             const m = this.normalizeYM(i.month);
@@ -365,31 +442,32 @@ class DashboardManager {
         });
     }
 
-    updateAcquisitionsChart(list) {
-        const canvas = document.getElementById("collectionsChart");
+    updateInvestmentChart(list) {
+        const canvas = document.getElementById("investmentChart");
         if (!canvas) return;
 
         list = normalizeList(list);
 
-        this.charts.collectionsChart?.destroy();
+        this.charts.investmentChart?.destroy();
 
         if (list.length === 0) {
-            this.charts.collectionsChart = null;
+            this.charts.investmentChart = null;
             return;
         }
 
-        const totals = {};
+        const monthTotals = {};
+
         list.forEach(i => {
             const m = this.normalizeYM(i.month);
             if (!m) return;
 
-            const val = Number(i.totalInvested ?? i.total_invested ?? 0);
-            totals[m] = (totals[m] ?? 0) + val;
+            const totalInvested = Number(i.totalInvested ?? i.total_invested ?? 0);
+            monthTotals[m] = (monthTotals[m] ?? 0) + totalInvested;
         });
 
-        const sorted = Object.keys(totals).sort();
+        const sortedMonths = Object.keys(monthTotals).sort();
 
-        const labels = sorted.map(m => {
+        const labels = sortedMonths.map(m => {
             const d = new Date(m + "-01");
             return d.toLocaleDateString("pt-BR", {
                 month: "short",
@@ -397,17 +475,143 @@ class DashboardManager {
             });
         });
 
-        this.charts.collectionsChart = new Chart(canvas.getContext("2d"), {
+        this.charts.investmentChart = new Chart(canvas.getContext("2d"), {
             type: "bar",
             data: {
                 labels,
                 datasets: [{
-                    label: "Total investido em estoque (R$)",
-                    data: sorted.map(m => totals[m]),
-                    backgroundColor: "#4D96FF"
+                    label: "Investimento Total em Estoque (R$)",
+                    data: sortedMonths.map(m => monthTotals[m]),
+                    backgroundColor: "#52C41A",
+                    borderColor: "#3d8b13",
+                    borderWidth: 1,
+                    borderRadius: 4
                 }]
             },
-            options: { responsive: true }
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: "top"
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: (value) => {
+                                return "R$ " + value.toLocaleString("pt-BR", { maximumFractionDigits: 0 });
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // ======================================================
+    // AQUISIÇÕES / INVESTIMENTOS
+    // ======================================================
+    registerAcquisitionsFilters() {
+        // ⭐ REMOVIDO: Não precisa de filtros de data para produtos envelhecendo
+        // Os dados são exibidos em tempo real
+    }
+
+    getFilteredAcquisitionsByProducts() {
+        // ⭐ REMOVIDO: Não precisa filtrar por data
+        return normalizeList(this.salesOverviewRaw);
+    }
+
+    updateAcquisitionsChart(list) {
+        const detailsContainer = document.getElementById("acq-details");
+        if (!detailsContainer) return;
+
+        list = normalizeList(list);
+
+        if (list.length === 0) {
+            detailsContainer.innerHTML = "<p>Nenhum produto envelhecendo encontrado.</p>";
+            return;
+        }
+
+        // ⭐ NOVO: Renderizar lista de produtos envelhecendo
+        this.renderAgedProductsList(list, detailsContainer);
+    }
+
+    // ⭐ NOVO: Renderizar lista de produtos envelhecendo
+    renderAgedProductsList(list, container) {
+        if (!container) return;
+
+        container.innerHTML = "";
+
+        // ⭐ CORRIGIDO: Filtrar produtos com quantidade > 0, preço >= 0 E dias em estoque > 0
+        const validProducts = normalizeList(list).filter(product => {
+            const quantity = product.current_quantity ?? 0;
+            const price = product.current_price ?? 0;
+            const daysInStock = product.days_in_stock ?? 0;
+            return quantity > 0 && price >= 0 && daysInStock > 0;
+        });
+
+        if (validProducts.length === 0) {
+            container.innerHTML = "<p style='padding: 20px; text-align: center; color: #666;'>Nenhum produto envelhecendo encontrado.</p>";
+            return;
+        }
+
+        // Ordenar por dias em estoque (maior primeiro)
+        const sortedList = [...validProducts].sort((a, b) => 
+            (b.days_in_stock ?? 0) - (a.days_in_stock ?? 0)
+        );
+
+        sortedList.forEach((product, index) => {
+            const daysInStock = product.days_in_stock ?? 0;
+            const productName = product.product_name ?? "Produto desconhecido";
+            const quantity = product.current_quantity ?? 0;
+            const price = product.current_price ?? 0;
+            const condition = product.condition_name ?? "---";
+            const createdAt = product.product_created_at ? new Date(product.product_created_at).toLocaleDateString("pt-BR") : "---";
+            const lastMovement = product.last_movement_date ? new Date(product.last_movement_date).toLocaleDateString("pt-BR") : "---";
+
+            // ⭐ Determinar cor baseada em dias em estoque
+            let urgencyClass = "aged-low";
+            if (daysInStock > 180) urgencyClass = "aged-critical";
+            else if (daysInStock > 120) urgencyClass = "aged-high";
+            else if (daysInStock > 60) urgencyClass = "aged-medium";
+
+            const productItem = document.createElement("div");
+            productItem.className = `aged-product-item ${urgencyClass}`;
+            productItem.innerHTML = `
+                <div class="aged-product-header">
+                    <div class="aged-product-rank">#${index + 1}</div>
+                    <div class="aged-product-name">${productName}</div>
+                    <div class="aged-days-badge">${daysInStock} dias</div>
+                </div>
+                
+                <div class="aged-product-details">
+                    <div class="aged-detail-row">
+                        <span class="aged-label">Condição:</span>
+                        <span class="aged-value">${condition}</span>
+                    </div>
+                    <div class="aged-detail-row">
+                        <span class="aged-label">Estoque Atual:</span>
+                        <span class="aged-value">${quantity} un.</span>
+                    </div>
+                    <div class="aged-detail-row">
+                        <span class="aged-label">Preço:</span>
+                        <span class="aged-value">R$ ${price.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</span>
+                    </div>
+                    <div class="aged-detail-row">
+                        <span class="aged-label">Cadastrado em:</span>
+                        <span class="aged-value">${createdAt}</span>
+                    </div>
+                    <div class="aged-detail-row">
+                        <span class="aged-label">Último movimento:</span>
+                        <span class="aged-value">${lastMovement}</span>
+                    </div>
+                </div>
+            `;
+
+            container.appendChild(productItem);
         });
     }
 
@@ -454,20 +658,74 @@ class DashboardManager {
         list = normalizeList(list);
 
         if (list.length === 0) {
-            container.innerHTML = "<p>Nenhuma carta encontrada.</p>";
+            container.innerHTML = "<p>Nenhum produto encontrado.</p>";
             return;
         }
 
-        list.forEach((c, i) => {
-            const div = document.createElement("div");
-            div.className = "card-item";
-            div.innerHTML = `
-                <span>#${i + 1}</span>
-                <span>${c.product_name ?? c.productName ?? "---"}</span>
-                <span>Avg: ${this.formatCurrency(c.avg_sale_price ?? c.avgSalePrice ?? 0)}</span>
-                <span>Atual: ${this.formatCurrency(c.current_sale_price ?? c.currentSalePrice ?? 0)}</span>
+        list.forEach((product, i) => {
+            const productName = product.product_name ?? product.productName ?? "---";
+            const description = product.product_description ?? "---";
+            const currentPrice = Number(product.current_sale_price ?? 0);
+            const avgPrice = Number(product.avg_sale_price ?? 0);
+            const maxPrice = Number(product.max_sale_price ?? 0);
+            const minPrice = Number(product.min_sale_price ?? 0);
+            const currentStock = Number(product.current_stock ?? 0);
+            const percentageChange = Number(product.percentage_change ?? 0);
+            const lastSale = product.last_sale ? new Date(product.last_sale).toLocaleDateString("pt-BR") : "---";
+            const differenceFromAvg = Number(product.difference_from_avg ?? 0);
+
+            // Determinar cor baseada na variação de preço
+            let priceChangeClass = "price-neutral";
+            if (percentageChange > 5) priceChangeClass = "price-up";
+            else if (percentageChange < -5) priceChangeClass = "price-down";
+
+            const productItem = document.createElement("div");
+            productItem.className = `valued-product-item ${priceChangeClass}`;
+            productItem.innerHTML = `
+                <div class="valued-product-header">
+                    <div class="valued-product-rank">#${i + 1}</div>
+                    <div class="valued-product-name">${productName}</div>
+                    <div class="valued-price-current">R$ ${currentPrice.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</div>
+                </div>
+
+                <div class="valued-product-description">
+                    ${description}
+                </div>
+
+                <div class="valued-product-details">
+                    <div class="valued-detail-group">
+                        <div class="valued-detail-row">
+                            <span class="valued-label">Preço Médio:</span>
+                            <span class="valued-value">R$ ${avgPrice.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</span>
+                        </div>
+                        <div class="valued-detail-row">
+                            <span class="valued-label">Variação:</span>
+                            <span class="valued-value ${percentageChange > 0 ? 'positive' : percentageChange < 0 ? 'negative' : ''}">${percentageChange > 0 ? '+' : ''}${percentageChange.toFixed(2)}%</span>
+                        </div>
+                        <div class="valued-detail-row">
+                            <span class="valued-label">Diferença do Avg:</span>
+                            <span class="valued-value">R$ ${differenceFromAvg.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</span>
+                        </div>
+                    </div>
+
+                    <div class="valued-detail-group">
+                        <div class="valued-detail-row">
+                            <span class="valued-label">Min/Máx:</span>
+                            <span class="valued-value">R$ ${minPrice.toLocaleString("pt-BR", { minimumFractionDigits: 2 })} / R$ ${maxPrice.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</span>
+                        </div>
+                        <div class="valued-detail-row">
+                            <span class="valued-label">Estoque:</span>
+                            <span class="valued-value">${currentStock} un.</span>
+                        </div>
+                        <div class="valued-detail-row">
+                            <span class="valued-label">Última Venda:</span>
+                            <span class="valued-value">${lastSale}</span>
+                        </div>
+                    </div>
+                </div>
             `;
-            container.appendChild(div);
+
+            container.appendChild(productItem);
         });
     }
 
