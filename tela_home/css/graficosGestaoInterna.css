@@ -13,6 +13,17 @@
   overflow: hidden;
 }
 
+.info-box {
+    background-color: #e8f3ff;
+    border-left: 4px solid #4d96ff;
+}
+
+.kpi-value.info {
+    color: #2266dd;
+    font-weight: 600;
+}
+
+
 /* Header do card com título + filtros */
 .chart-header {
   display: flex;

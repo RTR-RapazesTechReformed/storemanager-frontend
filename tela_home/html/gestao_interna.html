@@ -7,8 +7,8 @@
     <title>Gestão Interna - StoreManager</title>
 
     <!-- CSS -->
-    <link rel="stylesheet" href="/css/styles.css">
-    <link rel="stylesheet" href="/css/graficosGestaoInterna.css">
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/graficosGestaoInterna.css">
 
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -88,11 +88,50 @@
                 </div>
             </div>
 
-            <div class="financial-box danger-box">
-                <h4 class="financial-title">Top Pokémon em Estoque</h4>
-                <div id="total-debts" class="financial-value danger">--</div>
+            <div class="financial-box info-box">
+                <h4 class="financial-title">Top Carta em Estoque</h4>
+
+                <div class="kpi-stack">
+                    <div class="kpi-row">
+                        <span class="kpi-label">Carta:</span>
+                        <span id="kpi-topcard-nome" class="kpi-value info">--</span>
+                    </div>
+
+                    <div class="kpi-row">
+                        <span class="kpi-label">Qtd. Atual:</span>
+                        <span id="kpi-topcard-qtd" class="kpi-value info">--</span>
+                    </div>
+
+                    <div class="kpi-row">
+                        <span class="kpi-label">Vendas (30 dias):</span>
+                        <span id="kpi-topcard-vendas" class="kpi-value info">--</span>
+                    </div>
+                </div>
             </div>
+
+            <!-- TOP COLEÇÃO -->
+            <div class="financial-box info-box">
+                <h4 class="financial-title">Coleção Mais Vendida (30 dias)</h4>
+
+                <div class="kpi-stack">
+                    <div class="kpi-row">
+                        <span class="kpi-label">Coleção:</span>
+                        <span id="kpi-colecao-nome" class="kpi-value info">--</span>
+                    </div>
+
+                    <div class="kpi-row">
+                        <span class="kpi-label">Vendidas no mês:</span>
+                        <span id="kpi-colecao-vendas" class="kpi-value info">--</span>
+                    </div>
+
+                    <div class="kpi-row">
+                        <span class="kpi-label">Estoque atual:</span>
+                        <span id="kpi-colecao-estoque" class="kpi-value info">--</span>
+                    </div>
+                </div>
             </div>
+
+
         </aside>
 
         <!-- === Gráficos e Listas === -->

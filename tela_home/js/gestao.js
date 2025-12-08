@@ -1,192 +1,131 @@
 /**
- * Dashboard Management System
- * Integração real com backend (Spring Boot)
+ * Dashboard – Integração com Backend (Spring Boot)
+ * Versão alinhada com /monthly-investments (investimento em estoque)
  */
 
 const CONFIG = {
-    API_BASE_URL: 'http://localhost:8080/api/dashboard',
-    UPDATE_INTERVAL: 30000,
+    API_BASE_URL: "http://localhost:8080/api/store-manager-api/dashboard",
+    UPDATE_INTERVAL: 30000
 };
 
-// =========================
-// SERVIÇOS DE API
-// =========================
+// ======================================================
+// SAFE HELPERS
+// ======================================================
+function normalizeList(x) {
+    return Array.isArray(x) ? x : [];
+}
+
+// ======================================================
+// API SERVICE
+// ======================================================
 class DashboardAPI {
-
-    static async getTotalCardsInStock() {
-        return this.fetchJSON(`${CONFIG.API_BASE_URL}/total-cards-in-stock`);
-    }
-
-    static async getTotalBoosterBoxes() {
-        return this.fetchJSON(`${CONFIG.API_BASE_URL}/total-booster-boxes`);
-    }
-
-    static async getTopPokemonByStock() {
-        return this.fetchJSON(`${CONFIG.API_BASE_URL}/top-pokemon-by-stock`);
-    }
-
-    static async getStockAgingOverview() {
-        return this.fetchJSON(`${CONFIG.API_BASE_URL}/stock-aging-overview`);
-    }
-
-    static async getValuedCards() {
-        return this.fetchJSON(`${CONFIG.API_BASE_URL}/valued-cards`);
-    }
-
-    static async getMonthlyAcquisitions() {
-        return this.fetchJSON(`${CONFIG.API_BASE_URL}/monthly-acquisitions`);
-    }
-
-    static async getSalesOverview() {
-        return this.fetchJSON(`${CONFIG.API_BASE_URL}/sales-overview`);
-    }
-
-    // 🆕 NOVA KPI
-    static async getKpisCartas() {
-        return this.fetchJSON(`${CONFIG.API_BASE_URL}/kpis-cartas`);
-    }
 
     static async fetchJSON(url) {
         try {
             const res = await fetch(url);
-            if (!res.ok) throw new Error(res.status);
+
+            if (!res.ok) {
+                console.error("HTTP ERROR:", res.status, url);
+                return {};
+            }
+
             return await res.json();
         } catch (err) {
-            console.error("[API ERROR]", url, err);
-            return [];
+            console.error("Erro na API:", url, err);
+            return {};
         }
+    }
+
+    static getKpisCartas() {
+        return this.fetchJSON(`${CONFIG.API_BASE_URL}/kpis-cartas`);
+    }
+
+    static getKpisBoosters() {
+        return this.fetchJSON(`${CONFIG.API_BASE_URL}/kpis-boosters`);
+    }
+
+    static getTopCardKpi() {
+        return this.fetchJSON(`${CONFIG.API_BASE_URL}/kpi-top-card`);
+    }
+
+    static getTopCollectionKpi() {
+        return this.fetchJSON(`${CONFIG.API_BASE_URL}/kpi-top-collection`);
+    }
+
+    static getTopPokemonByStock() {
+        return this.fetchJSON(`${CONFIG.API_BASE_URL}/top-pokemon-by-stock`);
+    }
+
+    // ⚠️ NOVO ENDPOINT
+    static getMonthlyInvestments() {
+        return this.fetchJSON(`${CONFIG.API_BASE_URL}/monthly-investments`);
+    }
+
+    static getSalesOverview() {
+        return this.fetchJSON(`${CONFIG.API_BASE_URL}/sales-overview`);
+    }
+
+    static getStockAgingOverview() {
+        return this.fetchJSON(`${CONFIG.API_BASE_URL}/stock-aging-overview`);
+    }
+
+    static getValuedCards() {
+        return this.fetchJSON(`${CONFIG.API_BASE_URL}/valued-cards`);
     }
 }
 
-// =========================
+// ======================================================
 // DASHBOARD MANAGER
-// =========================
+// ======================================================
 class DashboardManager {
     constructor() {
         this.charts = {};
         this.salesOverviewRaw = [];
-        this.monthlyAcquisitionsRaw = [];
+        this.monthlyInvestmentsRaw = [];
         this.init();
     }
 
-    init() {
+    // -------------------------
+    // INIT
+    // -------------------------
+    async init() {
         this.registerSalesFilters();
         this.registerAcquisitionsFilters();
-        this.loadInitialData();
+
+        this.applyDefaultMonthRange();
+
+        await this.loadInitialData();
         this.startAutoUpdate();
     }
 
-    // =========================
-    // CARREGAMENTO INICIAL
-    // =========================
-    async loadInitialData() {
-        try {
-            const [
-                totalCards,
-                boosterBoxes,
-                topPokemon,
-                monthlyAcq,
-                salesOverview,
-                stockAging,
-                valuedCards,
-                kpisCartas
-            ] = await Promise.all([
-                DashboardAPI.getTotalCardsInStock(),
-                DashboardAPI.getTotalBoosterBoxes(),
-                DashboardAPI.getTopPokemonByStock(),
-                DashboardAPI.getMonthlyAcquisitions(),
-                DashboardAPI.getSalesOverview(),
-                DashboardAPI.getStockAgingOverview(),
-                DashboardAPI.getValuedCards(),
-                DashboardAPI.getKpisCartas()
-            ]);
+    // ======================================================
+    // RANGE AUTOMÁTICO DE 5 MESES
+    // ======================================================
+    getLastFiveMonthsRange() {
+        const endDate = new Date();
+        endDate.setDate(1);
+        const end = endDate.toISOString().slice(0, 7);
 
-            this.salesOverviewRaw = salesOverview;
-            this.monthlyAcquisitionsRaw = monthlyAcq;
+        const startDate = new Date(endDate);
+        startDate.setMonth(startDate.getMonth() - 4);
+        const start = startDate.toISOString().slice(0, 7);
 
-            this.updateKPIs({
-                totalCards, boosterBoxes, topPokemon, kpisCartas
-            });
-
-            this.updateCharts({ stockAging, valuedCards });
-
-            this.updateSalesChart(this.getFilteredSalesOverview());
-            this.updateAcquisitionsChart(this.getFilteredMonthlyAcquisitions());
-
-        } catch (e) {
-            console.error("Erro ao carregar dados iniciais", e);
-        }
+        return { start, end };
     }
 
-    // =========================
-    // KPI's
-    // =========================
-    updateKPIs({ totalCards, boosterBoxes, topPokemon }) {
+    applyDefaultMonthRange() {
+        const { start, end } = this.getLastFiveMonthsRange();
 
-        // ===== Cartas =====
-        const cartasTotal = Number(totalCards.total_cards_in_stock ?? 0);
-        const cartasVendidasHoje = Number(totalCards.cards_sold_today ?? 0);
-        const cartasCriadasHoje = Number(totalCards.cards_added_today ?? 0);
+        const ids = [
+            ["sales-start-month", start],
+            ["sales-end-month", end],
+            ["acq-start-month", start],
+            ["acq-end-month", end]
+        ];
 
-        const elTotal = document.getElementById("kpi-total-cartas");
-        const elVend = document.getElementById("kpi-vendidas-hoje");
-        const elCad = document.getElementById("kpi-cadastradas-hoje");
-
-        if (elTotal) elTotal.textContent = cartasTotal;
-        if (elVend) elVend.textContent = cartasVendidasHoje;
-        if (elCad) elCad.textContent = cartasCriadasHoje;
-
-        // ===== Boosters =====
-        const boosterTotal = Number(boosterBoxes.total_boxes_in_stock ?? 0);
-        const boosterVendidasHoje = Number(boosterBoxes.boxes_sold_today ?? 0);
-        const boosterCriadasHoje = Number(boosterBoxes.boxes_added_today ?? 0);
-
-        const bxTotal = document.getElementById("kpi-boxes-total");
-        const bxVend = document.getElementById("kpi-boxes-vendidas-hoje");
-        const bxCad = document.getElementById("kpi-boxes-cadastradas-hoje");
-
-        if (bxTotal) bxTotal.textContent = boosterTotal;
-        if (bxVend) bxVend.textContent = boosterVendidasHoje;
-        if (bxCad) bxCad.textContent = boosterCriadasHoje;
-
-        // ===== Top Pokémon (continua igual) =====
-        const topName =
-            topPokemon?.pokemonName ??
-            topPokemon?.productName ??
-            "---";
-
-        const elTop = document.getElementById("total-debts");
-        if (elTop) elTop.textContent = topName;
-    }
-
-
-    // =========================
-    // CHAMADA CENTRAL DE GRÁFICOS
-    // =========================
-    updateCharts({ stockAging, valuedCards }) {
-        this.updateStockAgingChart(stockAging);
-        this.updateTopCardsList(valuedCards);
-    }
-
-    // =========================
-    // PANORAMA DE VENDAS
-    // =========================
-    registerSalesFilters() {
-        const start = document.getElementById("sales-start-month");
-        const end = document.getElementById("sales-end-month");
-        const clear = document.getElementById("sales-filter-clear");
-
-        const refresh = () => {
-            this.updateSalesChart(this.getFilteredSalesOverview());
-        };
-
-        if (start) start.addEventListener("change", refresh);
-        if (end) end.addEventListener("change", refresh);
-
-        if (clear) clear.addEventListener("click", () => {
-            start.value = "";
-            end.value = "";
-            this.updateSalesChart(this.salesOverviewRaw);
+        ids.forEach(([id, value]) => {
+            const el = document.getElementById(id);
+            if (el) el.value = value;
         });
     }
 
@@ -194,161 +133,301 @@ class DashboardManager {
         return v?.slice(0, 7) ?? null;
     }
 
+    // ======================================================
+    // LOAD INITIAL DATA
+    // ======================================================
+    async loadInitialData() {
+        try {
+            const [
+                cartasKpis,
+                boostersKpis,
+                topPokemon,
+                monthlyInvestments,
+                salesOverview,
+                stockAging,
+                valuedCards,
+                topCardKpi,
+                topCollectionKpi
+            ] = await Promise.all([
+                DashboardAPI.getKpisCartas(),
+                DashboardAPI.getKpisBoosters(),
+                DashboardAPI.getTopPokemonByStock(),
+                DashboardAPI.getMonthlyInvestments(),
+                DashboardAPI.getSalesOverview(),
+                DashboardAPI.getStockAgingOverview(),
+                DashboardAPI.getValuedCards(),
+                DashboardAPI.getTopCardKpi(),
+                DashboardAPI.getTopCollectionKpi()
+            ]);
+
+            this.salesOverviewRaw = normalizeList(salesOverview);
+            this.monthlyInvestmentsRaw = normalizeList(monthlyInvestments);
+
+            this.updateKPIs({
+                cartasKpis,
+                boostersKpis,
+                topPokemon,
+                topCardKpi,
+                topCollectionKpi
+            });
+
+            this.updateCharts({
+                stockAging: normalizeList(stockAging),
+                valuedCards: normalizeList(valuedCards)
+            });
+
+            this.updateSalesChart(this.getFilteredSalesOverview());
+            this.updateAcquisitionsChart(this.getFilteredMonthlyInvestments());
+
+        } catch (err) {
+            console.error("Erro ao carregar dados iniciais:", err);
+        }
+    }
+
+    // ======================================================
+    // UPDATE KPI
+    // ======================================================
+    sanitizeKpiValue(v) {
+        return (v === null || v === undefined || v === "") ? "0" : v;
+    }
+
+    updateKPIs({ cartasKpis, boostersKpis, topPokemon, topCardKpi, topCollectionKpi }) {
+
+        const map = [
+            ["kpi-total-cartas", cartasKpis?.total],
+            ["kpi-vendidas-hoje", cartasKpis?.vendidasHoje],
+            ["kpi-cadastradas-hoje", cartasKpis?.cadastradasHoje],
+
+            ["kpi-boxes-total", boostersKpis?.total],
+            ["kpi-boxes-vendidas-hoje", boostersKpis?.vendidasHoje],
+            ["kpi-boxes-cadastradas-hoje", boostersKpis?.cadastradasHoje],
+        ];
+
+        map.forEach(([id, value]) => {
+            const el = document.getElementById(id);
+            if (el) el.textContent = this.sanitizeKpiValue(value);
+        });
+
+        // TOP CARD
+        if (topCardKpi) {
+            document.getElementById("kpi-topcard-nome").textContent =
+                this.sanitizeKpiValue(topCardKpi.nome_carta ?? topCardKpi.nomeCarta);
+
+            document.getElementById("kpi-topcard-qtd").textContent =
+                this.sanitizeKpiValue(topCardKpi.quantidade_atual ?? topCardKpi.quantidadeAtual);
+
+            document.getElementById("kpi-topcard-vendas").textContent =
+                this.sanitizeKpiValue(topCardKpi.vendas_ultimo_mes ?? topCardKpi.vendasUltimoMes);
+        }
+
+        // TOP COLEÇÃO  ⭐⭐⭐ AQUI AGORA FUNCIONA PERFEITO ⭐⭐⭐
+        if (topCollectionKpi) {
+            document.getElementById("kpi-colecao-nome").textContent =
+                this.sanitizeKpiValue(topCollectionKpi.colecao ?? topCollectionKpi.nomeColecao);
+
+            document.getElementById("kpi-colecao-vendas").textContent =
+                this.sanitizeKpiValue(topCollectionKpi.vendidas_ultimo_mes ?? topCollectionKpi.vendasUltimoMes);
+
+            document.getElementById("kpi-colecao-estoque").textContent =
+                this.sanitizeKpiValue(topCollectionKpi.estoque_atual ?? topCollectionKpi.estoqueAtual);
+        }
+
+        // TOP POKEMON
+        const topName =
+            topPokemon?.pokemonName ??
+            topPokemon?.productName ??
+            topPokemon?.pokemon_name ??
+            "---";
+
+        const elTop = document.getElementById("total-debts");
+        if (elTop) elTop.textContent = topName;
+    }
+
+    // ======================================================
+    // CHARTS
+    // ======================================================
+    updateCharts({ stockAging, valuedCards }) {
+        this.updateStockAgingChart(stockAging);
+        this.updateTopCardsList(valuedCards);
+    }
+
+    // ======================================================
+    // SALES FILTERS
+    // ======================================================
+    registerSalesFilters() {
+        const refresh = () =>
+            this.updateSalesChart(this.getFilteredSalesOverview());
+
+        document.getElementById("sales-start-month")?.addEventListener("change", refresh);
+        document.getElementById("sales-end-month")?.addEventListener("change", refresh);
+
+        document.getElementById("sales-filter-clear")?.addEventListener("click", () => {
+            this.applyDefaultMonthRange();
+            refresh();
+        });
+    }
+
     getFilteredSalesOverview() {
         const start = this.normalizeYM(document.getElementById("sales-start-month")?.value);
         const end = this.normalizeYM(document.getElementById("sales-end-month")?.value);
 
-        return this.salesOverviewRaw.filter(item => {
-            const key = this.normalizeYM(item.month ?? item.month_year);
-            if (!key) return false;
-            if (start && key < start) return false;
-            if (end && key > end) return false;
+        return normalizeList(this.salesOverviewRaw).filter(i => {
+            const mk = this.normalizeYM(i.month || i.month_year);
+            if (!mk) return false;
+            if (start && mk < start) return false;
+            if (end && mk > end) return false;
             return true;
         });
     }
 
     updateSalesChart(list) {
-        const el = document.getElementById("salesChart");
-        if (!el) return;
+        const canvas = document.getElementById("salesChart");
+        if (!canvas) return;
 
-        if (!list || list.length === 0) {
-            if (this.charts.salesChart) this.charts.salesChart.destroy();
+        list = normalizeList(list);
+
+        if (list.length === 0) {
+            this.charts.salesChart?.destroy();
+            this.charts.salesChart = null;
             return;
         }
 
-        if (this.charts.salesChart) this.charts.salesChart.destroy();
+        this.charts.salesChart?.destroy();
 
         const months = new Set();
-        const map = new Map();
+        const productMap = new Map();
 
         list.forEach(i => {
             const m = this.normalizeYM(i.month ?? i.month_year);
+            if (!m) return;
+
             months.add(m);
-            if (!map.has(i.product_name)) map.set(i.product_name, {});
-            map.get(i.product_name)[m] = i.total_sold;
+            const prod = i.product_name ?? i.productName ?? "Produto";
+
+            if (!productMap.has(prod)) productMap.set(prod, {});
+            productMap.get(prod)[m] = i.total_sold ?? i.totalSold ?? 0;
         });
 
-        const sorted = [...months].sort();
+        const sortedMonths = [...months].sort();
 
-        const labels = sorted.map(m => {
+        const labels = sortedMonths.map(m => {
             const d = new Date(m + "-01");
-            return d.toLocaleDateString("pt-BR", { month: "short", year: "2-digit" });
+            return d.toLocaleDateString("pt-BR", {
+                month: "short",
+                year: "2-digit"
+            });
         });
 
-        const colors = ["#20B2AA", "#FF6F61", "#4D96FF", "#FFD700"];
+        const colors = ["#20B2AA", "#FF6F61", "#4D96FF", "#FFD700", "#6A5ACD", "#32CD32"];
 
-        const datasets = [...map.entries()].map(([prod, obj], idx) => ({
-            label: prod,
-            data: sorted.map(m => obj[m] ?? 0),
-            borderColor: colors[idx % colors.length],
-            tension: 0.3,
+        const datasets = [...productMap.entries()].map(([name, vals], i) => ({
+            label: name,
+            data: sortedMonths.map(m => vals[m] ?? 0),
+            borderColor: colors[i % colors.length],
+            backgroundColor: colors[i % colors.length],
+            fill: false,
+            tension: 0.3
         }));
 
-        const ctx = el.getContext("2d");
-        this.charts.salesChart = new Chart(ctx, {
+        this.charts.salesChart = new Chart(canvas.getContext("2d"), {
             type: "line",
             data: { labels, datasets },
             options: { responsive: true }
         });
     }
 
-    // =========================
-    // AQUISIÇÕES
-    // =========================
+    // ======================================================
+    // AQUISIÇÕES / INVESTIMENTOS
+    // ======================================================
     registerAcquisitionsFilters() {
-        const start = document.getElementById("acq-start-month");
-        const end = document.getElementById("acq-end-month");
-        const clear = document.getElementById("acq-filter-clear");
-
         const refresh = () =>
-            this.updateAcquisitionsChart(this.getFilteredMonthlyAcquisitions());
+            this.updateAcquisitionsChart(this.getFilteredMonthlyInvestments());
 
-        if (start) start.addEventListener("change", refresh);
-        if (end) end.addEventListener("change", refresh);
+        document.getElementById("acq-start-month")?.addEventListener("change", refresh);
+        document.getElementById("acq-end-month")?.addEventListener("change", refresh);
 
-        if (clear) clear.addEventListener("click", () => {
-            start.value = "";
-            end.value = "";
-            this.updateAcquisitionsChart(this.monthlyAcquisitionsRaw);
+        document.getElementById("acq-filter-clear")?.addEventListener("click", () => {
+            this.applyDefaultMonthRange();
+            refresh();
         });
     }
 
-    getFilteredMonthlyAcquisitions() {
+    getFilteredMonthlyInvestments() {
         const start = this.normalizeYM(document.getElementById("acq-start-month")?.value);
         const end = this.normalizeYM(document.getElementById("acq-end-month")?.value);
 
-        return this.monthlyAcquisitionsRaw.filter(item => {
-            const key = this.normalizeYM(item.month);
-            if (!key) return false;
-            if (start && key < start) return false;
-            if (end && key > end) return false;
+        return normalizeList(this.monthlyInvestmentsRaw).filter(i => {
+            const m = this.normalizeYM(i.month);
+            if (!m) return false;
+            if (start && m < start) return false;
+            if (end && m > end) return false;
             return true;
         });
     }
 
     updateAcquisitionsChart(list) {
-        const el = document.getElementById("collectionsChart");
-        if (!el) return;
+        const canvas = document.getElementById("collectionsChart");
+        if (!canvas) return;
 
-        if (!list || list.length === 0) {
-            if (this.charts.collectionsChart) this.charts.collectionsChart.destroy();
+        list = normalizeList(list);
+
+        this.charts.collectionsChart?.destroy();
+
+        if (list.length === 0) {
+            this.charts.collectionsChart = null;
             return;
         }
-
-        if (this.charts.collectionsChart) this.charts.collectionsChart.destroy();
 
         const totals = {};
         list.forEach(i => {
             const m = this.normalizeYM(i.month);
-            totals[m] = (totals[m] ?? 0) + Number(i.totalCost);
+            if (!m) return;
+
+            const val = Number(i.totalInvested ?? i.total_invested ?? 0);
+            totals[m] = (totals[m] ?? 0) + val;
         });
 
         const sorted = Object.keys(totals).sort();
 
         const labels = sorted.map(m => {
             const d = new Date(m + "-01");
-            return d.toLocaleDateString("pt-BR", { month: "short", year: "2-digit" });
+            return d.toLocaleDateString("pt-BR", {
+                month: "short",
+                year: "2-digit"
+            });
         });
 
-        const ctx = el.getContext("2d");
-        this.charts.collectionsChart = new Chart(ctx, {
+        this.charts.collectionsChart = new Chart(canvas.getContext("2d"), {
             type: "bar",
             data: {
                 labels,
                 datasets: [{
+                    label: "Total investido em estoque (R$)",
                     data: sorted.map(m => totals[m]),
                     backgroundColor: "#4D96FF"
                 }]
             },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false
-            }
+            options: { responsive: true }
         });
     }
 
-    // =========================
-    // ENVELHECIMENTO DE ESTOQUE
-    // =========================
-    updateStockAgingChart(data) {
-        const el = document.getElementById("weeklyChart");
-        if (!el) return;
+    // ======================================================
+    // ENVELHECIMENTO
+    // ======================================================
+    updateStockAgingChart(list) {
+        const canvas = document.getElementById("weeklyChart");
+        if (!canvas) return;
 
-        if (this.charts.weeklyChart) this.charts.weeklyChart.destroy();
+        list = normalizeList(list);
 
-        const labelField = "product_name" in data[0]
-            ? "product_name"
-            : Object.keys(data[0])[0];
+        if (list.length === 0) return;
 
-        const valueField = "days_in_stock" in data[0]
-            ? "days_in_stock"
-            : Object.keys(data[0])[1];
+        this.charts.weeklyChart?.destroy();
 
-        const labels = data.map(r => r[labelField]);
-        const values = data.map(r => r[valueField]);
+        const labels = list.map(i => i.product_name ?? i.productName ?? "---");
+        const values = list.map(i => i.days_in_stock ?? i.daysInStock ?? 0);
 
-        const ctx = el.getContext("2d");
-        this.charts.weeklyChart = new Chart(ctx, {
+        this.charts.weeklyChart = new Chart(canvas.getContext("2d"), {
             type: "bar",
             data: {
                 labels,
@@ -359,67 +438,75 @@ class DashboardManager {
                 }]
             },
             options: {
-                responsive: true,
-                indexAxis: "y"
+                indexAxis: "y",
+                responsive: true
             }
         });
     }
 
-    // =========================
-    // CARTAS MAIS VALIOSAS
-    // =========================
+    // ======================================================
+    // VALUED CARDS LIST
+    // ======================================================
     updateTopCardsList(list) {
         const container = document.getElementById("top-cards-list");
         container.innerHTML = "";
 
-        list.forEach((c, idx) => {
-            const name = c.product_name ?? c.cardName ?? "---";
-            const avg = c.avg_sale_price ?? 0;
-            const price = c.current_sale_price ?? 0;
+        list = normalizeList(list);
 
+        if (list.length === 0) {
+            container.innerHTML = "<p>Nenhuma carta encontrada.</p>";
+            return;
+        }
+
+        list.forEach((c, i) => {
             const div = document.createElement("div");
             div.className = "card-item";
             div.innerHTML = `
-                <span>#${idx + 1}</span>
-                <span>${name}</span>
-                <span>Avg: ${this.formatCurrency(avg)}</span>
-                <span>Atual: ${this.formatCurrency(price)}</span>
+                <span>#${i + 1}</span>
+                <span>${c.product_name ?? c.productName ?? "---"}</span>
+                <span>Avg: ${this.formatCurrency(c.avg_sale_price ?? c.avgSalePrice ?? 0)}</span>
+                <span>Atual: ${this.formatCurrency(c.current_sale_price ?? c.currentSalePrice ?? 0)}</span>
             `;
             container.appendChild(div);
         });
     }
 
-    // =========================
-    // AUTO UPDATE
-    // =========================
+    // ======================================================
+    // AUTO UPDATE (KPIs)
+    // ======================================================
     startAutoUpdate() {
-        setInterval(() => this.refreshData(), CONFIG.UPDATE_INTERVAL);
+        setInterval(() => this.refreshKPIs(), CONFIG.UPDATE_INTERVAL);
     }
 
-    async refreshData() {
-    const totalCards = await DashboardAPI.getTotalCardsInStock();
+    async refreshKPIs() {
+        const cartas = await DashboardAPI.getKpisCartas();
+        const boosters = await DashboardAPI.getKpisBoosters();
+        const topCardKpi = await DashboardAPI.getTopCardKpi();
+        const topCollectionKpi = await DashboardAPI.getTopCollectionKpi();
 
-    const cartasTotal = Number(totalCards.total_cards_in_stock ?? 0);
-    const elTotal = document.getElementById("kpi-total-cartas");
+        this.updateKPIs({
+            cartasKpis: cartas,
+            boostersKpis: boosters,
+            topCardKpi,
+            topCollectionKpi,
+            topPokemon: null
+        });
+    }
 
-    if (elTotal) elTotal.textContent = cartasTotal;
-}
-
-
-    // =========================
+    // ======================================================
     // UTILS
-    // =========================
+    // ======================================================
     formatCurrency(v) {
-        return new Intl.NumberFormat("pt-BR", {
+        return Number(v).toLocaleString("pt-BR", {
             style: "currency",
             currency: "BRL"
-        }).format(v);
+        });
     }
 }
 
-// =========================
+// ======================================================
 // START
-// =========================
+// ======================================================
 document.addEventListener("DOMContentLoaded", () => {
     window.dashboardManager = new DashboardManager();
 });
