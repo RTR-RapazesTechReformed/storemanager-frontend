@@ -2,7 +2,7 @@
  * Sistema de Cadastro de Produto - Front-end
  * Versão Corrigida e Atualizada
  */
-const user = sessionStorage.getItem("session-id");
+const user = sessionStorage.getItem("user-id");
 
 // ====== CONFIGURAÇÃO DE ENDPOINT DA API ======
 // Para produção/deploy  "/api/store-manager-api"
@@ -17,22 +17,19 @@ const API_CONFIG = {
 };
 
 const OTHER_PRODUCT_TYPES = ["BOOSTER_BOX", "ACCESSORY", "OTHER"];
-const MAIN_STORE_ID = "2ab08857-c06c-4fa2-8d6b-0e6822d1d528";
 
 document.addEventListener("DOMContentLoaded", () => {
   initializeEventListeners();
+  loadStores();
 });
 
 function initializeEventListeners() {
   const form = document.getElementById("product-form");
   const typeSelect = document.getElementById("product-type");
-  const targetStoreSelect = document.getElementById("target-store-select");
 
   if (form) form.addEventListener("submit", handleProductSubmit);
   if (typeSelect)
     typeSelect.addEventListener("change", handleProductTypeChange);
-  if (targetStoreSelect)
-    targetStoreSelect.addEventListener("change", handleTargetStoreChange);
 
   // Inicializar estado dos campos
   handleProductTypeChange({ target: typeSelect });
@@ -52,6 +49,52 @@ function showAlert(message, type = "success") {
   setTimeout(() => alert.remove(), 5000);
 }
 
+async function loadStores() {
+  try {
+    const response = await fetch(`${API_CONFIG.BASE_URL}/stores`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "user-id": user,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Erro ao carregar lojas");
+    }
+
+    const stores = await response.json();
+    populateStoreSelect(stores);
+  } catch (error) {
+    console.error("Erro ao carregar lojas:", error);
+    showAlert("Erro ao carregar lista de lojas", "error");
+  }
+}
+
+function populateStoreSelect(stores) {
+  const targetStoreSelect = document.getElementById("target-store-select");
+  if (!targetStoreSelect) {
+    console.error("Select de loja não encontrado");
+    return;
+  }
+
+  // Limpar opções existentes (exceto a primeira "Selecione...")
+  targetStoreSelect.innerHTML = '<option value="">Selecione a loja...</option>';
+
+  // Adicionar lojas do banco
+  stores.forEach((store) => {
+    const option = document.createElement("option");
+    option.value = store.id;
+    option.textContent = store.name;
+    targetStoreSelect.appendChild(option);
+  });
+
+  // Guardar a primeira loja como loja principal (se existir)
+  if (stores.length > 0) {
+    window.MAIN_STORE_ID = stores[0].id;
+  }
+}
+
 function handleProductTypeChange(event) {
   const productType = event.target.value;
   const cardFields = document.getElementById("card-fields");
@@ -67,42 +110,29 @@ function handleProductTypeChange(event) {
   cardFields.style.display = "none";
   otherFields.style.display = "none";
 
-  // Limpar campos quando não estão visíveis
-  cardFields.querySelectorAll("input").forEach((input) => (input.value = ""));
-  otherFields
-    .querySelectorAll("input, textarea")
-    .forEach((input) => (input.value = ""));
+  // Limpar campos e remover required quando não estão visíveis
+  cardFields.querySelectorAll("input, select, textarea").forEach((input) => {
+    input.value = "";
+    input.removeAttribute("required");
+  });
+  otherFields.querySelectorAll("input, select, textarea").forEach((input) => {
+    input.value = "";
+    input.removeAttribute("required");
+  });
 
-  // MOSTRAR apenas os campos relevantes
+  // MOSTRAR apenas os campos relevantes e adicionar required de volta
   if (productType === "CARD") {
     cardFields.style.display = "block";
+    // Adicionar required apenas nos campos obrigatórios de CARD
+    const cardTitle = document.getElementById("card-title");
+    const cardCategory = document.getElementById("card-category");
+    if (cardTitle) cardTitle.setAttribute("required", "required");
+    if (cardCategory) cardCategory.setAttribute("required", "required");
   } else if (OTHER_PRODUCT_TYPES.includes(productType)) {
     otherFields.style.display = "block";
+    // Campos de OTHER não tem required obrigatório
   }
   // Se for outro tipo (ou nenhum selecionado), ambos permanecem hidden
-}
-
-function handleTargetStoreChange(event) {
-  const storeValue = event.target.value;
-  const existingProductIdGroup = document.getElementById(
-    "existing-product-id-group"
-  );
-  const existingProductIdInput = document.getElementById("existing-product-id");
-
-  if (!existingProductIdGroup || !existingProductIdInput) {
-    console.error("Elementos de ID do produto existente não encontrados");
-    return;
-  }
-
-  // Se a loja selecionada NÃO for a loja principal, mostrar campo de ID existente
-  if (storeValue !== MAIN_STORE_ID) {
-    existingProductIdGroup.style.display = "block";
-    existingProductIdInput.setAttribute("required", "required");
-  } else {
-    existingProductIdGroup.style.display = "none";
-    existingProductIdInput.removeAttribute("required");
-    existingProductIdInput.value = ""; // Limpar o campo
-  }
 }
 
 function validateProductData(productData) {
@@ -135,11 +165,6 @@ function validateProductData(productData) {
     }
   }
 
-  // Validação para lojas secundárias
-  if (productData.store_id !== MAIN_STORE_ID && !productData.productId) {
-    errors.push("ID do produto existente é obrigatório para lojas secundárias");
-  }
-
   return errors;
 }
 
@@ -157,12 +182,6 @@ async function handleProductSubmit(event) {
     store_id: formData.get("store_id"),
     condition: formData.get("condition") || "MINT",
   };
-
-  // Tratar ID do produto existente para lojas secundárias
-  const existingProductId = formData.get("existing_product_id")?.trim();
-  if (productData.store_id !== MAIN_STORE_ID && existingProductId) {
-    productData.productId = existingProductId;
-  }
 
   //campo das carta
   if (productData.type === "CARD") {
@@ -227,13 +246,9 @@ function clearForm() {
     // Esconder todos os campos específicos
     const cardFields = document.getElementById("card-fields");
     const otherFields = document.getElementById("other-fields");
-    const existingProductIdGroup = document.getElementById(
-      "existing-product-id-group"
-    );
 
     if (cardFields) cardFields.style.display = "none";
     if (otherFields) otherFields.style.display = "none";
-    if (existingProductIdGroup) existingProductIdGroup.style.display = "none";
 
     // Limpar campos específicos
     if (cardFields)
