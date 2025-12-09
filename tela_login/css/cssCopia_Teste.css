@@ -9,7 +9,7 @@ body {
     font-family: 'Montserrat', sans-serif;
     overflow: hidden;
   /* fundo gradiente */
-  background: linear-gradient(135deg, #264f61, #3d7081, #2c9ccc);
+  background: linear-gradient(135deg, #4c2661, #7f3d81, #612ccc);
   background-size: 400% 400%;
   animation: gradientMove 8s ease infinite;
 }
