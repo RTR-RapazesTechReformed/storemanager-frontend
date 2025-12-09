@@ -9,7 +9,7 @@ const user = sessionStorage.getItem("user-id");
 // Para rodar local, use: "http://localhost:8080"
 
 const API_CONFIG = {
-  BASE_URL: "http://localhost:8080/api/store-manager-api",
+  BASE_URL: "/api/store-manager-api",
   HEADERS: {
     "Content-Type": "application/json",
     "user-id": user,

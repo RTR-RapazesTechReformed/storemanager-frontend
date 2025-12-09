@@ -14,7 +14,7 @@ async function logout() {
       // Para rodar local, use os endpoints locais, por exemplo:
       //   API_BASE_URL: "http://localhost:8080"
 
-      fetch("http://localhost:8080/api/store-manager-api/auth/logout", {
+      fetch("/api/store-manager-api/auth/logout", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

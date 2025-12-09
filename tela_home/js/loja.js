@@ -9,7 +9,7 @@
 //   API_BASE_URL: "http://localhost:8080"
 
 const API_CONFIG = {
-  BASE_URL: "http://localhost:8080/api/store-manager-api",
+  BASE_URL: "/api/store-manager-api",
   HEADERS: {
     "Content-Type": "application/json",
     "user-id": "77042ffc-b15f-11f0-8c22-706979a3c737",
