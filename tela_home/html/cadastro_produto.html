@@ -5,8 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastrar Produto - StoreManager</title>
-    <link rel="stylesheet" href="../css/cadastroProduto.css">
-    <link rel="stylesheet" href="../css/estoque.css">
+    <link rel="stylesheet" href="/css/cadastroProduto.css">
+    <link rel="stylesheet" href="/css/estoque.css">
 </head>
 
 <body>
@@ -118,10 +118,33 @@
                 <!-- CAMPOS EXCLUSIVOS PARA CARTA -->
                 <div id="card-fields" class="card-fields">
                     <h3>Informações da Carta</h3>
+                    <button id="openCamBtn">Abrir Câmera</button>
+                    <div id="cameraBox" style="display:none; position:relative; width:400px;">
+                        <!-- O VÍDEO (ID CORRETO) -->
+                        <video id="video" width="400" autoplay playsinline style="border:1px solid #ccc;"></video>
+                        <div id="frame-box"></div>
+                        <!-- OVERLAY DO RECORTE  -->
+                        <br>
+                        <button id="captureBtn">Capturar</button>
+                        <!-- CANVAS PARA SNAPSHOT REAL (OCULTO) -->
+                        <canvas id="snapshot" width="400" height="300" style="display:none;"></canvas>
+                    </div>
 
-                    <div class="form-group">
-                        <label for="card-image">Imagem da Carta</label>
-                        <input type="file" id="card-image" accept="image/*">
+                    <label>Upload da Imagem da Carta</label>
+                    <div id="cardUploadArea" class="upload-area-small">
+                        <div id="cardUploadText">Clique ou arraste a imagem da carta aqui</div>
+                        <input id="cardFileInput" type="file" accept="image/*" style="display:none;">
+                    </div>
+
+                    <div class="small-preview" id="cardPreviewBlock" style="display:none;">
+                        <!-- apenas a imagem original enviada pelo usuário -->
+                        <img id="cardOriginalPreview" alt="Pré-visualização da Carta" src="" />
+
+                        <div style="margin-top:10px;">
+                            <button type="button" id="cardProcessBtn" class="btn-primary" disabled>Processar
+                                Carta</button>
+                            <span id="cardLoading" class="note hidden"></span>
+                        </div>
                     </div>
 
                     <div class="form-group">
@@ -166,28 +189,26 @@
                         </div>
                     </div>
 
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="card-category">Categoria da Carta <span class="required">*</span></label>
-                            <select id="card-category" name="category" required onchange="verificarCategoria()">
-                                <option value="">Selecione a Categoria</option>
-                                <option value="pokemon">Pokémon</option>
-                                <option value="treinador">Treinador</option>
-                                <option value="energia">Energia</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div id="btn-step-container" style="text-align: center; margin: 15px 0; display: none;">
-                        <button type="button" onclick="mostrarCamposIA()"
-                            style="background-color: #6c757d; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">
-                            Pedir ajuda com Precificação para Modelo
+                    <div id="btn-step-container" style="text-align: center; margin: 15px 0;">
+                        <button type="button" onclick="mostrarCamposIA()" class="button-campos-ia">
+                            Usar Assistente de IA
                         </button>
                     </div>
 
                     <div id="ai-setup-area"
                         style="display: none; background-color: #f8f9fa; padding: 15px; border-radius: 8px; border-left: 4px solid #3c5aa6; margin-bottom: 20px;">
-                        <h4 style="margin-top: 0; color: #3c5aa6;">Parâmetros de Precificação (IA)</h4>
+                        <h4 style="margin-top: 0; color: #3c5aa6; display: inline-block;">
+                            Detalhes da Carta
+                            <span class="tooltip-info">
+                                <svg width="18" height="18" viewBox="0 0 20 20" fill="#3c5aa6"
+                                    style="vertical-align: middle;">
+                                    <circle cx="10" cy="10" r="10" fill="#e3f2fd" />
+                                    <text x="10" y="15" text-anchor="middle" font-size="13" fill="#3c5aa6"
+                                        font-family="Arial" font-weight="bold">i</text>
+                                </svg>
+                                <span class="tooltip-text">Esses detalhes aumentam a precisão da estimativa.</span>
+                            </span>
+                        </h4>
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="card-subtype">Sub-Tipo <span class="required">*</span></label>
@@ -201,7 +222,7 @@
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label for="card-rarity-ia">Raridade Oficial <span class="required">*</span></label>
+                                <label for="card-rarity-ia">Raridade <span class="required">*</span></label>
                                 <select id="card-rarity-ia" name="rarity" style="width: 100%; padding: 8px;">
                                     <option value="Common">Common (Comum)</option>
                                     <option value="Uncommon">Uncommon (Incomum)</option>
@@ -216,9 +237,8 @@
                             </div>
                         </div>
                         <div class="form-actions" style="text-align: center; margin-top: 15px;">
-                            <button type="button" onclick="calcularPreco()"
-                                style="background-color: #0a3d62; color: #ffffff; font-weight: bold; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px;">
-                                Prever Preço
+                            <button type="button" onclick="calcularPreco()" class="button-estimativa-ia">
+                                Ver Estimativa
                             </button>
                         </div>
                     </div>
