@@ -8,7 +8,7 @@
 // Para rodar local, use: "http://localhost:8080"
 
 const CONFIG = {
-  API_BASE_URL: "/api/store-manager-api/dashboard",
+  API_BASE_URL: "'http://localhost:8080/store-manager-api",
   UPDATE_INTERVAL: 30000,
   STORAGE_PREFIX: "dashboard_",
 };

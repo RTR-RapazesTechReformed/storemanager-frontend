@@ -6,7 +6,7 @@
 // Para rodar local, use: "http://localhost:8080"
 
 const ANALYTICS_CONFIG = {
-  API_BASE_URL: "/api/store-manager-api/dashboard",
+  API_BASE_URL: "'http://localhost:8080/store-manager-api",
 };
 
 // =================== API ===================
