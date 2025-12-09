@@ -106,11 +106,11 @@ class DashboardManager {
     // ======================================================
     getLastFiveMonthsRange() {
         const endDate = new Date();
-        // ⭐ CORRIGIDO: Usar o mês atual, não o primeiro dia
+        //  CORRIGIDO: Usar o mês atual, não o primeiro dia
         const end = endDate.toISOString().slice(0, 7);
 
         const startDate = new Date(endDate);
-        // ⭐ CORRIGIDO: Subtrair 4 meses para obter 5 meses no total (atual + 4 anteriores)
+        //  CORRIGIDO: Subtrair 4 meses para obter 5 meses no total (atual + 4 anteriores)
         startDate.setMonth(startDate.getMonth() - 4);
         const start = startDate.toISOString().slice(0, 7);
 
@@ -184,7 +184,7 @@ class DashboardManager {
 
             this.updateSalesChart(this.getFilteredSalesOverview());
             this.updateInvestmentChart(this.getFilteredMonthlyInvestments());
-            this.updateAcquisitionsChart(normalizeList(stockAging)); // ⭐ CORRIGIDO: Usar stockAging diretamente
+            this.updateAcquisitionsChart(normalizeList(stockAging)); //  CORRIGIDO: Usar stockAging diretamente
 
         } catch (err) {
             console.error("Erro ao carregar dados iniciais:", err);
@@ -279,7 +279,7 @@ class DashboardManager {
     }
 
     // ======================================================
-    // ⭐ NOVO: PRODUCT SELECTION CONTROL
+    //  NOVO: PRODUCT SELECTION CONTROL
     // ======================================================
     registerProductSelectors() {
         document.getElementById("sales-product-clear")?.addEventListener("click", () => {
@@ -295,13 +295,13 @@ class DashboardManager {
         
         if (!container) return;
 
-        // ⭐ NOVO: Lista de produtos a excluir
+        //  NOVO: Lista de produtos a excluir
         const productsToExclude = ["Arcanine ex", "Armarouge"];
 
         const allProducts = [...new Set(
             normalizeList(this.salesOverviewRaw)
                 .map(i => i.product_name ?? i.productName)
-                // ⭐ NOVO: Filtrar produtos excluídos
+                //  NOVO: Filtrar produtos excluídos
                 .filter(product => !productsToExclude.includes(product))
         )].sort();
 
@@ -368,7 +368,7 @@ class DashboardManager {
 
         const sortedMonths = [...months].sort();
 
-        // ⭐ CORRIGIDO: Formatar meses corretamente
+        //  CORRIGIDO: Formatar meses corretamente
         const labels = sortedMonths.map(m => {
             const [year, month] = m.split('-');
             const date = new Date(year, parseInt(month) - 1, 1);
@@ -475,7 +475,7 @@ class DashboardManager {
 
         const sortedMonths = Object.keys(monthTotals).sort();
 
-        // ⭐ CORRIGIDO: Formatar meses corretamente
+        //  CORRIGIDO: Formatar meses corretamente
         const labels = sortedMonths.map(m => {
           const [year, month] = m.split('-');
           const date = new Date(year, parseInt(month) - 1, 1);
@@ -485,7 +485,7 @@ class DashboardManager {
           });
         });
 
-        // ⭐ NOVO: Renderizar tabela de investimentos por mês
+        //  NOVO: Renderizar tabela de investimentos por mês
         this.renderInvestmentByMonthTable(list, sortedMonths);
 
         this.charts.investmentChart = new Chart(canvas.getContext("2d"), {
@@ -524,7 +524,7 @@ class DashboardManager {
         });
       }
 
-      // ⭐ NOVO: Renderizar tabela de investimentos por mês
+      //  NOVO: Renderizar tabela de investimentos por mês
       renderInvestmentByMonthTable(list, sortedMonths) {
         let summaryContainer = document.getElementById("investment-by-month-table");
         
@@ -551,7 +551,7 @@ class DashboardManager {
         let html = '<div style="padding: 10px 0;">';
         
         sortedMonths.forEach(month => {
-          // ⭐ CORRIGIDO: Formatar mês corretamente
+          //  CORRIGIDO: Formatar mês corretamente
           const [year, monthNum] = month.split('-');
           const monthDate = new Date(year, parseInt(monthNum) - 1, 1);
           const monthLabel = monthDate.toLocaleDateString("pt-BR", {
@@ -614,12 +614,12 @@ class DashboardManager {
     // AQUISIÇÕES / INVESTIMENTOS
     // ======================================================
     registerAcquisitionsFilters() {
-        // ⭐ REMOVIDO: Não precisa de filtros de data para produtos envelhecendo
+        //  REMOVIDO: Não precisa de filtros de data para produtos envelhecendo
         // Os dados são exibidos em tempo real
     }
 
     getFilteredAcquisitionsByProducts() {
-        // ⭐ REMOVIDO: Não precisa filtrar por data
+        //  REMOVIDO: Não precisa filtrar por data
         return normalizeList(this.salesOverviewRaw);
     }
 
@@ -634,17 +634,17 @@ class DashboardManager {
             return;
         }
 
-        // ⭐ NOVO: Renderizar lista de produtos envelhecendo
+        //  NOVO: Renderizar lista de produtos envelhecendo
         this.renderAgedProductsList(list, detailsContainer);
     }
 
-    // ⭐ NOVO: Renderizar lista de produtos envelhecendo
+    //  NOVO: Renderizar lista de produtos envelhecendo
     renderAgedProductsList(list, container) {
         if (!container) return;
 
         container.innerHTML = "";
 
-        // ⭐ CORRIGIDO: Filtrar produtos com quantidade > 0, preço >= 0 E dias em estoque > 0
+        //  CORRIGIDO: Filtrar produtos com quantidade > 0, preço >= 0 E dias em estoque > 0
         const validProducts = normalizeList(list).filter(product => {
             const quantity = product.current_quantity ?? 0;
             const price = product.current_price ?? 0;
@@ -662,7 +662,7 @@ class DashboardManager {
             (b.days_in_stock ?? 0) - (a.days_in_stock ?? 0)
         );
 
-        // ⭐ NOVO: Criar grid container
+        //  NOVO: Criar grid container
         const gridContainer = document.createElement("div");
         gridContainer.className = "aged-products-grid";
         gridContainer.style.cssText = `
@@ -681,7 +681,7 @@ class DashboardManager {
             const createdAt = product.product_created_at ? new Date(product.product_created_at).toLocaleDateString("pt-BR") : "---";
             const lastMovement = product.last_movement_date ? new Date(product.last_movement_date).toLocaleDateString("pt-BR") : "---";
 
-            // ⭐ Determinar cor baseada em dias em estoque
+            //  Determinar cor baseada em dias em estoque
             let urgencyClass = "aged-low";
             let urgencyColor = "#FFD700";
             if (daysInStock > 180) {
@@ -815,7 +815,7 @@ class DashboardManager {
             return;
         }
 
-        // ⭐ NOVO: Criar grid container
+        //  NOVO: Criar grid container
         const gridContainer = document.createElement("div");
         gridContainer.className = "valued-products-grid";
         gridContainer.style.cssText = `

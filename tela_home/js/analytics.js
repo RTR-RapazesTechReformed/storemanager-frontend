@@ -26,10 +26,11 @@ class AnalyticsAPI {
   }
 
   static async getProfitByCategory(startDate, endDate) {
+     console.log(startDate, endDate);
     const url = `${ANALYTICS_CONFIG.API_BASE_URL}/profit?start=${startDate}&end=${endDate}`;
     return this.fetchJSON(url);
   }
-
+    
   static async getSpendVsEarn(startDate, endDate) {
     const url = `${ANALYTICS_CONFIG.API_BASE_URL}/spend-earn?start=${startDate}&end=${endDate}`;
     return this.fetchJSON(url);
@@ -63,15 +64,15 @@ class AnalyticsAPI {
 class AnalyticsManager {
   constructor() {
     this.charts = {};
-    this.currentChartType = "bar"; // ⭐ ALTERADO: De "doughnut" para "bar"
-    this.currentProfitChartType = "bar"; // ⭐ NOVO: Tipo de gráfico de lucro
-    this.inventoryData = null; // ⭐ NOVO: Dados salvos
-    this.profitData = null; // ⭐ NOVO: Dados de lucro salvos
+    this.currentChartType = "bar"; //  ALTERADO: De "doughnut" para "bar"
+    this.currentProfitChartType = "bar"; //  NOVO: Tipo de gráfico de lucro
+    this.inventoryData = null; //  NOVO: Dados salvos
+    this.profitData = null; //  NOVO: Dados de lucro salvos
     this.init();
   }
 
   async init() {
-    // ⭐ NOVO: Aplicar range automático de 5 meses
+    //  NOVO: Aplicar range automático de 5 meses
     this.applyDefaultDateRange();
 
     // ----- ESTOQUE -----
@@ -95,7 +96,7 @@ class AnalyticsManager {
     }
 
     // ----- VENDAS (TOP CARTAS) -----
-    // ⭐ REMOVIDO: Botão de filtro de vendas
+    //  REMOVIDO: Botão de filtro de vendas
     // Dados carregados automaticamente ao iniciar
 
     // ----- LUCRO POR CATEGORIA -----
@@ -116,9 +117,9 @@ class AnalyticsManager {
       btnValuation.addEventListener("click", () => this.loadStockValuation());
     }
 
-    // ⭐ NOVO: Registrar toggle de tipo de gráfico
+    //  NOVO: Registrar toggle de tipo de gráfico
     this.registerChartTypeToggle();
-    // ⭐ NOVO: Registrar toggle de tipo de gráfico de lucro
+    //  NOVO: Registrar toggle de tipo de gráfico de lucro
     this.registerProfitChartTypeToggle();
 
     await this.loadInventoryDistribution();
@@ -128,7 +129,7 @@ class AnalyticsManager {
     setTimeout(() => this.loadStockValuation(), 10);
   }
 
-  // ⭐ NOVO: Aplicar range automático de 5 meses
+  //  NOVO: Aplicar range automático de 5 meses
   applyDefaultDateRange() {
     const today = new Date();
     const end = today.toISOString().split('T')[0];
@@ -155,7 +156,7 @@ class AnalyticsManager {
     });
   }
 
-  // ⭐ NOVO: Registrar botões de tipo de gráfico
+  //  NOVO: Registrar botões de tipo de gráfico
   registerChartTypeToggle() {
     document.getElementById("chart-type-doughnut")?.addEventListener("click", () => {
       this.setChartType("doughnut");
@@ -168,7 +169,7 @@ class AnalyticsManager {
     });
   }
 
-  // ⭐ NOVO: Alterar tipo de gráfico
+  //  NOVO: Alterar tipo de gráfico
   setChartType(type) {
     this.currentChartType = type;
 
@@ -180,13 +181,13 @@ class AnalyticsManager {
       }
     });
 
-    // Re-renderizar gráfico com novos dados salvos
+    // Re-renderizar gráfico com novos dados salvos   
     if (this.inventoryData) {
       this.updateInventoryChart(this.inventoryData);
     }
   }
 
-  // ⭐ NOVO: Registrar botões de tipo de gráfico de lucro
+  //  NOVO: Registrar botões de tipo de gráfico de lucro
   registerProfitChartTypeToggle() {
     document.getElementById("chart-type-profit-bar")?.addEventListener("click", () => {
       this.setProfitChartType("bar");
@@ -199,7 +200,7 @@ class AnalyticsManager {
     });
   }
 
-  // ⭐ NOVO: Alterar tipo de gráfico de lucro
+  // NOVO: Alterar tipo de gráfico de lucro
   setProfitChartType(type) {
     this.currentProfitChartType = type;
 
@@ -232,7 +233,7 @@ class AnalyticsManager {
     }
 
     const data = await AnalyticsAPI.getHistoricalInventoryDistribution(refDate);
-    this.inventoryData = data; // ⭐ NOVO: Salvar dados
+    this.inventoryData = data; //  NOVO: Salvar dados
     this.updateInventoryChart(data);
   }
 
@@ -261,12 +262,12 @@ class AnalyticsManager {
     const totalQuantity = values.reduce((a, b) => a + b, 0);
     const percentages = values.map((v) => ((v / totalQuantity) * 100).toFixed(1));
 
-    // ⭐ NOVO: Renderizar tabela de resumo
+    //  NOVO: Renderizar tabela de resumo
     this.renderInventorySummaryTable(distributionData, labels, values, percentages, totalQuantity);
 
     const ctx = canvas.getContext("2d");
     
-    // ⭐ NOVO: Configurações por tipo de gráfico
+    //  NOVO: Configurações por tipo de gráfico
     const chartConfigs = {
       doughnut: {
         type: "doughnut",
@@ -378,7 +379,7 @@ class AnalyticsManager {
     });
   }
 
-  // ⭐ NOVO: Renderizar tabela de resumo de distribuição
+  //  NOVO: Renderizar tabela de resumo de distribuição
   renderInventorySummaryTable(distributionData, labels, values, percentages, totalQuantity) {
     let summaryContainer = document.getElementById("inventory-summary-table");
     
@@ -428,7 +429,7 @@ class AnalyticsManager {
     const tbody = document.querySelector("#topSellingCardsTable tbody");
     if (!tbody) return;
 
-    // ⭐ REMOVIDO: Inputs de data - usar range padrão de 12 meses
+    //  REMOVIDO: Inputs de data - usar range padrão de 12 meses
     const today = new Date();
     const start = new Date(today.getFullYear() - 1, today.getMonth(), today.getDate())
       .toISOString().split('T')[0];
@@ -461,7 +462,7 @@ class AnalyticsManager {
     const startInput = document.getElementById("profit-start-date");
     const endInput = document.getElementById("profit-end-date");
 
-    // ⭐ ATUALIZADO: Usar valores dos inputs (que já têm valores padrão)
+    //  ATUALIZADO: Usar valores dos inputs (que já têm valores padrão)
     const start = startInput?.value || this.getDateRangeStart();
     const end = endInput?.value || this.getDateRangeEnd();
 
@@ -470,7 +471,7 @@ class AnalyticsManager {
     canvas.width = canvas.width;
     canvas.height = 420;
 
-    this.profitData = rows; // ⭐ NOVO: Salvar dados
+    this.profitData = rows; //  NOVO: Salvar dados
     this.updateProfitChart(rows);
   }
 
@@ -489,6 +490,7 @@ class AnalyticsManager {
     }
 
     const labels = rows.map((r) => this.mapCategoryLabel(r.category));
+    console.log(rows.map(r => r.category));
 
     const values = rows.map((r) =>
       Number(
@@ -503,12 +505,12 @@ class AnalyticsManager {
     const totalProfit = values.reduce((a, b) => a + b, 0);
     const percentages = values.map((v) => ((v / totalProfit) * 100).toFixed(1));
 
-    // ⭐ NOVO: Renderizar tabela de resumo de lucro
+    //  NOVO: Renderizar tabela de resumo de lucro
     this.renderProfitSummaryTable(rows, labels, values, percentages, totalProfit);
 
     const ctx = canvas.getContext("2d");
 
-    // ⭐ NOVO: Configurações por tipo de gráfico
+    //  NOVO: Configurações por tipo de gráfico
     const chartConfigs = {
       bar: {
         type: "bar",
@@ -521,7 +523,7 @@ class AnalyticsManager {
             x: {
               beginAtZero: true,
               ticks: {
-                callback: (value) => value + " un."
+                callback: (value) => "R$ " + value 
               }
             }
           }
@@ -626,7 +628,7 @@ class AnalyticsManager {
     });
   }
 
-  // ⭐ NOVO: Renderizar tabela de resumo de lucro
+  //  NOVO: Renderizar tabela de resumo de lucro
   renderProfitSummaryTable(rows, labels, values, percentages, totalProfit) {
     let summaryContainer = document.getElementById("profit-summary-table");
     
@@ -676,7 +678,7 @@ class AnalyticsManager {
     const canvas = document.getElementById("spendEarnChart");
     if (!canvas) return;
 
-    // ⭐ ATUALIZADO: Usar valores dos inputs
+    //  ATUALIZADO: Usar valores dos inputs
     const start = document.getElementById("se-start-date")?.value || this.getDateRangeStart();
     const end = document.getElementById("se-end-date")?.value || this.getDateRangeEnd();
 
@@ -723,7 +725,7 @@ class AnalyticsManager {
             yAxisID: "y",
           },
           {
-            // ⭐ ALTERADO: De "line" para "bar"
+            //  ALTERADO: De "line" para "bar"
             label: "Ganhos",
             type: "bar",
             data: earned,
@@ -757,7 +759,7 @@ class AnalyticsManager {
     const canvas = document.getElementById("stockValuationChart");
     if (!canvas) return;
 
-    // ⭐ ATUALIZADO: Usar valores dos inputs
+    //  ATUALIZADO: Usar valores dos inputs
     const start = document.getElementById("valuation-start-date")?.value || this.getDateRangeStart();
     const end = document.getElementById("valuation-end-date")?.value || this.getDateRangeEnd();
 
@@ -824,7 +826,7 @@ class AnalyticsManager {
     });
   }
 
-  // ⭐ NOVO: Helper para obter data de início (5 meses atrás)
+  //  NOVO: Helper para obter data de início (5 meses atrás)
   getDateRangeStart() {
     const today = new Date();
     const startDate = new Date(today);
@@ -832,7 +834,7 @@ class AnalyticsManager {
     return startDate.toISOString().split('T')[0];
   }
 
-  // ⭐ NOVO: Helper para obter data de fim (hoje)
+  //  NOVO: Helper para obter data de fim (hoje)
   getDateRangeEnd() {
     return new Date().toISOString().split('T')[0];
   }
@@ -844,18 +846,18 @@ class AnalyticsManager {
         return "Cartas Avulsas";
       case "BOOSTER_BOX":
         return "Booster Box";
-      case "BOOSTER":
-        return "Boosters";
+      case "ACESSÓRIOS":
       case "ACCESSORY":
         return "Acessórios";
       case "OUTROS":
+      case "OTHERS":
         return "Outros";
       default:
         return code || "Desconhecido";
     }
   }
 
-  // ⭐ CORRIGIDO: Função para normalizar e formatar mês corretamente
+  //  CORRIGIDO: Função para normalizar e formatar mês corretamente
   normalizeAndFormatMonth(monthString) {
     if (!monthString) return "";
     
