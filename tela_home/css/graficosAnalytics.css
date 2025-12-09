@@ -1,142 +1,256 @@
-/* ===== LAYOUT GERAL DA PÁGINA ===== */
-
-.main-container {
-    display: flex;
-    justify-content: center;
-    padding: 2rem;
-    background-color: #f3f4f6;
+/* ====================================
+   LAYOUT GERAL DA PÁGINA
+   ==================================== */
+.analytics-main {
+    width: 100%;
+    padding: 20px;
+    box-sizing: border-box;
 }
 
-.analytics-column {
+.analytics-container {
     width: 100%;
-    max-width: 1200px;
+    max-width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 1.8rem;
+    gap: 30px;
+    box-sizing: border-box;
 }
 
-/* ===== CARDS ===== */
-
+/* ====================================
+   CHART CARD
+   ==================================== */
 .chart-card {
     background: #ffffff;
-    border-radius: 12px;
-    padding: 1.5rem 1.8rem;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-}
-
-/* card “full-width” continua igual, só pra semântica */
-.chart-card.full-width {
+    border-radius: 14px;
+    padding: 25px 30px;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+    min-height: 280px;
     width: 100%;
-}
-
-/* ===== CABEÇALHO DO CARD (título + filtros) ===== */
-
-.chart-card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 1rem;
-    flex-wrap: wrap;
+    box-sizing: border-box;
 }
 
 .chart-title {
-    margin: 0;
-    font-size: 1.2rem;
+    margin: 0 0 20px 0;
+    font-size: 1.3rem;
     font-weight: 600;
+    color: #222;
 }
 
-/* ===== FILTROS (inputs e botões) ===== */
-
-.chart-filters,
-.date-filter,
+/* ====================================
+   FILTER ROW
+   ==================================== */
 .filter-row {
     display: flex;
+    gap: 12px;
     align-items: center;
-    gap: 0.75rem;
+    margin-bottom: 20px;
     flex-wrap: wrap;
 }
 
-.chart-filters label,
 .filter-row label {
-    font-size: 0.9rem;
+    font-size: 14px;
+    color: #555;
+    font-weight: 500;
 }
 
-.chart-filters input[type="date"],
-.date-filter input[type="date"],
-.filter-row input[type="date"] {
-    padding: 0.25rem 0.4rem;
-    font-size: 0.9rem;
-}
-
-#inventory-today-btn,
-.filter-btn,
-#sales-filter-btn {
-    padding: 0.35rem 0.8rem;
+.filter-row input[type="date"],
+.filter-row input[type="month"] {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
     border-radius: 6px;
+    font-size: 14px;
+}
+
+.filter-btn {
+    padding: 8px 16px;
+    background: #4D96FF;
+    color: white;
     border: none;
+    border-radius: 6px;
     cursor: pointer;
-    background-color: #2563eb;
-    color: #fff;
-    font-size: 0.9rem;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background 0.3s ease;
 }
 
-#inventory-today-btn:hover,
-.filter-btn:hover,
-#sales-filter-btn:hover {
-    background-color: #1d4ed8;
+.filter-btn:hover {
+    background: #3d7ce6;
 }
 
-/* ===== ÁREA DO GRÁFICO ===== */
-
+/* ====================================
+   CHART CARD BODY
+   ==================================== */
 .chart-card-body {
+    height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     position: relative;
     width: 100%;
-    height: 380px;      /* altura fixa pro gráfico */
-    margin-top: 0.5rem;
 }
 
-/* canvas ocupa 100% da área acima */
 .chart-card canvas {
-    display: block;
+    display: block !important;
     width: 100% !important;
     height: 100% !important;
+    max-height: 400px !important;
 }
 
-/* ===== TABELA DE TOP VENDAS ===== */
+/* ====================================
+   TABLE VENDAS
+   ==================================== */
+.table-vendas {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.table-vendas thead tr {
+    border-bottom: 2px solid #e5e7eb;
+    background: #f9f9f9;
+}
+
+.table-vendas th {
+    text-align: left;
+    padding: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+}
+
+.table-vendas td {
+    padding: 12px;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 14px;
+    color: #555;
+}
+
+.table-vendas tr:hover {
+    background: #f9f9f9;
+}
+
+.table-vendas tr:last-child td {
+    border-bottom: none;
+}
+
+/* ====================================
+   CHART TYPE TOGGLE BUTTONS
+   ==================================== */
+.chart-type-btn {
+    padding: 8px 12px;
+    background: #f0f0f0;
+    color: #555;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.chart-type-btn:hover {
+    background: #e8e8e8;
+    border-color: #bbb;
+}
+
+.chart-type-btn.active {
+    background: #4D96FF;
+    color: white;
+    border-color: #4D96FF;
+}
+
+/* ====================================
+   TOP PRODUTOS MAIS VENDIDOS
+   ==================================== */
+.chart-card:has(#topSellingCardsTable) {
+    min-height: auto;
+    padding: 20px 25px;
+    max-height: 300px;
+    overflow-y: auto;
+}
 
 .table-vendas {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 0.75rem;
-    font-size: 0.9rem;
+    margin-top: 0;
+    font-size: 12px;
 }
 
-.table-vendas thead {
-    background-color: #f3f4f6;
+.table-vendas thead tr {
+    border-bottom: 2px solid #e5e7eb;
+    background: #f9f9f9;
 }
 
-.table-vendas th,
-.table-vendas td {
-    padding: 0.55rem 0.5rem;
-    border-bottom: 1px solid #e5e7eb;
+.table-vendas th {
     text-align: left;
+    padding: 8px 10px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #333;
 }
 
-/* ===== RESPONSIVO ===== */
+.table-vendas td {
+    padding: 8px 10px;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 12px;
+    color: #555;
+}
 
-@media (max-width: 768px) {
-    .main-container {
-        padding: 1rem;
+.table-vendas tr:hover {
+    background: #f9f9f9;
+}
+
+.table-vendas tr:last-child td {
+    border-bottom: none;
+}
+
+/* ====================================
+   RESPONSIVO
+   ==================================== */
+@media (max-width: 1200px) {
+    .analytics-main {
+        padding: 15px;
+    }
+
+    .analytics-container {
+        gap: 20px;
     }
 
     .chart-card {
-        padding: 1.2rem;
+        padding: 20px 25px;
+    }
+}
+
+@media (max-width: 768px) {
+    .analytics-main {
+        padding: 10px;
+    }
+
+    .chart-card {
+        padding: 15px 20px;
     }
 
     .chart-card-body {
         height: 300px;
+    }
+
+    .filter-row {
+        gap: 8px;
+        margin-bottom: 15px;
+    }
+
+    .filter-row input[type="date"] {
+        padding: 6px 8px;
+        font-size: 12px;
+    }
+
+    .filter-btn {
+        padding: 6px 12px;
+        font-size: 12px;
+    }
+
+    .chart-title {
+        font-size: 1.1rem;
     }
 }

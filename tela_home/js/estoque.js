@@ -9,7 +9,7 @@
 // Para rodar local, use: "http://localhost:8080"
 
 const API_CONFIG = {
-  BASE_URL: "'http://localhost:8080/store-manager-api",
+  BASE_URL: "http://localhost:8080/api/store-manager-api",
 };
 
 function getHeaders() {
