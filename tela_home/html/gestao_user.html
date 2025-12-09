@@ -2,165 +2,36 @@
 <html lang="pt-BR">
 
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Gestão de Usuários - StoreManager</title>
-
-  <link rel="stylesheet" href="../css/estoque.css" />
-  <link rel="stylesheet" href="../css/loja.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestão de Usuários - StoreManager</title>
+    <link rel="stylesheet" href="../css/estoque.css">
 </head>
 
 <body>
-  <header class="main-header">
-    <div class="header-container">
-      <div class="logo-container">
-        <div class="logo-icon">RTR</div>
-        <div class="logo-text">StoreManager</div>
-      </div>
-
-      <nav class="main-navigation">
-        <button class="nav-button active" onclick="location.href='gestao_interna.html'">
-          <span class="nav-text">Gestão Interna</span>
-        </button>
-        <button class="nav-button" onclick="location.href='analytics.html'">
-          <span class="nav-text">Analytics</span>
-        </button>
-        <button class="nav-button" onclick="location.href='estoque.html'">
-          <span class="nav-text">Estoque</span>
-        </button>
-        <button class="nav-button" onclick="location.href='loja.html'">
-          <span class="nav-text">Lojas</span>
-        </button>
-      </nav>
-    </div>
-  </header>
-
-  <main class="main-content">
-    <div class="container">
-      <div class="tabs">
-        <button class="tab active" onclick="showTab('register')">Cadastrar Usuário</button>
-        <button class="tab" onclick="showTab('list')">Usuários Cadastrados</button>
-      </div>
-
-      <div id="register-tab" class="tab-content active">
-        <h2>Cadastrar Novo Usuário</h2>
-
-        <form id="user-form" class="movement-form">
-          <div class="form-group">
-            <label class="form-label" for="user-name">Nome <span style="color: var(--danger-color);">*</span></label>
-            <input class="form-input" type="text" id="user-name" name="name" required placeholder="Ex: João da Silva" />
-          </div>
-
-          <div class="form-group">
-            <label class="form-label" for="user-email">E-mail <span style="color: var(--danger-color);">*</span></label>
-            <input class="form-input" type="email" id="user-email" name="email" required
-              placeholder="Ex: joao@exemplo.com" />
-          </div>
-
-          <div class="form-group">
-            <label class="form-label" for="user-password">Senha <span
-                style="color: var(--danger-color);">*</span></label>
-            <input class="form-input" type="password" id="user-password" name="password" required
-              placeholder="Mínimo 8 caracteres, letras e números" />
-          </div>
-
-          <div class="form-group">
-            <label class="form-label" for="user-role">Função (Role) <span
-                style="color: var(--danger-color);">*</span></label>
-            <select class="form-input" id="user-role" name="role_name" required>
-              <option value="" disabled selected>Selecione a função</option>
-              <option value="admin">Administrador</option>
-              <option value="manager">Gerente</option>
-              <option value="staff">Funcionário</option>
-            </select>
-          </div>
-
-          <button type="submit" class="btn btn-primary">Cadastrar Usuário</button>
-        </form>
-      </div>
-
-      <div id="list-tab" class="tab-content">
-        <h2>Usuários Cadastrados</h2>
-
-        <div id="users-list" class="movements-list">
-          <div class="loading-state">
-            <div class="loading-spinner"></div>
-            Carregando usuários...
-          </div>
+    <header class="main-header">
+        <div class="header-container">
+            <div class="logo-container">
+                <div class="logo-icon">RTR</div>
+                <div class="logo-text">StoreManager</div>
+            </div>
+            <nav class="main-navigation">
+                <button class="nav-button" onclick="location.href='gestao_interna.html'">Gestão Interna</button>
+                <button class="nav-button" onclick="location.href='analytics.html'">Analytics</button>
+                <button class="nav-button" onclick="location.href='estoque.html'">Estoque</button>
+                <button class="nav-button" onclick="location.href='loja.html'">Lojas</button>
+                <button class="nav-button active" onclick="location.href='gestao_user.html'">Usuários</button>
+            </nav>
         </div>
-      </div>
+    </header>
 
-      <div id="alerts"></div>
-    </div>
-  </main>
-
-  <div id="edit-modal" class="modal-overlay">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2>Editar Usuário</h2>
-        <button class="modal-close" onclick="closeEditModal()">&times;</button>
-      </div>
-
-      <form id="edit-form" class="movement-form">
-        <input type="hidden" id="edit-user-id" name="user_id">
-
-        <div class="form-group">
-          <label class="form-label" for="edit-name">Nome <span style="color: var(--danger-color);">*</span></label>
-          <input class="form-input" type="text" id="edit-name" name="name" required placeholder="Ex: João da Silva" />
+    <main class="main-content">
+        <div class="container">
+            <!-- Add your user management content here -->
         </div>
+    </main>
 
-        <div class="form-group">
-          <label class="form-label" for="edit-email">E-mail <span style="color: var(--danger-color);">*</span></label>
-          <input class="form-input" type="email" id="edit-email" name="email" required
-            placeholder="Ex: joao@exemplo.com" />
-        </div>
-
-        <div class="form-group">
-          <label class="form-label" for="edit-role">Função (Role) <span
-              style="color: var(--danger-color);">*</span></label>
-          <select class="form-input" id="edit-role" name="role_name" required>
-            <option value="" disabled selected>Selecione a função</option>
-            <option value="admin">Administrador</option>
-            <option value="manager">Gerente</option>
-            <option value="staff">Funcionário</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label class="form-label" for="edit-store-id">ID da Loja (store_id)</label>
-          <input class="form-input" type="text" id="edit-store-id" name="store_id" placeholder="UUID da loja" />
-          <small style="color: var(--gray-dark); font-size: var(--font-size-sm);">Opcional, para vincular o usuário a
-            uma loja.</small>
-        </div>
-
-        <div class="modal-actions">
-          <button type="button" class="btn btn-secondary" onclick="closeEditModal()">Cancelar</button>
-          <button type="submit" class="btn btn-primary">Confirmar Edição</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <div id="delete-modal" class="modal-overlay confirm-modal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2>Confirmar Exclusão</h2>
-        <button class="modal-close" onclick="closeDeleteModal()">&times;</button>
-      </div>
-
-      <div class="modal-body">
-        <p>Tem certeza que deseja excluir o usuário <span class="user-name" id="delete-user-name"></span>?</p>
-        <p style="color: #6b7280; font-size: 0.9rem; margin-top: 10px;">Esta ação não pode ser desfeita.</p>
-      </div>
-
-      <div class="modal-actions">
-        <button type="button" class="btn btn-secondary" onclick="closeDeleteModal()">Cancelar</button>
-        <button type="button" class="btn btn-danger" id="confirm-delete-btn">Excluir</button>
-      </div>
-    </div>
-  </div>
-
-  <script src="../js/gestao_user.js"></script>
+    <script src="../js/gestao_user.js"></script>
 </body>
 
 </html>

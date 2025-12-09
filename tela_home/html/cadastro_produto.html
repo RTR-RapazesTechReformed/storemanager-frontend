@@ -5,119 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastrar Produto - StoreManager</title>
-    <!-- <link rel="stylesheet" href="../css/cadastroProduto.css"> -->
+    <link rel="stylesheet" href="../css/cadastroProduto.css">
     <link rel="stylesheet" href="../css/estoque.css">
-    
-
-    <style>
-        .card-fields,
-        .other-fields {
-            display: none;
-        }
-
-        .container {
-            max-width: 800px;
-            margin: 50px auto;
-            padding: 20px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-
-        .form-row {
-            display: flex;
-            gap: 20px;
-        }
-
-        .form-row>.form-group {
-            flex: 1;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-
-        input[type="text"],
-        input[type="number"],
-        select,
-        textarea {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-
-        .btn-primary {
-            background-color: #007bff;
-            color: white;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .btn-secondary {
-            background-color: #6c757d;
-            color: white;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 4px;
-            text-decoration: none;
-            display: inline-block;
-        }
-
-        #alerts {
-            margin-top: 20px;
-        }
-
-        .alert {
-            padding: 15px;
-            margin-bottom: 15px;
-            border-radius: 4px;
-        }
-
-        .alert-success {
-            background-color: #d4edda;
-            color: #155724;
-            border-color: #c3e6cb;
-        }
-
-        .alert-error {
-            background-color: #f8d7da;
-            color: #721c24;
-            border-color: #f5c6cb;
-        }
-
-        .card-fields,
-        .other-fields {
-            border: 1px solid #007bff;
-            padding: 15px;
-            margin-top: 20px;
-            border-radius: 5px;
-        }
-
-        .card-fields h3,
-        .other-fields h3 {
-            margin-top: 0;
-            color: #007bff;
-        }
-
-        .required {
-            color: red;
-        }
-
-        .form-actions {
-            margin-top: 20px;
-            display: flex;
-            gap: 10px;
-        }
-    </style>
 </head>
 
 <body>
@@ -129,9 +18,10 @@
             </div>
             <nav class="main-navigation">
                 <button class="nav-button" onclick="location.href='gestao_interna.html'">Gestão Interna</button>
-                <button class="nav-button" onclick="location.href='externo.html'">Mercado Externo</button>
                 <button class="nav-button" onclick="location.href='analytics.html'">Analytics</button>
-                <button class="nav-button active" onclick="location.href='estoque.html'">Estoque</button>
+                <button class="nav-button" onclick="location.href='estoque.html'">Estoque</button>
+                <button class="nav-button" onclick="location.href='loja.html'">Lojas</button>
+                <button class="nav-button" onclick="location.href='gestao_user.html'">Usuários</button>
             </nav>
         </div>
     </header>
@@ -356,7 +246,6 @@
     <div id="alerts"></div>
     </div>
 
-    <script src="../js/cadastro_produto.js"></script>
     <script src="../js/cadastro_produto.js"></script>
 </body>
 

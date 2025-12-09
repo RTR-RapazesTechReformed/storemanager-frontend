@@ -4,34 +4,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Sistema de Gestão</title>
-    <link rel="stylesheet" href="../css/styles.css">
-    <link rel="stylesheet" href="../css/graficosAnalytics.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>Analytics - StoreManager</title>
+    <link rel="stylesheet" href="../css/estoque.css">
+    <link rel="stylesheet" href="../css/graficosGestaoInterna.css">
 </head>
 
 <body>
-    <!-- Header Principal -->
     <header class="main-header">
         <div class="header-container">
-            <!-- Logo -->
             <div class="logo-container">
-                <div class="logo-icon">
-                    <p class="storeManagerTitulo">STORE MANAGER</p>
-                </div>
+                <div class="logo-icon">RTR</div>
+                <div class="logo-text">StoreManager</div>
             </div>
-
-            <!-- Navegação Principal -->
             <nav class="main-navigation">
-                <button class="nav-button" onclick="location.href='gestao_interna.html'">
-                    <span class="nav-text">Gestão Interna</span>
-                </button>
-                <button class="nav-button active" onclick="location.href='analytics.html'">
-                    <span class="nav-text">Analytics</span>
-                </button>
-                <button class="nav-button" onclick="location.href='estoque.html'">
-                    <span class="nav-text">Estoque</span>
-                </button>
+                <button class="nav-button" onclick="location.href='gestao_interna.html'">Gestão Interna</button>
+                <button class="nav-button active" onclick="location.href='analytics.html'">Analytics</button>
+                <button class="nav-button" onclick="location.href='estoque.html'">Estoque</button>
+                <button class="nav-button" onclick="location.href='loja.html'">Lojas</button>
+                <button class="nav-button" onclick="location.href='gestao_user.html'">Usuários</button>
             </nav>
         </div>
     </header>
@@ -48,6 +38,13 @@
                     <label>Data:</label>
                     <input type="date" id="inventory-date">
                     <button id="inventory-today-btn" class="filter-btn">Hoje</button>
+
+                    <!--  NOVO: Botões de visualização -->
+                    <div style="margin-left: auto; display: flex; gap: 8px;">
+                        <button id="chart-type-doughnut" class="chart-type-btn" data-type="doughnut" title="Rosca">Rosca</button>
+                        <button id="chart-type-bar" class="chart-type-btn active" data-type="bar" title="Barras">Barras</button>
+                        <button id="chart-type-pie" class="chart-type-btn" data-type="pie" title="Pizza">Pizza</button>
+                    </div>
                 </div>
 
                 <div class="chart-card-body">
@@ -58,12 +55,6 @@
             <!-- CARD 2 - Top Vendas -->
             <div class="chart-card">
                 <h2 class="chart-title">Top Produtos Mais Vendidos</h2>
-
-                <div class="filter-row">
-                    <input type="date" id="sales-start-date">
-                    <input type="date" id="sales-end-date">
-                    <button id="sales-filter-btn" class="filter-btn">Filtrar</button>
-                </div>
 
                 <table class="table-vendas" id="topSellingCardsTable">
                     <thead>
@@ -85,6 +76,13 @@
                     <label>Fim:</label>
                     <input type="date" id="profit-end-date">
                     <button id="profit-filter-btn" class="filter-btn">Filtrar</button>
+
+                    <!--  NOVO: Botões de visualização -->
+                    <div style="margin-left: auto; display: flex; gap: 8px;">
+                        <button id="chart-type-profit-bar" class="chart-type-btn active" data-type="bar" title="Barras">Barras</button>
+                        <button id="chart-type-profit-doughnut" class="chart-type-btn" data-type="doughnut" title="Rosca">Rosca</button>
+                        <button id="chart-type-profit-pie" class="chart-type-btn" data-type="pie" title="Pizza">Pizza</button>
+                    </div>
                 </div>
                 <div class="chart-card-body">
                     <canvas id="profitChart"></canvas>
@@ -128,10 +126,6 @@
             </div>
 
         </div>
-    </main>
-
-    </main>
-
     </main>
 
     <script src="../js/analytics.js"></script>

@@ -1,142 +1,216 @@
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-25px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
 /* ===== CARDS DE GRÁFICOS ===== */
 
 .chart-card {
-  position: relative;
-  width: 100%;
-  max-width: 100%;
-  margin: 0 auto 32px;
-  padding: 16px 20px 12px;
-  border-radius: var(--border-radius-lg);
-  background-color: var(--white);
-  box-shadow: var(--shadow-md);
-  box-sizing: border-box;
-  overflow: hidden;
+    background: linear-gradient(135deg, #FFFFFF 0%, rgba(248, 248, 248, 0.95) 100%);
+    padding: 24px;
+    border: 1.5px solid rgba(19, 141, 141, 0.15);
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(19, 141, 141, 0.12);
+    margin-bottom: 24px;
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    animation: slideInUp 0.6s ease-out;
+}
+
+.chart-card:hover {
+    border-color: rgba(19, 141, 141, 0.4);
+    box-shadow: 0 12px 32px rgba(19, 141, 141, 0.18);
+    transform: translateY(-3px);
 }
 
 .info-box {
-    background-color: #e8f3ff;
-    border-left: 4px solid #4d96ff;
+    background: rgba(19, 141, 141, 0.08);
+    padding: 16px;
+    border-radius: 8px;
+    border: 1px solid rgba(19, 141, 141, 0.15);
+    margin-bottom: 16px;
 }
 
 .kpi-value.info {
-    color: #2266dd;
-    font-weight: 600;
+    color: #138d8d;
+    font-weight: 700;
+    font-size: 1.5rem;
 }
-
 
 /* Header do card com título + filtros */
 .chart-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    gap: 16px;
+    flex-wrap: wrap;
+    animation: slideInLeft 0.8s ease-out;
 }
 
 .chart-title {
-  font-size: 1rem;
-  font-weight: 600;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #138d8d;
+    letter-spacing: 0.3px;
 }
 
 /* Filtros de data (De / Até / Limpar) */
 .chart-filters {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 0.85rem;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
 }
 
 .chart-filters label {
-  display: flex;
-  align-items: center;
-  gap: 4px;
+    font-size: 0.875rem;
+    color: #333333;
+    font-weight: 600;
 }
 
 .chart-filters input[type="month"] {
-  padding: 2px 4px;
-  font-size: 0.8rem;
+    padding: 8px 12px;
+    border: 1.5px solid rgba(19, 141, 141, 0.2);
+    border-radius: 8px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(248, 248, 248, 0.9) 100%);
+    color: #333333;
+    font-size: 0.875rem;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    cursor: pointer;
+}
+
+.chart-filters input[type="month"]:focus {
+    outline: none;
+    border-color: #138d8d;
+    box-shadow: 0 0 0 3px rgba(19, 141, 141, 0.15);
 }
 
 .chart-filters button {
-  padding: 4px 8px;
-  border-radius: 4px;
-  border: none;
-  background: var(--primary-color);
-  color: #fff;
-  cursor: pointer;
-  font-size: 0.8rem;
-  transition: opacity 0.2s ease;
+    padding: 8px 16px;
+    background: linear-gradient(135deg, #138d8d 0%, #0d878b 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .chart-filters button:hover {
-  opacity: 0.9;
+    box-shadow: 0 6px 16px rgba(19, 141, 141, 0.3);
+    transform: translateY(-2px);
 }
 
 /* Canvas ocupa o espaço interno do card, abaixo do header */
 .chart-card canvas {
-  display: block;
-  width: 100% !important;
-  height: calc(100% - 32px) !important; /* 32px ≈ altura do header */
+    width: 100%;
+    height: auto;
 }
 
 /* Alturas específicas por card */
 #panoramaVendas {
-  height: 420px;
+    min-height: 400px;
 }
 
 #aquisicoesMensais,
 #envelhecimentoEstoque {
-  height: 380px;
+    min-height: 350px;
 }
 
 /* Margem inferior padrão entre cards */
 .chart-card {
-  margin-bottom: 2%;
+    margin-bottom: 24px;
 }
 
 /* Sidebar Gestão Interna */
-
 .financial-sidebar {
-  background-color: var(--light-color);
-  border-radius: var(--border-radius-lg);
-  box-shadow: var(--shadow-md);
-  padding: var(--spacing-md);
-  margin-bottom: 2rem;
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: var(--spacing-md);
+    background: linear-gradient(135deg, #FFFFFF 0%, rgba(248, 248, 248, 0.95) 100%);
+    padding: 24px;
+    border: 1.5px solid rgba(19, 141, 141, 0.15);
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(19, 141, 141, 0.12);
+    animation: slideInRight 0.8s ease-out;
 }
 
 /* Boxes individuais */
 .financial-box {
-  background-color: var(--white);
-  padding: var(--spacing-md);
-  border-radius: var(--border-radius-lg);
-  text-align: center;
-  box-shadow: var(--shadow-md);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background: rgba(19, 141, 141, 0.08);
+    padding: 16px;
+    border-radius: 8px;
+    border: 1px solid rgba(19, 141, 141, 0.15);
+    margin-bottom: 16px;
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    animation: slideInUp 0.6s ease-out backwards;
 }
+
+.financial-box:nth-child(1) { animation-delay: 0.2s; }
+.financial-box:nth-child(2) { animation-delay: 0.3s; }
+.financial-box:nth-child(3) { animation-delay: 0.4s; }
+.financial-box:nth-child(4) { animation-delay: 0.5s; }
 
 .financial-box:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-lg);
+    background: rgba(19, 141, 141, 0.12);
+    border-color: rgba(19, 141, 141, 0.3);
+    transform: translateY(-2px);
 }
 
-/* Cores de destaque para cada box */
-.primary-box { border-top: 4px solid var(--primary-color); }
-.success-box { border-top: 4px solid var(--success-color); }
-.danger-box  { border-top: 4px solid var(--danger-color); }
+.financial-box:last-child {
+    margin-bottom: 0;
+}
 
 /* Tipografia */
 .financial-box .financial-title {
-  font-size: var(--font-size-base);
-  margin-bottom: var(--spacing-sm);
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+  color: #555;
 }
 
 .financial-box .financial-value {
-  font-size: var(--font-size-2xl);
+  font-size: 1.8rem;
   font-weight: 700;
-  margin-top: var(--spacing-sm);
+  margin-top: 0.5rem;
+  animation: slideInRight 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .chart-header {
