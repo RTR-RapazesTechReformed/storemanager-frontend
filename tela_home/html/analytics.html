@@ -7,6 +7,7 @@
     <title>Analytics - StoreManager</title>
     <link rel="stylesheet" href="../css/estoque.css">
     <link rel="stylesheet" href="../css/graficosGestaoInterna.css">
+    <link rel="stylesheet" href="../css/graficosAnalytics.css">
 </head>
 
 <body>
@@ -47,13 +48,13 @@
                     </div>
                 </div>
 
-                <div class="chart-card-body">
+                <div class="chart-card-body" id="distribuicaoEstoque">
                     <canvas id="inventoryChart"></canvas>
                 </div>
             </div>
 
             <!-- CARD 2 - Top Vendas -->
-            <div class="chart-card">
+            <div class="chart-card" id="topVendidos">
                 <h2 class="chart-title">Top Produtos Mais Vendidos</h2>
 
                 <table class="table-vendas" id="topSellingCardsTable">
@@ -68,7 +69,7 @@
             </div>
 
             <!-- CARD 3 - Lucro -->
-            <div class="chart-card">
+            <div class="chart-card" id="participacaoLucro">
                 <h2 class="chart-title">Participação de Lucro por Produto</h2>
                 <div class="filter-row">
                     <label>Início:</label>
