@@ -295,8 +295,14 @@ class DashboardManager {
         
         if (!container) return;
 
+        // ⭐ NOVO: Lista de produtos a excluir
+        const productsToExclude = ["Arcanine ex", "Armarouge"];
+
         const allProducts = [...new Set(
-            normalizeList(this.salesOverviewRaw).map(i => i.product_name ?? i.productName)
+            normalizeList(this.salesOverviewRaw)
+                .map(i => i.product_name ?? i.productName)
+                // ⭐ NOVO: Filtrar produtos excluídos
+                .filter(product => !productsToExclude.includes(product))
         )].sort();
 
         container.innerHTML = "";
