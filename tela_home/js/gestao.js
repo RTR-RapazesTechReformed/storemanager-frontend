@@ -815,6 +815,16 @@ class DashboardManager {
             return;
         }
 
+        // ⭐ NOVO: Criar grid container
+        const gridContainer = document.createElement("div");
+        gridContainer.className = "valued-products-grid";
+        gridContainer.style.cssText = `
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            padding: 10px 0;
+        `;
+
         list.forEach((product, i) => {
             const productName = product.product_name ?? product.productName ?? "---";
             const description = product.product_description ?? "---";
@@ -829,57 +839,90 @@ class DashboardManager {
 
             // Determinar cor baseada na variação de preço
             let priceChangeClass = "price-neutral";
-            if (percentageChange > 5) priceChangeClass = "price-up";
-            else if (percentageChange < -5) priceChangeClass = "price-down";
+            let priceColor = "#FFD700";
+            if (percentageChange > 5) {
+                priceChangeClass = "price-up";
+                priceColor = "#52C41A";
+            } else if (percentageChange < -5) {
+                priceChangeClass = "price-down";
+                priceColor = "#FF4D4F";
+            }
 
             const productItem = document.createElement("div");
-            productItem.className = `valued-product-item ${priceChangeClass}`;
+            productItem.className = `valued-product-card ${priceChangeClass}`;
+            productItem.style.cssText = `
+                background: white;
+                border: 2px solid ${priceColor};
+                border-radius: 8px;
+                padding: 15px;
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+                transition: all 0.3s ease;
+            `;
+
+            productItem.onmouseover = function() {
+                this.style.boxShadow = "0 4px 16px rgba(0, 0, 0, 0.15)";
+                this.style.transform = "translateY(-2px)";
+            };
+
+            productItem.onmouseout = function() {
+                this.style.boxShadow = "0 2px 8px rgba(0, 0, 0, 0.08)";
+                this.style.transform = "translateY(0)";
+            };
+
             productItem.innerHTML = `
-                <div class="valued-product-header">
-                    <div class="valued-product-rank">#${i + 1}</div>
-                    <div class="valued-product-name">${productName}</div>
-                    <div class="valued-price-current">R$ ${currentPrice.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</div>
-                </div>
-
-                <div class="valued-product-description">
-                    ${description}
-                </div>
-
-                <div class="valued-product-details">
-                    <div class="valued-detail-group">
-                        <div class="valued-detail-row">
-                            <span class="valued-label">Preço Médio:</span>
-                            <span class="valued-value">R$ ${avgPrice.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</span>
-                        </div>
-                        <div class="valued-detail-row">
-                            <span class="valued-label">Variação:</span>
-                            <span class="valued-value ${percentageChange > 0 ? 'positive' : percentageChange < 0 ? 'negative' : ''}">${percentageChange > 0 ? '+' : ''}${percentageChange.toFixed(2)}%</span>
-                        </div>
-                        <div class="valued-detail-row">
-                            <span class="valued-label">Diferença do Avg:</span>
-                            <span class="valued-value">R$ ${differenceFromAvg.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</span>
-                        </div>
+                <div style="display: flex; justify-content: space-between; align-items: start; gap: 10px;">
+                    <div style="flex: 1;">
+                        <h4 style="margin: 0 0 6px 0; font-size: 13px; font-weight: 600; color: #222; word-break: break-word;">
+                            ${productName}
+                        </h4>
+                        <p style="margin: 0; font-size: 11px; color: #999; font-style: italic; line-height: 1.3;">
+                            ${description}
+                        </p>
                     </div>
+                    <div style="flex-shrink: 0; text-align: center;">
+                        <div style="font-size: 11px; color: #999; font-weight: 500;">Rank</div>
+                        <div style="font-size: 18px; font-weight: 700; color: ${priceColor};">#${i + 1}</div>
+                    </div>
+                </div>
 
-                    <div class="valued-detail-group">
-                        <div class="valued-detail-row">
-                            <span class="valued-label">Min/Máx:</span>
-                            <span class="valued-value">R$ ${minPrice.toLocaleString("pt-BR", { minimumFractionDigits: 2 })} / R$ ${maxPrice.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</span>
-                        </div>
-                        <div class="valued-detail-row">
-                            <span class="valued-label">Estoque:</span>
-                            <span class="valued-value">${currentStock} un.</span>
-                        </div>
-                        <div class="valued-detail-row">
-                            <span class="valued-label">Última Venda:</span>
-                            <span class="valued-value">${lastSale}</span>
-                        </div>
+                <div style="border-top: 1px solid #f0f0f0; padding-top: 10px; display: flex; flex-direction: column; gap: 6px; font-size: 12px;">
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: #999;">Preço Atual:</span>
+                        <span style="font-weight: 600; color: ${priceColor};">R$ ${currentPrice.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: #999;">Preço Médio:</span>
+                        <span style="font-weight: 500; color: #333;">R$ ${avgPrice.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: #999;">Variação:</span>
+                        <span style="font-weight: 600; color: ${priceColor};">${percentageChange > 0 ? '+' : ''}${percentageChange.toFixed(2)}%</span>
+                    </div>
+                </div>
+
+                <div style="border-top: 1px solid #f0f0f0; padding-top: 10px; display: flex; flex-direction: column; gap: 4px; font-size: 11px;">
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: #999;">Min/Máx:</span>
+                        <span style="color: #555;">R$ ${minPrice.toLocaleString("pt-BR", { minimumFractionDigits: 2 })} / R$ ${maxPrice.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: #999;">Estoque:</span>
+                        <span style="color: #555;">${currentStock} un.</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: #999;">Última Venda:</span>
+                        <span style="color: #555;">${lastSale}</span>
                     </div>
                 </div>
             `;
 
-            container.appendChild(productItem);
+            gridContainer.appendChild(productItem);
         });
+
+        container.appendChild(gridContainer);
     }
 
     // ======================================================
