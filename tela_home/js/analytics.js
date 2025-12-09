@@ -6,8 +6,8 @@
 // Para rodar local, use: "http://localhost:8080"
 
 const ANALYTICS_CONFIG = {
-  API_BASE_URL: "http://localhost:8080/api/store-manager-api/dashboard",
-  UPDATE_INTERVAL: 30000
+  API_BASE_URL: "/api/store-manager-api/dashboard",
+  UPDATE_INTERVAL: 30000,
 };
 
 // =================== API ===================
@@ -26,11 +26,11 @@ class AnalyticsAPI {
   }
 
   static async getProfitByCategory(startDate, endDate) {
-     console.log(startDate, endDate);
+    console.log(startDate, endDate);
     const url = `${ANALYTICS_CONFIG.API_BASE_URL}/profit?start=${startDate}&end=${endDate}`;
     return this.fetchJSON(url);
   }
-    
+
   static async getSpendVsEarn(startDate, endDate) {
     const url = `${ANALYTICS_CONFIG.API_BASE_URL}/spend-earn?start=${startDate}&end=${endDate}`;
     return this.fetchJSON(url);
@@ -132,11 +132,11 @@ class AnalyticsManager {
   //  NOVO: Aplicar range automático de 5 meses
   applyDefaultDateRange() {
     const today = new Date();
-    const end = today.toISOString().split('T')[0];
-    
+    const end = today.toISOString().split("T")[0];
+
     const startDate = new Date(today);
     startDate.setMonth(startDate.getMonth() - 4); // 5 meses (atual + 4 anteriores)
-    const start = startDate.toISOString().split('T')[0];
+    const start = startDate.toISOString().split("T")[0];
 
     // Aplicar em todos os inputs de data
     const dateIds = [
@@ -145,22 +145,24 @@ class AnalyticsManager {
       "se-start-date",
       "se-end-date",
       "valuation-start-date",
-      "valuation-end-date"
+      "valuation-end-date",
     ];
 
-    dateIds.forEach(id => {
+    dateIds.forEach((id) => {
       const input = document.getElementById(id);
       if (input) {
-        input.value = (id.includes("end")) ? end : start;
+        input.value = id.includes("end") ? end : start;
       }
     });
   }
 
   //  NOVO: Registrar botões de tipo de gráfico
   registerChartTypeToggle() {
-    document.getElementById("chart-type-doughnut")?.addEventListener("click", () => {
-      this.setChartType("doughnut");
-    });
+    document
+      .getElementById("chart-type-doughnut")
+      ?.addEventListener("click", () => {
+        this.setChartType("doughnut");
+      });
     document.getElementById("chart-type-bar")?.addEventListener("click", () => {
       this.setChartType("bar");
     });
@@ -174,14 +176,14 @@ class AnalyticsManager {
     this.currentChartType = type;
 
     // Atualizar botões ativos
-    document.querySelectorAll(".chart-type-btn").forEach(btn => {
+    document.querySelectorAll(".chart-type-btn").forEach((btn) => {
       btn.classList.remove("active");
       if (btn.dataset.type === type) {
         btn.classList.add("active");
       }
     });
 
-    // Re-renderizar gráfico com novos dados salvos   
+    // Re-renderizar gráfico com novos dados salvos
     if (this.inventoryData) {
       this.updateInventoryChart(this.inventoryData);
     }
@@ -189,15 +191,21 @@ class AnalyticsManager {
 
   //  NOVO: Registrar botões de tipo de gráfico de lucro
   registerProfitChartTypeToggle() {
-    document.getElementById("chart-type-profit-bar")?.addEventListener("click", () => {
-      this.setProfitChartType("bar");
-    });
-    document.getElementById("chart-type-profit-doughnut")?.addEventListener("click", () => {
-      this.setProfitChartType("doughnut");
-    });
-    document.getElementById("chart-type-profit-pie")?.addEventListener("click", () => {
-      this.setProfitChartType("pie");
-    });
+    document
+      .getElementById("chart-type-profit-bar")
+      ?.addEventListener("click", () => {
+        this.setProfitChartType("bar");
+      });
+    document
+      .getElementById("chart-type-profit-doughnut")
+      ?.addEventListener("click", () => {
+        this.setProfitChartType("doughnut");
+      });
+    document
+      .getElementById("chart-type-profit-pie")
+      ?.addEventListener("click", () => {
+        this.setProfitChartType("pie");
+      });
   }
 
   // NOVO: Alterar tipo de gráfico de lucro
@@ -205,7 +213,7 @@ class AnalyticsManager {
     this.currentProfitChartType = type;
 
     // Atualizar botões ativos
-    document.querySelectorAll("[data-type]").forEach(btn => {
+    document.querySelectorAll("[data-type]").forEach((btn) => {
       if (btn.id.includes("profit")) {
         btn.classList.remove("active");
         if (btn.dataset.type === type) {
@@ -260,90 +268,100 @@ class AnalyticsManager {
     );
 
     const totalQuantity = values.reduce((a, b) => a + b, 0);
-    const percentages = values.map((v) => ((v / totalQuantity) * 100).toFixed(1));
+    const percentages = values.map((v) =>
+      ((v / totalQuantity) * 100).toFixed(1)
+    );
 
     //  NOVO: Renderizar tabela de resumo
-    this.renderInventorySummaryTable(distributionData, labels, values, percentages, totalQuantity);
+    this.renderInventorySummaryTable(
+      distributionData,
+      labels,
+      values,
+      percentages,
+      totalQuantity
+    );
 
     const ctx = canvas.getContext("2d");
-    
+
     //  NOVO: Configurações por tipo de gráfico
     const chartConfigs = {
       doughnut: {
         type: "doughnut",
         options: {
           plugins: {
-            legend: { 
+            legend: {
               position: "right",
-              labels: { padding: 15, font: { size: 12 } }
-            }
-          }
+              labels: { padding: 15, font: { size: 12 } },
+            },
+          },
         },
-        plugins: [{
-          id: 'textCenter',
-          afterDraw(chart) {
-            const {width, height, ctx} = chart;
-            chart.data.datasets.forEach((dataset, i) => {
-              const meta = chart.getDatasetMeta(i);
-              if (!meta || !meta.data) return;
-              
-              meta.data.forEach((datapoint, index) => {
-                const {x, y} = datapoint.getProps(['x', 'y'], true);
-                const data = dataset.data[index];
-                const percentage = ((data / totalQuantity) * 100).toFixed(0);
+        plugins: [
+          {
+            id: "textCenter",
+            afterDraw(chart) {
+              const { width, height, ctx } = chart;
+              chart.data.datasets.forEach((dataset, i) => {
+                const meta = chart.getDatasetMeta(i);
+                if (!meta || !meta.data) return;
 
-                ctx.fillStyle = "white";
-                ctx.font = "bold 14px Arial";
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.fillText(data, x, y - 5);
-                
-                ctx.font = "bold 12px Arial";
-                ctx.fillText(`${percentage}%`, x, y + 15);
+                meta.data.forEach((datapoint, index) => {
+                  const { x, y } = datapoint.getProps(["x", "y"], true);
+                  const data = dataset.data[index];
+                  const percentage = ((data / totalQuantity) * 100).toFixed(0);
+
+                  ctx.fillStyle = "white";
+                  ctx.font = "bold 14px Arial";
+                  ctx.textAlign = "center";
+                  ctx.textBaseline = "middle";
+                  ctx.fillText(data, x, y - 5);
+
+                  ctx.font = "bold 12px Arial";
+                  ctx.fillText(`${percentage}%`, x, y + 15);
+                });
               });
-            });
-          }
-        }]
+            },
+          },
+        ],
       },
       bar: {
         type: "bar",
         options: {
           indexAxis: "y",
           plugins: {
-            legend: { display: false }
+            legend: { display: false },
           },
           scales: {
             x: {
               beginAtZero: true,
               ticks: {
-                callback: (value) => value + " un."
-              }
-            }
-          }
+                callback: (value) => value + " un.",
+              },
+            },
+          },
         },
-        plugins: []
+        plugins: [],
       },
       pie: {
         type: "pie",
         options: {
           plugins: {
-            legend: { 
+            legend: {
               position: "right",
-              labels: { padding: 15, font: { size: 12 } }
+              labels: { padding: 15, font: { size: 12 } },
             },
             tooltip: {
               callbacks: {
-                label: function(context) {
+                label: function (context) {
                   const value = context.parsed;
                   const percentage = ((value / totalQuantity) * 100).toFixed(1);
                   return `${context.label}: ${value} un. (${percentage}%)`;
-                }
-              }
-            }
-          }
+                },
+              },
+            },
+          },
         },
-        plugins: []
-      }
+        plugins: [],
+      },
     };
 
     const config = chartConfigs[this.currentChartType];
@@ -363,29 +381,37 @@ class AnalyticsManager {
               "#6A5ACD",
               "#32CD32",
               "#FF8C00",
-              "#DC143C"
+              "#DC143C",
             ],
             borderColor: "#fff",
-            borderWidth: 2
+            borderWidth: 2,
           },
         ],
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
-        ...config.options
+        ...config.options,
       },
-      plugins: config.plugins
+      plugins: config.plugins,
     });
   }
 
   //  NOVO: Renderizar tabela de resumo de distribuição
-  renderInventorySummaryTable(distributionData, labels, values, percentages, totalQuantity) {
+  renderInventorySummaryTable(
+    distributionData,
+    labels,
+    values,
+    percentages,
+    totalQuantity
+  ) {
     let summaryContainer = document.getElementById("inventory-summary-table");
-    
+
     // Se não existir, criar o container
     if (!summaryContainer) {
-      const chartCard = document.querySelector("#inventoryChart").closest(".chart-card");
+      const chartCard = document
+        .querySelector("#inventoryChart")
+        .closest(".chart-card");
       summaryContainer = document.createElement("div");
       summaryContainer.id = "inventory-summary-table";
       summaryContainer.style.marginTop = "20px";
@@ -403,16 +429,26 @@ class AnalyticsManager {
             </tr>
           </thead>
           <tbody>
-            ${values.map((value, index) => `
+            ${values
+              .map(
+                (value, index) => `
               <tr style="border-bottom: 1px solid #f0f0f0;">
                 <td style="text-align: left; padding: 12px; color: #555;">
-                  <span style="display: inline-block; width: 12px; height: 12px; border-radius: 2px; background: ${'#FF6F61,#20B2AA,#4D96FF,#FFD700,#6A5ACD,#32CD32,#FF8C00,#DC143C'.split(',')[index]}; margin-right: 8px;"></span>
+                  <span style="display: inline-block; width: 12px; height: 12px; border-radius: 2px; background: ${
+                    "#FF6F61,#20B2AA,#4D96FF,#FFD700,#6A5ACD,#32CD32,#FF8C00,#DC143C".split(
+                      ","
+                    )[index]
+                  }; margin-right: 8px;"></span>
                   ${labels[index]}
                 </td>
                 <td style="text-align: right; padding: 12px; color: #222; font-weight: 500;">${value} un.</td>
-                <td style="text-align: right; padding: 12px; color: #2563eb; font-weight: 600;">${percentages[index]}%</td>
+                <td style="text-align: right; padding: 12px; color: #2563eb; font-weight: 600;">${
+                  percentages[index]
+                }%</td>
               </tr>
-            `).join('')}
+            `
+              )
+              .join("")}
             <tr style="background: #f9f9f9; border-top: 2px solid #e5e7eb;">
               <td style="text-align: left; padding: 12px; font-weight: 600; color: #222;">TOTAL</td>
               <td style="text-align: right; padding: 12px; font-weight: 600; color: #222;">${totalQuantity} un.</td>
@@ -431,9 +467,14 @@ class AnalyticsManager {
 
     //  REMOVIDO: Inputs de data - usar range padrão de 12 meses
     const today = new Date();
-    const start = new Date(today.getFullYear() - 1, today.getMonth(), today.getDate())
-      .toISOString().split('T')[0];
-    const end = today.toISOString().split('T')[0];
+    const start = new Date(
+      today.getFullYear() - 1,
+      today.getMonth(),
+      today.getDate()
+    )
+      .toISOString()
+      .split("T")[0];
+    const end = today.toISOString().split("T")[0];
 
     const rows = await AnalyticsAPI.getCardSales(start, end);
 
@@ -490,7 +531,7 @@ class AnalyticsManager {
     }
 
     const labels = rows.map((r) => this.mapCategoryLabel(r.category));
-    console.log(rows.map(r => r.category));
+    console.log(rows.map((r) => r.category));
 
     const values = rows.map((r) =>
       Number(
@@ -506,7 +547,13 @@ class AnalyticsManager {
     const percentages = values.map((v) => ((v / totalProfit) * 100).toFixed(1));
 
     //  NOVO: Renderizar tabela de resumo de lucro
-    this.renderProfitSummaryTable(rows, labels, values, percentages, totalProfit);
+    this.renderProfitSummaryTable(
+      rows,
+      labels,
+      values,
+      percentages,
+      totalProfit
+    );
 
     const ctx = canvas.getContext("2d");
 
@@ -517,82 +564,88 @@ class AnalyticsManager {
         options: {
           indexAxis: "y",
           plugins: {
-            legend: { display: false }
+            legend: { display: false },
           },
           scales: {
             x: {
               beginAtZero: true,
               ticks: {
-                callback: (value) => "R$ " + value 
-              }
-            }
-          }
+                callback: (value) => "R$ " + value,
+              },
+            },
+          },
         },
-        plugins: []
+        plugins: [],
       },
       doughnut: {
         type: "doughnut",
         options: {
           plugins: {
-            legend: { 
+            legend: {
               position: "right",
-              labels: { padding: 15, font: { size: 12 } }
+              labels: { padding: 15, font: { size: 12 } },
             },
             tooltip: {
               callbacks: {
-                label: function(context) {
+                label: function (context) {
                   const value = context.parsed;
                   const percentage = ((value / totalProfit) * 100).toFixed(1);
-                  return `${context.label}: R$ ${value.toLocaleString("pt-BR")} (${percentage}%)`;
-                }
-              }
-            }
-          }
+                  return `${context.label}: R$ ${value.toLocaleString(
+                    "pt-BR"
+                  )} (${percentage}%)`;
+                },
+              },
+            },
+          },
         },
-        plugins: [{
-          id: 'textCenter',
-          afterDraw(chart) {
-            const {width, height, ctx} = chart;
-            chart.data.datasets.forEach((dataset, i) => {
-              const meta = chart.getDatasetMeta(i);
-              if (!meta || !meta.data) return;
-              
-              meta.data.forEach((datapoint, index) => {
-                const {x, y} = datapoint.getProps(['x', 'y'], true);
-                const data = dataset.data[index];
-                const percentage = ((data / totalProfit) * 100).toFixed(0);
+        plugins: [
+          {
+            id: "textCenter",
+            afterDraw(chart) {
+              const { width, height, ctx } = chart;
+              chart.data.datasets.forEach((dataset, i) => {
+                const meta = chart.getDatasetMeta(i);
+                if (!meta || !meta.data) return;
 
-                ctx.fillStyle = "white";
-                ctx.font = "bold 12px Arial";
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.fillText(`${percentage}%`, x, y);
+                meta.data.forEach((datapoint, index) => {
+                  const { x, y } = datapoint.getProps(["x", "y"], true);
+                  const data = dataset.data[index];
+                  const percentage = ((data / totalProfit) * 100).toFixed(0);
+
+                  ctx.fillStyle = "white";
+                  ctx.font = "bold 12px Arial";
+                  ctx.textAlign = "center";
+                  ctx.textBaseline = "middle";
+                  ctx.fillText(`${percentage}%`, x, y);
+                });
               });
-            });
-          }
-        }]
+            },
+          },
+        ],
       },
       pie: {
         type: "pie",
         options: {
           plugins: {
-            legend: { 
+            legend: {
               position: "right",
-              labels: { padding: 15, font: { size: 12 } }
+              labels: { padding: 15, font: { size: 12 } },
             },
             tooltip: {
               callbacks: {
-                label: function(context) {
+                label: function (context) {
                   const value = context.parsed;
                   const percentage = ((value / totalProfit) * 100).toFixed(1);
-                  return `${context.label}: R$ ${value.toLocaleString("pt-BR")} (${percentage}%)`;
-                }
-              }
-            }
-          }
+                  return `${context.label}: R$ ${value.toLocaleString(
+                    "pt-BR"
+                  )} (${percentage}%)`;
+                },
+              },
+            },
+          },
         },
-        plugins: []
-      }
+        plugins: [],
+      },
     };
 
     const config = chartConfigs[this.currentProfitChartType];
@@ -612,29 +665,31 @@ class AnalyticsManager {
               "#a78bfa",
               "#fb923c",
               "#f43f5e",
-              "#06b6d4"
+              "#06b6d4",
             ],
             borderColor: "#fff",
-            borderWidth: 2
+            borderWidth: 2,
           },
         ],
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
-        ...config.options
+        ...config.options,
       },
-      plugins: config.plugins
+      plugins: config.plugins,
     });
   }
 
   //  NOVO: Renderizar tabela de resumo de lucro
   renderProfitSummaryTable(rows, labels, values, percentages, totalProfit) {
     let summaryContainer = document.getElementById("profit-summary-table");
-    
+
     // Se não existir, criar o container
     if (!summaryContainer) {
-      const chartCard = document.querySelector("#profitChart").closest(".chart-card");
+      const chartCard = document
+        .querySelector("#profitChart")
+        .closest(".chart-card");
       summaryContainer = document.createElement("div");
       summaryContainer.id = "profit-summary-table";
       summaryContainer.style.marginTop = "20px";
@@ -652,19 +707,35 @@ class AnalyticsManager {
             </tr>
           </thead>
           <tbody>
-            ${values.map((value, index) => `
+            ${values
+              .map(
+                (value, index) => `
               <tr style="border-bottom: 1px solid #f0f0f0;">
                 <td style="text-align: left; padding: 12px; color: #555;">
-                  <span style="display: inline-block; width: 12px; height: 12px; border-radius: 2px; background: ${'#f87171,#34d399,#60a5fa,#fbbf24,#a78bfa,#fb923c,#f43f5e,#06b6d4'.split(',')[index]}; margin-right: 8px;"></span>
+                  <span style="display: inline-block; width: 12px; height: 12px; border-radius: 2px; background: ${
+                    "#f87171,#34d399,#60a5fa,#fbbf24,#a78bfa,#fb923c,#f43f5e,#06b6d4".split(
+                      ","
+                    )[index]
+                  }; margin-right: 8px;"></span>
                   ${labels[index]}
                 </td>
-                <td style="text-align: right; padding: 12px; color: #222; font-weight: 500;">R$ ${value.toLocaleString("pt-BR", { maximumFractionDigits: 2 })}</td>
-                <td style="text-align: right; padding: 12px; color: #2563eb; font-weight: 600;">${percentages[index]}%</td>
+                <td style="text-align: right; padding: 12px; color: #222; font-weight: 500;">R$ ${value.toLocaleString(
+                  "pt-BR",
+                  { maximumFractionDigits: 2 }
+                )}</td>
+                <td style="text-align: right; padding: 12px; color: #2563eb; font-weight: 600;">${
+                  percentages[index]
+                }%</td>
               </tr>
-            `).join('')}
+            `
+              )
+              .join("")}
             <tr style="background: #f9f9f9; border-top: 2px solid #e5e7eb;">
               <td style="text-align: left; padding: 12px; font-weight: 600; color: #222;">TOTAL</td>
-              <td style="text-align: right; padding: 12px; font-weight: 600; color: #222;">R$ ${totalProfit.toLocaleString("pt-BR", { maximumFractionDigits: 2 })}</td>
+              <td style="text-align: right; padding: 12px; font-weight: 600; color: #222;">R$ ${totalProfit.toLocaleString(
+                "pt-BR",
+                { maximumFractionDigits: 2 }
+              )}</td>
               <td style="text-align: right; padding: 12px; font-weight: 600; color: #2563eb;">100%</td>
             </tr>
           </tbody>
@@ -673,14 +744,17 @@ class AnalyticsManager {
     `;
   }
 
-    // =================== SPEND VS EARN ===================
+  // =================== SPEND VS EARN ===================
   async loadSpendVsEarn() {
     const canvas = document.getElementById("spendEarnChart");
     if (!canvas) return;
 
     //  ATUALIZADO: Usar valores dos inputs
-    const start = document.getElementById("se-start-date")?.value || this.getDateRangeStart();
-    const end = document.getElementById("se-end-date")?.value || this.getDateRangeEnd();
+    const start =
+      document.getElementById("se-start-date")?.value ||
+      this.getDateRangeStart();
+    const end =
+      document.getElementById("se-end-date")?.value || this.getDateRangeEnd();
 
     const rows = await AnalyticsAPI.getSpendVsEarn(start, end);
 
@@ -760,8 +834,12 @@ class AnalyticsManager {
     if (!canvas) return;
 
     //  ATUALIZADO: Usar valores dos inputs
-    const start = document.getElementById("valuation-start-date")?.value || this.getDateRangeStart();
-    const end = document.getElementById("valuation-end-date")?.value || this.getDateRangeEnd();
+    const start =
+      document.getElementById("valuation-start-date")?.value ||
+      this.getDateRangeStart();
+    const end =
+      document.getElementById("valuation-end-date")?.value ||
+      this.getDateRangeEnd();
 
     const rows = await AnalyticsAPI.getStockValuation(start, end);
 
@@ -831,12 +909,12 @@ class AnalyticsManager {
     const today = new Date();
     const startDate = new Date(today);
     startDate.setMonth(startDate.getMonth() - 4);
-    return startDate.toISOString().split('T')[0];
+    return startDate.toISOString().split("T")[0];
   }
 
   //  NOVO: Helper para obter data de fim (hoje)
   getDateRangeEnd() {
-    return new Date().toISOString().split('T')[0];
+    return new Date().toISOString().split("T")[0];
   }
 
   // =================== HELPERS ===================
@@ -860,17 +938,17 @@ class AnalyticsManager {
   //  CORRIGIDO: Função para normalizar e formatar mês corretamente
   normalizeAndFormatMonth(monthString) {
     if (!monthString) return "";
-    
+
     // Se já vem no formato YYYY-MM
     if (/^\d{4}-\d{2}$/.test(monthString)) {
-      const [year, month] = monthString.split('-');
+      const [year, month] = monthString.split("-");
       const date = new Date(year, parseInt(month) - 1, 1);
       return date.toLocaleDateString("pt-BR", {
         month: "short",
-        year: "2-digit"
+        year: "2-digit",
       });
     }
-    
+
     return monthString;
   }
 }
