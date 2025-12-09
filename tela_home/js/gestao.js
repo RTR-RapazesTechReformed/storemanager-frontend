@@ -656,6 +656,16 @@ class DashboardManager {
             (b.days_in_stock ?? 0) - (a.days_in_stock ?? 0)
         );
 
+        // ⭐ NOVO: Criar grid container
+        const gridContainer = document.createElement("div");
+        gridContainer.className = "aged-products-grid";
+        gridContainer.style.cssText = `
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            padding: 10px 0;
+        `;
+
         sortedList.forEach((product, index) => {
             const daysInStock = product.days_in_stock ?? 0;
             const productName = product.product_name ?? "Produto desconhecido";
@@ -667,45 +677,89 @@ class DashboardManager {
 
             // ⭐ Determinar cor baseada em dias em estoque
             let urgencyClass = "aged-low";
-            if (daysInStock > 180) urgencyClass = "aged-critical";
-            else if (daysInStock > 120) urgencyClass = "aged-high";
-            else if (daysInStock > 60) urgencyClass = "aged-medium";
+            let urgencyColor = "#FFD700";
+            if (daysInStock > 180) {
+                urgencyClass = "aged-critical";
+                urgencyColor = "#FF4D4F";
+            } else if (daysInStock > 120) {
+                urgencyClass = "aged-high";
+                urgencyColor = "#FF7A45";
+            } else if (daysInStock > 60) {
+                urgencyClass = "aged-medium";
+                urgencyColor = "#FFA940";
+            }
 
             const productItem = document.createElement("div");
-            productItem.className = `aged-product-item ${urgencyClass}`;
+            productItem.className = `aged-product-card ${urgencyClass}`;
+            productItem.style.cssText = `
+                background: white;
+                border: 2px solid ${urgencyColor};
+                border-radius: 8px;
+                padding: 15px;
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+                transition: all 0.3s ease;
+            `;
+
+            productItem.onmouseover = function() {
+                this.style.boxShadow = "0 4px 16px rgba(0, 0, 0, 0.15)";
+                this.style.transform = "translateY(-2px)";
+            };
+
+            productItem.onmouseout = function() {
+                this.style.boxShadow = "0 2px 8px rgba(0, 0, 0, 0.08)";
+                this.style.transform = "translateY(0)";
+            };
+
             productItem.innerHTML = `
-                <div class="aged-product-header">
-                    <div class="aged-product-rank">#${index + 1}</div>
-                    <div class="aged-product-name">${productName}</div>
-                    <div class="aged-days-badge">${daysInStock} dias</div>
+                <div style="display: flex; justify-content: space-between; align-items: start; gap: 10px;">
+                    <div style="flex: 1;">
+                        <h4 style="margin: 0 0 6px 0; font-size: 13px; font-weight: 600; color: #222; word-break: break-word;">
+                            ${productName}
+                        </h4>
+                        <span style="display: inline-block; background: ${urgencyColor}; color: white; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 600;">
+                            ${daysInStock} dias
+                        </span>
+                    </div>
+                    <div style="flex-shrink: 0; text-align: center;">
+                        <div style="font-size: 11px; color: #999; font-weight: 500;">Rank</div>
+                        <div style="font-size: 18px; font-weight: 700; color: ${urgencyColor};">#${index + 1}</div>
+                    </div>
                 </div>
-                
-                <div class="aged-product-details">
-                    <div class="aged-detail-row">
-                        <span class="aged-label">Condição:</span>
-                        <span class="aged-value">${condition}</span>
+
+                <div style="border-top: 1px solid #f0f0f0; padding-top: 10px; display: flex; flex-direction: column; gap: 6px; font-size: 12px;">
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: #999;">Condição:</span>
+                        <span style="font-weight: 500; color: #333;">${condition}</span>
                     </div>
-                    <div class="aged-detail-row">
-                        <span class="aged-label">Estoque Atual:</span>
-                        <span class="aged-value">${quantity} un.</span>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: #999;">Estoque:</span>
+                        <span style="font-weight: 500; color: #333;">${quantity} un.</span>
                     </div>
-                    <div class="aged-detail-row">
-                        <span class="aged-label">Preço:</span>
-                        <span class="aged-value">R$ ${price.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</span>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: #999;">Preço:</span>
+                        <span style="font-weight: 600; color: #52C41A;">R$ ${price.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</span>
                     </div>
-                    <div class="aged-detail-row">
-                        <span class="aged-label">Cadastrado em:</span>
-                        <span class="aged-value">${createdAt}</span>
+                </div>
+
+                <div style="border-top: 1px solid #f0f0f0; padding-top: 10px; display: flex; flex-direction: column; gap: 4px; font-size: 11px;">
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: #999;">Cadastro:</span>
+                        <span style="color: #555;">${createdAt}</span>
                     </div>
-                    <div class="aged-detail-row">
-                        <span class="aged-label">Último movimento:</span>
-                        <span class="aged-value">${lastMovement}</span>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: #999;">Última movimentação:</span>
+                        <span style="color: #555;">${lastMovement}</span>
                     </div>
                 </div>
             `;
 
-            container.appendChild(productItem);
+            gridContainer.appendChild(productItem);
         });
+
+        container.appendChild(gridContainer);
     }
 
     // ======================================================
